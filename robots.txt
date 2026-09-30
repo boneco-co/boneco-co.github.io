@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /digit-wonjang/
+Sitemap: https://boneco-co.github.io/sitemap.xml
