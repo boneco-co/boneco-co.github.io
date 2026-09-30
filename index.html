@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>본에코(주) 대형폐기물 접수</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,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">
+<meta name="description" content="송파구 잠실본동·삼전동 대형폐기물 인터넷 접수 — 본에코(주)">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f0f4f8; --card:#ffffff; --line:#e5e7eb; --ink:#111827; --sub:#4b5563; --muted:#6b7280;
+  --teal:#1a56db; --teal-l:#e8f0fe;   /* 디지털원장과 같은 파랑 */ --warn:#b45309; --warn-l:#fef3c7; --bad:#dc2626; --bad-l:#fee2e2;
+  --font:'Noto Sans KR',-apple-system,'Malgun Gothic',sans-serif;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --bg:#f0f4f8; } }
+:root[data-theme="dark"]{ --bg:#f0f4f8; }
+html{ scroll-padding-top:env(safe-area-inset-top,0px); }
+*{ box-sizing:border-box; margin:0; padding:0; }
+body{ font-family:var(--font); background:var(--bg); color:var(--ink); font-size:16px; line-height:1.55; }
+button,input,textarea,select{ font-family:inherit; font-size:inherit; color:inherit; }
+button{ cursor:pointer; }
+:focus-visible{ outline:3px solid #60a5fa; outline-offset:2px; }
+
+.demo{ background:#334155; color:#fff; font-size:13px; text-align:center; padding:7px 12px; }
+header{ background:var(--teal); color:#fff; }
+.hd{ max-width:1100px; margin:0 auto; padding:18px 20px; display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+.hd h1{ font-size:24px; font-weight:900; letter-spacing:-.5px; }
+.brand{ display:flex; align-items:center; gap:12px; }
+.logo{ width:48px; height:48px; border-radius:50%; background:#fff; padding:3px; flex-shrink:0; }
+@media (max-width:760px){ .logo{ width:40px; height:40px; } }
+.hd p{ font-size:14px; opacity:.9; margin-top:2px; }
+.hd .tel{ font-size:15px; font-weight:700; background:rgba(255,255,255,.14); padding:8px 14px; border-radius:10px; white-space:nowrap; }
+.hd .tel b{ font-size:18px; }
+
+main{ max-width:1100px; margin:0 auto; padding:20px; display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start; }
+.col{ display:flex; flex-direction:column; gap:16px; min-width:0; }
+.card{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px 20px; }
+.card h2{ font-size:17px; font-weight:900; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+label.lb{ display:block; font-size:14px; font-weight:700; color:var(--sub); margin:12px 0 5px; }
+label.lb:first-of-type{ margin-top:0; }
+.in{ width:100%; border:1.5px solid var(--line); border-radius:10px; padding:12px 14px; background:#fff; min-height:48px; }
+.in:focus{ border-color:var(--teal); outline:none; box-shadow:0 0 0 3px var(--teal-l); }
+.in[readonly]{ background:#f3f7fb; color:var(--sub); }
+textarea.in{ resize:vertical; min-height:72px; }
+.help{ font-size:13px; color:var(--muted); margin-top:5px; }
+.err{ font-size:13px; color:var(--bad); font-weight:700; margin-top:5px; display:none; }
+.err.on{ display:block; }
+.in.bad{ border-color:var(--bad); }
+
+.addr-row{ display:flex; gap:8px; }
+.btn-search{ flex:0 0 auto; background:var(--teal); color:#fff; border:none; border-radius:10px; padding:0 18px; font-weight:900; min-height:48px; }
+.two{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.blocked{ background:var(--bad-l); border:1.5px solid #fca5a5; color:#991b1b; border-radius:10px; padding:12px 14px; font-size:14px; font-weight:700; margin-top:10px; display:none; line-height:1.6; }
+.blocked a{ color:#991b1b; }
+.blocked.on{ display:block; }
+
+.btn-price{ background:var(--teal-l); color:var(--teal); border:1.5px solid #b9cdf7; border-radius:10px; padding:7px 12px; font-size:14px; font-weight:900; white-space:nowrap; }
+.item{ display:grid; grid-template-columns:minmax(0,1fr) 92px 96px 44px; gap:8px; margin-bottom:8px; position:relative; }
+.item .amt{ text-align:right; }
+.cnt{ position:relative; }
+.cnt input{ text-align:center; padding-right:30px; }
+.arr{ position:absolute; right:4px; top:4px; bottom:4px; width:22px; display:flex; flex-direction:column; gap:2px; }
+.arr button{ flex:1; border:none; background:#eef3f8; border-radius:5px; font-size:9px; color:var(--sub); padding:0; }
+.del{ border:none; background:var(--bad-l); color:var(--bad); border-radius:10px; font-size:18px; font-weight:900; }
+.sugg{ position:absolute; left:0; top:50px; z-index:20; background:#fff; border:1.5px solid var(--line); border-radius:10px; box-shadow:0 8px 24px rgba(15,23,42,.12); width:100%; max-height:240px; overflow:auto; display:none; }
+.sugg.on{ display:block; }
+.sugg div{ padding:10px 12px; display:flex; justify-content:space-between; gap:10px; border-bottom:1px solid #eef3f8; cursor:pointer; font-size:15px; }
+.sugg div:hover{ background:var(--teal-l); }
+.sugg .none{ color:var(--warn); cursor:default; font-weight:700; font-size:14px; }
+.sugg .none:hover{ background:#fff; }
+.add-item{ width:100%; border:1.5px dashed #b9cdf7; background:#f5f8ff; color:var(--teal); border-radius:10px; padding:11px; font-weight:900; }
+.madae{ background:var(--warn-l); border:1.5px solid #fcd34d; border-radius:10px; padding:12px 14px; margin-top:12px; display:none; }
+.madae.on{ display:block; }
+.madae b{ color:var(--warn); }
+
+.total{ display:flex; justify-content:space-between; align-items:baseline; padding:4px 0 12px; }
+.total span{ font-weight:700; color:var(--sub); }
+.total strong{ font-size:28px; font-weight:900; color:var(--teal); }
+.go{ width:100%; border:none; background:var(--teal); color:#fff; border-radius:12px; padding:16px; font-size:18px; font-weight:900; }
+.note{ font-size:13px; color:var(--muted); margin-top:10px; line-height:1.6; }
+
+/* 창·판 공통 */
+.ov{ position:fixed; inset:0; background:rgba(15,23,42,.45); z-index:100; display:none; align-items:center; justify-content:center; padding:16px; }
+.ov.on{ display:flex; }
+.dlg{ background:#fff; border-radius:16px; padding:22px 24px; width:480px; max-width:100%; max-height:90vh; overflow:auto; }
+.dlg h3{ font-size:20px; font-weight:900; margin-bottom:10px; }
+.dlg p{ font-size:15px; color:var(--sub); line-height:1.7; }
+.dlg .big{ font-size:22px; font-weight:900; color:var(--ink); margin:10px 0; }
+.dlg .acct{ background:var(--teal-l); border-radius:12px; padding:14px 16px; margin:12px 0; }
+.dlg .acct b{ font-size:20px; }
+.dlg .row{ display:flex; gap:10px; margin-top:16px; }
+.dlg .row button{ flex:1; border:none; border-radius:12px; padding:14px; font-weight:900; font-size:16px; }
+.pri{ background:var(--teal); color:#fff; }
+.sec{ background:#eef3f8; color:var(--ink); }
+.pick{ display:flex; flex-direction:column; gap:8px; margin-top:10px; }
+.pick button{ text-align:left; border:1.5px solid var(--line); background:#fff; border-radius:10px; padding:12px 14px; font-size:15px; }
+.pick button small{ display:block; color:var(--muted); font-size:13px; }
+
+/* 가격표 — PC: 떠 있는 창(이동·크기조절) */
+.ptable{ position:fixed; z-index:90; top:120px; right:24px; width:420px; height:520px; min-width:320px; min-height:300px; max-width:95vw; max-height:90vh;
+  background:#fff; border:1.5px solid var(--line); border-radius:14px; box-shadow:0 16px 40px rgba(15,23,42,.2); display:none; flex-direction:column; resize:both; overflow:hidden; }
+.ptable.on{ display:flex; }
+.pt-head{ background:var(--teal); color:#fff; padding:10px 14px; display:flex; align-items:center; justify-content:space-between; cursor:move; user-select:none; }
+.pt-head b{ font-size:16px; }
+.pt-head button{ background:rgba(255,255,255,.2); border:none; color:#fff; border-radius:8px; padding:5px 10px; font-weight:900; }
+.pt-tools{ padding:10px 12px; border-bottom:1px solid var(--line); }
+.pt-tools input{ width:100%; border:1.5px solid var(--line); border-radius:10px; padding:10px 12px; }
+.chips{ display:flex; gap:6px; margin-top:8px; overflow-x:auto; padding-bottom:2px; }
+.chips button{ flex:0 0 auto; border:1.5px solid var(--line); background:#fff; border-radius:20px; padding:5px 12px; font-size:14px; font-weight:700; color:var(--sub); }
+.chips button.on{ background:var(--teal); color:#fff; border-color:var(--teal); }
+.pt-body{ flex:1; overflow:auto; padding:4px 0; }
+.pt-cat{ font-size:14px; font-weight:900; color:var(--teal); padding:10px 14px 4px; background:#f7fafd; position:sticky; top:0; }
+.pt-row{ display:flex; justify-content:space-between; gap:10px; padding:9px 14px; border-bottom:1px solid #eef3f8; cursor:pointer; font-size:15px; }
+.pt-row:nth-child(even){ background:#f5f8ff; }
+.pt-row:hover{ background:var(--teal-l); }
+.pt-row em{ font-style:normal; font-weight:900; white-space:nowrap; }
+.pt-row .plus{ color:var(--teal); font-weight:900; margin-left:6px; }
+.pt-foot{ display:none; }
+
+footer{ text-align:center; color:var(--muted); font-size:14px; padding:10px 20px 30px; }
+
+/* 폰 */
+@media (max-width:760px){
+  .hd h1{ font-size:20px; }
+  main{ grid-template-columns:1fr; padding:14px; gap:14px; }
+  .item{ grid-template-columns:minmax(0,1fr) 72px 44px; grid-template-areas:"nm nm nm" "cn am dl"; }
+  .item .nm{ grid-area:nm; } .item .cnt{ grid-area:cn; } .item .amt{ grid-area:am; } .item .del{ grid-area:dl; }
+  .item{ grid-template-columns:90px minmax(0,1fr) 48px; }
+  .arr{ display:none; }
+  .cnt input{ padding-right:14px; }
+  .sugg{ top:50px; }
+  /* 가격표 — 폰: 아래에서 올라오는 판 */
+  .ptable{ left:0; right:0; top:auto; bottom:0; width:100%; height:82vh; max-width:100%; border-radius:18px 18px 0 0; resize:none; }
+  .pt-head{ cursor:default; }
+  .pt-head::before{ content:''; position:absolute; left:50%; top:6px; width:40px; height:4px; margin-left:-20px; background:rgba(255,255,255,.5); border-radius:4px; }
+  .pt-head{ position:relative; padding-top:16px; }
+  .pt-foot{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 14px; border-top:1.5px solid var(--line); background:#fff; }
+  .pt-foot span{ font-weight:900; }
+  .pt-foot button{ border:none; background:var(--teal); color:#fff; border-radius:10px; padding:12px 22px; font-weight:900; font-size:16px; }
+  .pt-dim{ position:fixed; inset:0; background:rgba(15,23,42,.4); z-index:89; display:none; }
+  .pt-dim.on{ display:block; }
+}
+@media (prefers-reduced-motion: no-preference){ .ptable.on{ animation:pop .18s ease-out; } @keyframes pop{ from{ transform:translateY(12px); opacity:.6 } to{ transform:none; opacity:1 } } }
+
+.go:disabled{opacity:.6;}
+</style>
+</head>
+<body>
+<header><div class="hd">
+  <div class="brand"><img class="logo" src="data:image/png;base64,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" alt="본에코 로고"><div><h1>본에코(주) 대형폐기물 접수</h1><p>잠실본동 · 삼전동 대형폐기물 수거 (송파구 위탁업체)</p></div></div>
+  <div class="tel">문의 <b>02-414-6221~2</b></div>
+</div></header>
+
+<main>
+  <div class="col">
+    <section class="card">
+      <h2>배출 주소</h2>
+      <label class="lb">주소</label>
+      <div class="addr-row">
+        <button class="btn-search" type="button" onclick="openAddr()">주소검색</button>
+        <input class="in" id="addr" readonly placeholder="주소검색을 눌러 주세요" onclick="openAddr()">
+      </div>
+      <div class="blocked" id="blocked"></div>
+      <div id="aptBox" style="display:none">
+        <label class="lb">동 · 호</label>
+        <div class="two"><input class="in" id="dong" placeholder="동 (예: 520)" data-num><input class="in" id="ho" placeholder="호 (예: 1203)" data-num></div>
+      </div>
+      <div id="detailBox" style="display:none">
+        <label class="lb">상세주소 <span style="font-weight:500;color:var(--muted)">(선택)</span></label>
+        <input class="in" id="detail" placeholder="건물 이름, 동·호수 (예: B동 201호)">
+        <div class="help">안 적어도 접수됩니다.</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>신청자</h2>
+      <label class="lb">성명</label>
+      <input class="in" id="name" placeholder="홍길동" autocomplete="name">
+      <div class="err" id="nameErr">성명을 정확히 입력해 주세요.</div>
+      <label class="lb">휴대전화</label>
+      <input class="in" id="phone" placeholder="010-0000-0000" data-tel autocomplete="tel">
+      <div class="err" id="phoneErr">휴대전화 번호를 정확히 입력해 주세요.</div>
+      <div class="help">수거 관련 연락에만 씁니다.</div>
+    </section>
+
+    <section class="card">
+      <h2>배출위치 · 메모</h2>
+      <textarea class="in" id="memo" placeholder="예: 1층 분리수거장 옆, 현관 앞"></textarea>
+    </section>
+  </div>
+
+  <div class="col">
+    <section class="card">
+      <h2>버리실 품목 <button class="btn-price" type="button" onclick="openPrice()">📋 가격표 보기</button></h2>
+      <div id="items"></div>
+      <button class="add-item" type="button" onclick="addRow()">+ 품목 추가</button>
+      <div class="help">품목명을 두 글자 이상 치면 목록이 뜹니다. 목록에서 고르면 금액이 자동으로 들어갑니다.</div>
+      <div class="madae" id="madaeBox">
+        <b>특수마대 배출일</b> — 동네별로 정해진 요일에만 내놓을 수 있습니다.
+        <select class="in" id="madaeDay" style="margin-top:8px"></select>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>배출일</h2>
+      <input class="in" type="date" id="emit">
+      <div class="help">내일부터 고를 수 있습니다. 입금이 확인되면 배출일 다음날부터 3영업일 안에 수거합니다.</div>
+    </section>
+
+    <section class="card">
+      <div class="total"><span>총 금액</span><strong id="sum">0원</strong></div>
+      <button class="go" id="goBtn" type="button" onclick="submitReq()">접수하고 입금계좌 보기</button>
+      <p class="note">입금이 확인되어야 수거가 진행됩니다. 입금자명은 신청자 성명으로 보내 주세요.</p>
+    </section>
+  </div>
+</main>
+<footer>본에코(주) · 평일 09:00~18:00 · 문의 02-414-6221~2</footer>
+
+<div class="pt-dim" id="ptDim" onclick="closePrice()"></div>
+<div class="ptable" id="ptable" role="dialog" aria-label="가격표">
+  <div class="pt-head" id="ptHead"><b>📋 대형폐기물 가격표</b><button type="button" onclick="closePrice()">닫기</button></div>
+  <div class="pt-tools">
+    <input id="ptSearch" placeholder="품목 찾기 (예: 소파, 쇼파, 캐리어)" oninput="renderPrice()">
+    <div class="chips" id="ptChips"></div>
+  </div>
+  <div class="pt-body" id="ptBody"></div>
+  <div class="pt-foot"><span id="ptCart">담은 품목 없음</span><button type="button" onclick="closePrice()">완료</button></div>
+</div>
+
+<div class="ov" id="ov"><div class="dlg" id="dlg"></div></div>
+<div class="ov" id="addrOv"><div class="dlg" style="padding:12px;width:520px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin:4px 6px 10px"><b style="font-size:18px">주소검색</b><button type="button" class="sec" style="border:none;border-radius:10px;padding:8px 14px;font-weight:900" onclick="closeAddr()">닫기</button></div>
+  <div id="addrEmbed" style="height:460px;max-height:70vh"></div>
+</div></div>
+
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+// ══ Firebase (원장·수거앱과 같은 프로젝트) ══
+const firebaseConfig = {
+  apiKey:            "AIzaSyD4hPKN8cdtnsVACdvBxDfoR33mAOYEuco",
+  authDomain:        "boneco-wonjang.firebaseapp.com",
+  databaseURL:       "https://boneco-wonjang-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:         "boneco-wonjang",
+  storageBucket:     "boneco-wonjang.firebasestorage.app",
+  messagingSenderId: "463413861191",
+  appId:             "1:463413861191:web:c6a68b67fe000baae64a62"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const KAKAO_API_KEY = '3c1012691c2c9f444b70b2c4ce936c98';   // 원장과 같은 키 (행정동 확인용)
+const DB_REQ   = 'public_requests';   // 본에코홈 접수함 — 원장에서 확인 후 접수목록으로 전송
+const DB_CNT   = 'public_counts';     // 전화번호별 하루 접수 수 (5번째부터 막음)
+const DB_PRICE = 'price_table';       // 원장 가격표 관리에서 저장하는 가격표 (없으면 아래 기본표)
+const MAX_PER_DAY = 4;
+
+// ══ 가격표 — 원장(디지털원장) PRICE_LIST 그대로 ══
+const PRICE_LIST = [
+  {item:"(입)간판",spec:"40cm ×100cm 당",name:"(입)간판 (40cm ×100cm 당)",price:4000},
+  {item:"(입)간판",spec:"가장 긴면 1m 미만",name:"(입)간판 (가장 긴면 1m 미만)",price:1000},
+  {item:"(입)간판",spec:"가장 긴면 1m 이상",name:"(입)간판 (가장 긴면 1m 이상)",price:2000},
+  {item:"(입)간판",spec:"고무통 입간판",name:"(입)간판 (고무통 입간판)",price:5000},
+  {item:"DVD,비디오(VTR)",spec:"",name:"DVD,비디오(VTR)",price:0},
+  {item:"TV",spec:"25인치 미만",name:"TV (25인치 미만)",price:3000},
+  {item:"TV",spec:"25인치 이상",name:"TV (25인치 이상)",price:5000},
+  {item:"TV",spec:"42인치 이상",name:"TV (42인치 이상)",price:7000},
+  {item:"TV받침",spec:"",name:"TV받침",price:3000},
+  {item:"가방류",spec:"가장긴면 50cm 미만",name:"가방류 (가장긴면 50cm 미만)",price:2000},
+  {item:"가방류",spec:"가장긴면 50cm 이상",name:"가방류 (가장긴면 50cm 이상)",price:3000},
+  {item:"가스레인지",spec:"",name:"가스레인지",price:0},
+  {item:"가스오븐렌지",spec:"높이 1m 미만",name:"가스오븐렌지 (높이 1m 미만)",price:0},
+  {item:"가스오븐렌지",spec:"높이 1m 이상",name:"가스오븐렌지 (높이 1m 이상)",price:5000},
+  {item:"가습기",spec:"",name:"가습기",price:0},
+  {item:"거실장",spec:"너비 120cm 미만",name:"거실장 (너비 120cm 미만)",price:4000},
+  {item:"거실장",spec:"너비 120cm 이상",name:"거실장 (너비 120cm 이상)",price:6000},
+  {item:"거실장",spec:"너비 180cm 이상",name:"거실장 (너비 180cm 이상)",price:10000},
+  {item:"거울",spec:"가장 긴면 50cm미만",name:"거울 (가장 긴면 50cm미만)",price:1000},
+  {item:"거울",spec:"가장 긴면 50cm이상",name:"거울 (가장 긴면 50cm이상)",price:2000},
+  {item:"게시판(화이트보드)",spec:"가장 긴면 1m미만",name:"게시판(화이트보드) (가장 긴면 1m미만)",price:1000},
+  {item:"게시판(화이트보드)",spec:"가장 긴면 1m이상",name:"게시판(화이트보드) (가장 긴면 1m이상)",price:2000},
+  {item:"게임기오락기",spec:"50cm 미만",name:"게임기오락기 (50cm 미만)",price:3000},
+  {item:"게임기오락기",spec:"50cm 이상",name:"게임기오락기 (50cm 이상)",price:5000},
+  {item:"게임기오락기",spec:"전문 업소용",name:"게임기오락기 (전문 업소용)",price:12000},
+  {item:"고무통",spec:"지름 1m 이상",name:"고무통 (지름 1m 이상)",price:5000},
+  {item:"고무통",spec:"지름 50cm미만",name:"고무통 (지름 50cm미만)",price:3000},
+  {item:"고무통",spec:"지름 50cm이상",name:"고무통 (지름 50cm이상)",price:4000},
+  {item:"공기청정기",spec:"가장긴면 1m미만",name:"공기청정기 (가장긴면 1m미만)",price:0},
+  {item:"공기청정기",spec:"가장긴면 1m이상",name:"공기청정기 (가장긴면 1m이상)",price:4000},
+  {item:"공기청정기",spec:"영업용",name:"공기청정기 (영업용)",price:15000},
+  {item:"교자상․밥상",spec:"4인 미만",name:"교자상․밥상 (4인 미만)",price:1500},
+  {item:"교자상․밥상",spec:"4인 이상",name:"교자상․밥상 (4인 이상)",price:2000},
+  {item:"교자상․밥상",spec:"차식탁 (다과상)",name:"교자상․밥상 (차식탁 (다과상))",price:1000},
+  {item:"금고(가정용)",spec:"가장 긴면 1m 미만",name:"금고(가정용) (가장 긴면 1m 미만)",price:15000},
+  {item:"금고(가정용)",spec:"가장 긴면 30cm 미만",name:"금고(가정용) (가장 긴면 30cm 미만)",price:10000},
+  {item:"기름탱크",spec:"400L 미만",name:"기름탱크 (400L 미만)",price:4000},
+  {item:"기름탱크",spec:"400L 이상",name:"기름탱크 (400L 이상)",price:7000},
+  {item:"김치냉장고",spec:"130L 미만",name:"김치냉장고 (130L 미만)",price:3000},
+  {item:"김치냉장고",spec:"130L 이상",name:"김치냉장고 (130L 이상)",price:5000},
+  {item:"난로",spec:"가스",name:"난로 (가스)",price:2000},
+  {item:"난로",spec:"벽걸이",name:"난로 (벽걸이)",price:0},
+  {item:"난로",spec:"석유",name:"난로 (석유)",price:2000},
+  {item:"난로",spec:"전기",name:"난로 (전기)",price:0},
+  {item:"냉장고",spec:"300L 미만",name:"냉장고 (300L 미만)",price:5000},
+  {item:"냉장고",spec:"300L 이상",name:"냉장고 (300L 이상)",price:7000},
+  {item:"냉장고",spec:"500L 이상",name:"냉장고 (500L 이상)",price:10000},
+  {item:"냉장고",spec:"영업용 (대형)",name:"냉장고 (영업용 (대형))",price:20000},
+  {item:"노트북컴퓨터",spec:"",name:"노트북컴퓨터",price:0},
+  {item:"녹즙기",spec:"",name:"녹즙기",price:0},
+  {item:"다리미",spec:"",name:"다리미",price:0},
+  {item:"다리미판",spec:"",name:"다리미판",price:1000},
+  {item:"도마",spec:"가정용 나무도마",name:"도마 (가정용 나무도마)",price:1000},
+  {item:"도마",spec:"업소용 나무도마",name:"도마 (업소용 나무도마)",price:2000},
+  {item:"돗자리(대자리,놀이매트)",spec:"1㎡당",name:"돗자리(대자리,놀이매트) (1㎡당)",price:1000},
+  {item:"라지에터",spec:"",name:"라지에터",price:4000},
+  {item:"라켓",spec:"배드민턴 라켓",name:"라켓 (배드민턴 라켓)",price:500},
+  {item:"라켓",spec:"테니스 라켓",name:"라켓 (테니스 라켓)",price:1000},
+  {item:"렌지대수납장",spec:"",name:"렌지대수납장",price:4000},
+  {item:"마네킹",spec:"1m 미만",name:"마네킹 (1m 미만)",price:3000},
+  {item:"마네킹",spec:"1m 이상",name:"마네킹 (1m 이상)",price:5000},
+  {item:"모뎀",spec:"",name:"모뎀",price:0},
+  {item:"목욕탕수건함",spec:"",name:"목욕탕수건함",price:1000},
+  {item:"문갑",spec:"",name:"문갑",price:3000},
+  {item:"문짝",spec:"",name:"문짝",price:4000},
+  {item:"물탱크",spec:"0.5톤 미만",name:"물탱크 (0.5톤 미만)",price:3000},
+  {item:"물탱크",spec:"0.5톤 이상",name:"물탱크 (0.5톤 이상)",price:4000},
+  {item:"물탱크",spec:"1톤당",name:"물탱크 (1톤당)",price:6000},
+  {item:"믹서기",spec:"",name:"믹서기",price:0},
+  {item:"바둑판",spec:"두께 12mm",name:"바둑판 (두께 12mm)",price:1000},
+  {item:"바둑판",spec:"두께 60mm 이상",name:"바둑판 (두께 60mm 이상)",price:2000},
+  {item:"발마사지기계",spec:"",name:"발마사지기계",price:0},
+  {item:"방석",spec:"겨울용",name:"방석 (겨울용)",price:1000},
+  {item:"방석",spec:"여름용",name:"방석 (여름용)",price:500},
+  {item:"배기후드",spec:"",name:"배기후드",price:2000},
+  {item:"베개(라텍스베개)",spec:"",name:"베개(라텍스베개)",price:1000},
+  {item:"벽시계",spec:"길이 1m미만, 지름 28cm미만",name:"벽시계 (길이 1m미만, 지름 28cm미만)",price:1000},
+  {item:"벽시계",spec:"길이 1m이상, 지름 28cm이상",name:"벽시계 (길이 1m이상, 지름 28cm이상)",price:2000},
+  {item:"변기",spec:"양변기",name:"변기 (양변기)",price:8000},
+  {item:"변기",spec:"좌변기",name:"변기 (좌변기)",price:5000},
+  {item:"병풍",spec:"2폭당",name:"병풍 (2폭당)",price:1000},
+  {item:"보온밥통",spec:"",name:"보온밥통",price:0},
+  {item:"보일러",spec:"16kcal/h 미만",name:"보일러 (16kcal/h 미만)",price:10000},
+  {item:"보일러",spec:"16kcal/h 이상",name:"보일러 (16kcal/h 이상)",price:12000},
+  {item:"보행기",spec:"",name:"보행기",price:2000},
+  {item:"복사기",spec:"영업용",name:"복사기 (영업용)",price:10000},
+  {item:"블라인드",spec:"1㎡당",name:"블라인드 (1㎡당)",price:1000},
+  {item:"비닐옷장(비키니옷장)",spec:"",name:"비닐옷장(비키니옷장)",price:3000},
+  {item:"비데",spec:"",name:"비데",price:1000},
+  {item:"빨래건조대",spec:"길이 1m 미만",name:"빨래건조대 (길이 1m 미만)",price:1000},
+  {item:"빨래건조대",spec:"길이 1m 이상",name:"빨래건조대 (길이 1m 이상)",price:2000},
+  {item:"서랍장",spec:"4단 이하",name:"서랍장 (4단 이하)",price:3000},
+  {item:"서랍장",spec:"5단 이상",name:"서랍장 (5단 이상)",price:5000},
+  {item:"선풍기",spec:"가정용",name:"선풍기 (가정용)",price:0},
+  {item:"선풍기",spec:"업소용(스탠드형)",name:"선풍기 (업소용(스탠드형))",price:3000},
+  {item:"세면대",spec:"세면대 세트",name:"세면대 (세면대 세트)",price:3000},
+  {item:"세탁기",spec:"10kg 이상",name:"세탁기 (10kg 이상)",price:4000},
+  {item:"세탁기",spec:"10kg 이하",name:"세탁기 (10kg 이하)",price:3000},
+  {item:"소화기",spec:"대형(20㎏ 이상)",name:"소화기 (대형(20㎏ 이상))",price:3000},
+  {item:"소화기",spec:"소형(4.5㎏ 이하)",name:"소화기 (소형(4.5㎏ 이하))",price:1000},
+  {item:"소화기",spec:"중형 (4.5㎏초과 20㎏미만)",name:"소화기 (중형 (4.5㎏초과 20㎏미만))",price:2000},
+  {item:"쇼파",spec:"1인용",name:"쇼파 (1인용)",price:4000},
+  {item:"쇼파",spec:"2인용",name:"쇼파 (2인용)",price:7000},
+  {item:"쇼파",spec:"3인용",name:"쇼파 (3인용)",price:10000},
+  {item:"쇼파",spec:"4인용",name:"쇼파 (4인용)",price:13000},
+  {item:"쇼파",spec:"스툴",name:"쇼파 (스툴)",price:3000},
+  {item:"수도호스",spec:"10m 당",name:"수도호스 (10m 당)",price:1000},
+  {item:"스캐너",spec:"",name:"스캐너",price:0},
+  {item:"스키",spec:"스키(부츠별도)",name:"스키 (스키(부츠별도))",price:3000},
+  {item:"스키",spec:"스키부츠",name:"스키 (스키부츠)",price:2000},
+  {item:"스탠드옷걸이",spec:"가정용(행거)",name:"스탠드옷걸이 (가정용(행거))",price:2000},
+  {item:"식기건조기",spec:"높이 1m 미만",name:"식기건조기 (높이 1m 미만)",price:0},
+  {item:"식기건조기",spec:"높이 1m 이상",name:"식기건조기 (높이 1m 이상)",price:5000},
+  {item:"식기세척기",spec:"높이 1m 미만",name:"식기세척기 (높이 1m 미만)",price:0},
+  {item:"식기세척기",spec:"높이 1m 이상",name:"식기세척기 (높이 1m 이상)",price:5000},
+  {item:"식탁(나무)",spec:"3인 이하",name:"식탁(나무) (3인 이하)",price:3000},
+  {item:"식탁(나무)",spec:"4인 이상",name:"식탁(나무) (4인 이상)",price:4000},
+  {item:"식탁(나무)",spec:"6인 이상",name:"식탁(나무) (6인 이상)",price:5000},
+  {item:"식탁(대리석)",spec:"4인 이상",name:"식탁(대리석) (4인 이상)",price:10000},
+  {item:"식탁(대리석)",spec:"6인 이상",name:"식탁(대리석) (6인 이상)",price:13000},
+  {item:"신발장",spec:"높이 1.5m 미만",name:"신발장 (높이 1.5m 미만)",price:2000},
+  {item:"신발장",spec:"높이 1.5m 이상",name:"신발장 (높이 1.5m 이상)",price:4000},
+  {item:"싱크대",spec:"개당",name:"싱크대 (개당)",price:5000},
+  {item:"쌀통",spec:"",name:"쌀통",price:3000},
+  {item:"쓰레기통",spec:"가정용",name:"쓰레기통 (가정용)",price:1000},
+  {item:"쓰레기통",spec:"사무실 옥외용",name:"쓰레기통 (사무실 옥외용)",price:2000},
+  {item:"아이스박스",spec:"30L 미만",name:"아이스박스 (30L 미만)",price:1000},
+  {item:"아이스박스",spec:"30L 이상",name:"아이스박스 (30L 이상)",price:2000},
+  {item:"아이스박스",spec:"50L 이상",name:"아이스박스 (50L 이상)",price:3000},
+  {item:"안마기",spec:"",name:"안마기",price:2000},
+  {item:"안마의자",spec:"",name:"안마의자",price:10000},
+  {item:"액자",spec:"가장 긴면 100cm초과",name:"액자 (가장 긴면 100cm초과)",price:3000},
+  {item:"액자",spec:"가장 긴면 50cm미만",name:"액자 (가장 긴면 50cm미만)",price:1000},
+  {item:"액자",spec:"가장 긴면 50cm이상",name:"액자 (가장 긴면 50cm이상)",price:2000},
+  {item:"어항(수족관)",spec:"가장 긴면 1m미만",name:"어항(수족관) (가장 긴면 1m미만)",price:1000},
+  {item:"어항(수족관)",spec:"가장 긴면 1m이상",name:"어항(수족관) (가장 긴면 1m이상)",price:5000},
+  {item:"어항(수족관)",spec:"영업용, 2m이상",name:"어항(수족관) (영업용, 2m이상)",price:15000},
+  {item:"에어컨",spec:"264㎡ 이상",name:"에어컨 (264㎡ 이상)",price:9000},
+  {item:"에어컨",spec:"66㎡ 미만",name:"에어컨 (66㎡ 미만)",price:4000},
+  {item:"에어컨",spec:"66㎡ 이상",name:"에어컨 (66㎡ 이상)",price:6000},
+  {item:"에어컨실외기",spec:"1m 미만",name:"에어컨실외기 (1m 미만)",price:0},
+  {item:"에어컨실외기",spec:"1m 이상",name:"에어컨실외기 (1m 이상)",price:2000},
+  {item:"영업용프린터",spec:"높이 1m 미만",name:"영업용프린터 (높이 1m 미만)",price:3000},
+  {item:"영업용프린터",spec:"높이 1m 이상",name:"영업용프린터 (높이 1m 이상)",price:5000},
+  {item:"오디오본체",spec:"본체 1m 미만",name:"오디오본체 (본체 1m 미만)",price:0},
+  {item:"오디오본체",spec:"본체 1m 이상",name:"오디오본체 (본체 1m 이상)",price:4000},
+  {item:"오디오스피커",spec:"스피커 1m 미만",name:"오디오스피커 (스피커 1m 미만)",price:0},
+  {item:"오디오스피커",spec:"스피커 1m 이상",name:"오디오스피커 (스피커 1m 이상)",price:1000},
+  {item:"온수기",spec:"",name:"온수기",price:2000},
+  {item:"온풍기",spec:"264㎡ 이상",name:"온풍기 (264㎡ 이상)",price:8000},
+  {item:"온풍기",spec:"66㎡ 미만",name:"온풍기 (66㎡ 미만)",price:3000},
+  {item:"온풍기",spec:"66㎡ 이상",name:"온풍기 (66㎡ 이상)",price:5000},
+  {item:"올갠",spec:"일반용",name:"올갠 (일반용)",price:10000},
+  {item:"올갠",spec:"전자식",name:"올갠 (전자식)",price:5000},
+  {item:"욕조",spec:"유 아 용",name:"욕조 (유 아 용)",price:3000},
+  {item:"욕조",spec:"일 반 용",name:"욕조 (일 반 용)",price:5000},
+  {item:"우산",spec:"어린이용",name:"우산 (어린이용)",price:0},
+  {item:"우산",spec:"일반용",name:"우산 (일반용)",price:1000},
+  {item:"유리",spec:"0.5㎡ 당",name:"유리 (0.5㎡ 당)",price:1000},
+  {item:"유모차",spec:"1인용",name:"유모차 (1인용)",price:2000},
+  {item:"유모차",spec:"2인용",name:"유모차 (2인용)",price:4000},
+  {item:"의자",spec:"1인용",name:"의자 (1인용)",price:2000},
+  {item:"의자",spec:"장의자",name:"의자 (장의자)",price:6000},
+  {item:"의자",spec:"회전의자",name:"의자 (회전의자)",price:5000},
+  {item:"이불",spec:"겨울용",name:"이불 (겨울용)",price:2000},
+  {item:"인형",spec:"",name:"인형",price:1000},
+  {item:"자동판매기",spec:"음료 담배",name:"자동판매기 (음료 담배)",price:15000},
+  {item:"자동판매기",spec:"자가 소형",name:"자동판매기 (자가 소형)",price:3000},
+  {item:"자전거",spec:"성인용",name:"자전거 (성인용)",price:3000},
+  {item:"자전거",spec:"아동용 2륜",name:"자전거 (아동용 2륜)",price:2000},
+  {item:"자전거",spec:"아동용 3륜",name:"자전거 (아동용 3륜)",price:2000},
+  {item:"장난감",spec:"길이 50cm미만",name:"장난감 (길이 50cm미만)",price:1000},
+  {item:"장난감",spec:"길이 50cm이상",name:"장난감 (길이 50cm이상)",price:2000},
+  {item:"장롱",spec:"너비 100cm 미만(쪽당)",name:"장롱 (너비 100cm 미만(쪽당))",price:10000},
+  {item:"장롱",spec:"너비 100cm 이상(쪽당)",name:"장롱 (너비 100cm 이상(쪽당))",price:15000},
+  {item:"장식장",spec:"높이 120cm미만",name:"장식장 (높이 120cm미만)",price:4000},
+  {item:"장식장",spec:"높이 120cm이상",name:"장식장 (높이 120cm이상)",price:6000},
+  {item:"장식장",spec:"높이 180cm이상",name:"장식장 (높이 180cm이상)",price:10000},
+  {item:"장식장",spec:"오디오용",name:"장식장 (오디오용)",price:3000},
+  {item:"장판",spec:"3.3㎡당",name:"장판 (3.3㎡당)",price:2000},
+  {item:"장판",spec:"옥 자석 온수 등 1인용",name:"장판 (옥 자석 온수 등 1인용)",price:4000},
+  {item:"장판",spec:"옥 자석 온수 등 2인용",name:"장판 (옥 자석 온수 등 2인용)",price:7000},
+  {item:"장판",spec:"전기장판(1인용)",name:"장판 (전기장판(1인용))",price:2000},
+  {item:"장판",spec:"전기장판(2인용)",name:"장판 (전기장판(2인용))",price:3000},
+  {item:"재봉틀",spec:"(재봉틀대)",name:"재봉틀 ((재봉틀대))",price:2000},
+  {item:"전기담요",spec:"1인용",name:"전기담요 (1인용)",price:1000},
+  {item:"전기담요",spec:"2인용",name:"전기담요 (2인용)",price:2000},
+  {item:"전기밥솥",spec:"(보온밥솥)",name:"전기밥솥 ((보온밥솥))",price:0},
+  {item:"전기판넬",spec:"3.3㎡당",name:"전기판넬 (3.3㎡당)",price:2000},
+  {item:"전기히터",spec:"",name:"전기히터",price:0},
+  {item:"전자레인지",spec:"",name:"전자레인지",price:0},
+  {item:"전자시계",spec:"",name:"전자시계",price:0},
+  {item:"전화기․휴대폰",spec:"",name:"전화기․휴대폰",price:0},
+  {item:"정수기",spec:"높이 1m 미만",name:"정수기 (높이 1m 미만)",price:0},
+  {item:"정수기",spec:"높이 1m 이상",name:"정수기 (높이 1m 이상)",price:4000},
+  {item:"조명기구",spec:"샹드레아",name:"조명기구 (샹드레아)",price:2000},
+  {item:"조명기구",spec:"폭, 높이 1m미만",name:"조명기구 (폭, 높이 1m미만)",price:1000},
+  {item:"조명기구",spec:"폭, 높이 1m이상",name:"조명기구 (폭, 높이 1m이상)",price:2000},
+  {item:"진열대(목재)",spec:"1㎡ 당",name:"진열대(목재) (1㎡ 당)",price:5000},
+  {item:"창문",spec:"",name:"창문",price:2000},
+  {item:"책상",spec:"서랍 없음",name:"책상 (서랍 없음)",price:3000},
+  {item:"책상",spec:"양수",name:"책상 (양수)",price:8000},
+  {item:"책상",spec:"컴퓨터 책상",name:"책상 (컴퓨터 책상)",price:3000},
+  {item:"책상",spec:"편수",name:"책상 (편수)",price:5000},
+  {item:"책장",spec:"4단 이하",name:"책장 (4단 이하)",price:2000},
+  {item:"책장",spec:"90cm×180cm 미만",name:"책장 (90cm×180cm 미만)",price:5000},
+  {item:"책장",spec:"90cm×180cm 이상",name:"책장 (90cm×180cm 이상)",price:8000},
+  {item:"천막",spec:"길이 6m 미만",name:"천막 (길이 6m 미만)",price:5000},
+  {item:"천막",spec:"길이 6m 이상",name:"천막 (길이 6m 이상)",price:7000},
+  {item:"청소기",spec:"가정용",name:"청소기 (가정용)",price:0},
+  {item:"청소기",spec:"영업용",name:"청소기 (영업용)",price:4000},
+  {item:"침대(돌,옥,황토침대)",spec:"1인용 돌, 옥, 황토",name:"침대(돌,옥,황토침대) (1인용 돌, 옥, 황토)",price:20000},
+  {item:"침대(돌,옥,황토침대)",spec:"2인용 돌, 옥, 황토",name:"침대(돌,옥,황토침대) (2인용 돌, 옥, 황토)",price:30000},
+  {item:"침대(목재)",spec:"1인용 매트리스",name:"침대(목재) (1인용 매트리스)",price:5000},
+  {item:"침대(목재)",spec:"1인용 침대 틀",name:"침대(목재) (1인용 침대 틀)",price:5000},
+  {item:"침대(목재)",spec:"2인용 매트리스",name:"침대(목재) (2인용 매트리스)",price:8000},
+  {item:"침대(목재)",spec:"2인용 침대 틀",name:"침대(목재) (2인용 침대 틀)",price:7000},
+  {item:"침대(목재)",spec:"어린이 2층",name:"침대(목재) (어린이 2층)",price:15000},
+  {item:"침대(목재)",spec:"유아용",name:"침대(목재) (유아용)",price:3000},
+  {item:"카세트라디오",spec:"",name:"카세트라디오",price:0},
+  {item:"카시트",spec:"",name:"카시트",price:2000},
+  {item:"카페트",spec:"3.3㎡당",name:"카페트 (3.3㎡당)",price:2000},
+  {item:"캐비넷(파일)",spec:"3단 이하",name:"캐비넷(파일) (3단 이하)",price:2000},
+  {item:"캐비넷(파일)",spec:"4단 이상",name:"캐비넷(파일) (4단 이상)",price:3000},
+  {item:"캐비넷(파일)",spec:"90cm×180cm",name:"캐비넷(파일) (90cm×180cm)",price:4000},
+  {item:"커튼",spec:"2m 미만",name:"커튼 (2m 미만)",price:1000},
+  {item:"커튼",spec:"2m 이상",name:"커튼 (2m 이상)",price:2000},
+  {item:"커튼봉",spec:"",name:"커튼봉",price:1000},
+  {item:"커피포트",spec:"",name:"커피포트",price:0},
+  {item:"컬러박스(공간박스)",spec:"2단 미만",name:"컬러박스(공간박스) (2단 미만)",price:1000},
+  {item:"컬러박스(공간박스)",spec:"3단 이상",name:"컬러박스(공간박스) (3단 이상)",price:2000},
+  {item:"컴퓨터",spec:"",name:"컴퓨터",price:0},
+  {item:"컴퓨터복합기",spec:"",name:"컴퓨터복합기",price:0},
+  {item:"컴퓨터오락기",spec:"",name:"컴퓨터오락기",price:0},
+  {item:"컴퓨터키보드",spec:"",name:"컴퓨터키보드",price:0},
+  {item:"킥보드",spec:"",name:"킥보드",price:2000},
+  {item:"타이어",spec:"지름 110cm이상",name:"타이어 (지름 110cm이상)",price:6000},
+  {item:"타이어",spec:"지름 60cm 미만",name:"타이어 (지름 60cm 미만)",price:3000},
+  {item:"타이어",spec:"지름 60cm 이상",name:"타이어 (지름 60cm 이상)",price:5000},
+  {item:"탁구대",spec:"",name:"탁구대",price:7000},
+  {item:"탁자",spec:"10인용 미만",name:"탁자 (10인용 미만)",price:6000},
+  {item:"탁자",spec:"10인용 이상",name:"탁자 (10인용 이상)",price:8000},
+  {item:"탁자",spec:"2인용",name:"탁자 (2인용)",price:3000},
+  {item:"탁자",spec:"응접용",name:"탁자 (응접용)",price:3000},
+  {item:"탁자",spec:"협 탁",name:"탁자 (협 탁)",price:2000},
+  {item:"탈수기",spec:"가정용",name:"탈수기 (가정용)",price:0},
+  {item:"텐트",spec:"4인용 미만",name:"텐트 (4인용 미만)",price:3000},
+  {item:"텐트",spec:"4인용 이상",name:"텐트 (4인용 이상)",price:4000},
+  {item:"토스터기",spec:"",name:"토스터기",price:0},
+  {item:"파티션",spec:"1㎡당",name:"파티션 (1㎡당)",price:2000},
+  {item:"팩시밀리",spec:"가정용",name:"팩시밀리 (가정용)",price:0},
+  {item:"팩시밀리",spec:"사무용",name:"팩시밀리 (사무용)",price:2500},
+  {item:"팬히터",spec:"벽걸이형",name:"팬히터 (벽걸이형)",price:2000},
+  {item:"프린터",spec:"가정용",name:"프린터 (가정용)",price:0},
+  {item:"피아노",spec:"디지털",name:"피아노 (디지털)",price:5000},
+  {item:"피아노",spec:"일반",name:"피아노 (일반)",price:16000},
+  {item:"항아리",spec:"높이 50cm 미만",name:"항아리 (높이 50cm 미만)",price:3000},
+  {item:"항아리",spec:"높이 50cm 이상",name:"항아리 (높이 50cm 이상)",price:5000},
+  {item:"행거",spec:"1단 행거",name:"행거 (1단 행거)",price:2000},
+  {item:"행거",spec:"2단 행거",name:"행거 (2단 행거)",price:3000},
+  {item:"헤어드라이어",spec:"",name:"헤어드라이어",price:0},
+  {item:"헬스기구",spec:"런닝머신",name:"헬스기구 (런닝머신)",price:15000},
+  {item:"헬스기구",spec:"스텝퍼",name:"헬스기구 (스텝퍼)",price:4000},
+  {item:"헬스기구",spec:"헬스자전거",name:"헬스기구 (헬스자전거)",price:7000},
+  {item:"화분",spec:"지름 50cm 미만",name:"화분 (지름 50cm 미만)",price:1000},
+  {item:"화분",spec:"지름 50cm 이상",name:"화분 (지름 50cm 이상)",price:2000},
+  {item:"화장대(경대)",spec:"가정용",name:"화장대(경대) (가정용)",price:3000},
+  {item:"화환",spec:"",name:"화환",price:3000},
+  {item:"환풍기",spec:"가정용",name:"환풍기 (가정용)",price:0},
+  {item:"환풍기",spec:"업소용(대형)",name:"환풍기 (업소용(대형))",price:3000},
+  {item:"휠체어",spec:"",name:"휠체어",price:3000},
+  {item:"휴대폰충전기",spec:"",name:"휴대폰충전기",price:0},
+  {item:"특수마대",spec:"",name:"특수마대",price:0},
+];
+
+// 분류 (가격표 보기용)
+const CAT_RULES = [
+  ['가구', /거실장|교자상|문갑|서랍장|쇼파|식탁|신발장|장롱|장식장|책상|책장|침대|탁자|화장대|의자|렌지대|옷장|옷걸이|행거|컬러박스|캐비넷|진열대|싱크대|수건함|파티션|TV받침|병풍|금고/],
+  ['가전', /TV|DVD|비디오|레인지|렌지|가습기|청정기|냉장고|컴퓨터|녹즙기|다리미$|믹서|밥통|밥솥|복사기|비데|선풍기|세탁기|탈수기|스캐너|식기|안마|에어컨|실외기|프린터|오디오|온수기|온풍기|전기|전자|전화기|정수기|청소기|라디오|커피포트|토스터|팩시밀리|히터|드라이어|환풍기|모뎀|게임기|오락기|난로|라지에터|보일러|후드|판매기|충전기|마사지/],
+  ['운동·유아', /자전거|유모차|보행기|카시트|킥보드|스키|라켓|헬스|탁구대|텐트|휠체어|바둑판|장난감|인형/],
+  ['특수마대', /특수마대/],
+];
+const catOf = it => (CAT_RULES.find(([, re]) => re.test(it)) || ['생활·기타'])[0];
+// 다른 이름 (쇼파=소파, 캐리어=가방류 …) — 가격표 관리에서 품목별로 더 넣을 수 있게 됨
+const ALIAS = { '소파':'쇼파', '쇼파':'쇼파', '캐리어':'가방류', '케리어':'가방류', '여행가방':'가방류', '장농':'장롱', '옷장':'장롱',
+  '티비':'TV', '텔레비전':'TV', '테레비':'TV', '에어콘':'에어컨', '김냉':'김치냉장고', '테이블':'탁자', '밥상':'교자상',
+  '전자렌지':'전자레인지', '렌지대':'렌지대수납장', '매트':'돗자리', '침대':'침대', '핸드폰':'전화기', '휴대폰':'전화기' };
+
+let PRICES = [];      // {name, item, spec, price, cat, al:[]}
+function loadPrices(list){
+  PRICES = list.filter(x => x && x.name).map(x => ({ name:x.name, item:x.item||x.name, spec:x.spec||'', price:+x.price||0, cat:x.cat||catOf(x.item||x.name), al:x.alias||[] }));
+  renderPrice();
+}
+
+const norm = s => String(s||'').replace(/[\s()·․,]/g,'').toLowerCase();
+function findItems(q){
+  let k = norm(q); if (k.length < 2) return [];
+  const aliasTo = Object.entries(ALIAS).filter(([a]) => norm(a).includes(k) || k.includes(norm(a))).map(([, t]) => norm(t));
+  return PRICES.filter(x => norm(x.name).includes(k) || aliasTo.some(t => norm(x.item).includes(t)) || x.al.some(a => norm(a).includes(k)));
+}
+const won = n => n === 0 ? '무상' : n.toLocaleString() + '원';
+const isTouch = () => { try { return matchMedia('(pointer: coarse)').matches && !matchMedia('(pointer: fine)').matches; } catch(e){ return false; } };
+const ymd = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+
+// ══ 숫자칸: PC는 한글 자판 유지(글자칸+숫자만), 폰은 숫자 키패드 ══
+function setupNum(el, tel){
+  if (isTouch()) el.setAttribute('inputmode', tel ? 'tel' : 'numeric');
+  el.addEventListener('input', () => {
+    let v = el.value.replace(/[^0-9]/g,'');
+    if (tel){ v = v.slice(0,11); el.value = v.length > 7 ? v.replace(/^(\d{3})(\d{3,4})(\d{4})$/,'$1-$2-$3') : v.length > 3 ? v.replace(/^(\d{3})(\d+)/,'$1-$2') : v; }
+    else el.value = v;
+    calc();
+  });
+}
+document.querySelectorAll('[data-num]').forEach(e => setupNum(e,false));
+setupNum(document.getElementById('phone'), true);
+
+// ══ 주소 — 카카오(다음) 주소검색 → 담당 구역 확인 ══
+//   담당: 행정동 잠실본동·삼전동 + 담당 아파트 단지(원장·수거앱과 같은 목록)
+const APT_KEYS = [ [/주공\s*5단지|잠실\s*5단지|5단지/, '5단지'], [/트리지움/, '트리지움'], [/레이크\s*팰리스/, '레이크팰리스'],
+                   [/우성\s*4차/, '우성4차'], [/잠실\s*현대/, '잠실현대'], [/삼전\s*현대/, '삼전현대'] ];
+// [원장과 같은 표] 단지 정문 도로명 · 단지 지번 — 건물 이름이 "잠실주공아파트"처럼 와도 단지를 알아본다
+const APT_ROAD = { '송파대로 567':'5단지', '잠실로 62':'트리지움', '잠실로 88':'레이크팰리스',
+                   '백제고분로18길 30':'우성4차', '백제고분로18길 7':'잠실현대', '백제고분로22길 39':'삼전현대' };
+const APT_JIBUN = { '잠실동': { 27:'5단지', 35:'트리지움', 44:'레이크팰리스', 320:'우성4차', 331:'잠실현대' }, '삼전동': { 39:'삼전현대' } };
+// [원장과 같은 표] 담당 아님: 잠실동 19=엘스 / 22=리센츠 / 40=갤러리아팰리스 — 카카오 확인이 안 될 때도 막는다
+const NOT_OURS_JIBUN = { '잠실동': [19, 22, 40] };
+const NOT_OURS_NAME = /엘스|리센츠(?!\s*빌)|갤러리아/;
+function notOurs(jibun, bldg){
+  const m = String(jibun||'').match(/(잠실동|삼전동)\s+(\d+)/);
+  if (m && (NOT_OURS_JIBUN[m[1]]||[]).includes(+m[2])) return true;
+  return NOT_OURS_NAME.test(bldg||'');
+}
+function aptOf(road, jibun, bldg){
+  const flat = String(road||'').replace(/\s+/g,'');
+  for (const k in APT_ROAD){ const kk = k.replace(/\s+/g,''); const i = flat.indexOf(kk); if (i >= 0 && !/\d/.test(flat.charAt(i + kk.length))) return APT_ROAD[k]; }
+  const m = String(jibun||'').match(/(잠실동|삼전동)\s+(\d+)/);
+  if (m && APT_JIBUN[m[1]] && APT_JIBUN[m[1]][+m[2]]) return APT_JIBUN[m[1]][+m[2]];
+  return (APT_KEYS.find(([re]) => re.test(bldg||'')) || [])[1] || '';
+}
+let ADDR = null;
+function openAddr(){
+  document.getElementById('addrOv').classList.add('on');
+  const box = document.getElementById('addrEmbed'); box.innerHTML = '';
+  new daum.Postcode({ oncomplete: onAddr, width:'100%', height:'100%' }).embed(box, { autoClose:false });
+}
+function closeAddr(){ document.getElementById('addrOv').classList.remove('on'); }
+async function onAddr(d){
+  closeAddr();
+  const bl = document.getElementById('blocked'), aptBox = document.getElementById('aptBox'), detBox = document.getElementById('detailBox');
+  aptBox.style.display = 'none'; detBox.style.display = 'none'; bl.classList.remove('on'); ADDR = null;
+  const road = d.roadAddress || d.address || '', jibun = d.jibunAddress || d.autoJibunAddress || '';
+  const bname = d.bname || '', bldg = d.buildingName || '';
+  document.getElementById('addr').value = `${road}${bldg ? ' ' + bldg : ''}`;
+  const aptKey = aptOf(road, jibun, bldg);
+  // 행정동 확인 (카카오 로컬). 실패하면 법정동으로만 보고 사무실 확인 표시
+  let hname = '', checked = false;
+  try {
+    const r = await fetch(`https://dapi.kakao.com/v2/local/search/address.json?query=${encodeURIComponent(jibun || road)}&size=1`, { headers:{ Authorization:`KakaoAK ${KAKAO_API_KEY}` } });
+    if (r.ok){ const j = await r.json(); const a = j.documents && j.documents[0] && j.documents[0].address; if (a){ hname = a.region_3depth_h_name || ''; checked = true; } }
+  } catch(e){}
+  const inSongpa = /송파구/.test(road + jibun);
+  const inArea = inSongpa && !notOurs(jibun, bldg) && (aptKey || (checked ? /^(잠실본동|삼전동)$/.test(hname) : /^(잠실동|삼전동)$/.test(bname)));
+  if (!inArea){
+    const where = (notOurs(jibun, bldg) && bldg) ? bldg : (hname || bname || '이 주소');   // 엘스·리센츠 등은 단지 이름으로 안내
+    bl.innerHTML = `${where}은(는) 본에코 담당 구역이 아닙니다.<br>송파구청 대형폐기물 인터넷 신청을 이용해 주세요. <a href="https://www.songpa.go.kr" target="_blank" rel="noopener">송파구청 바로가기</a>`;
+    bl.classList.add('on'); updateMadae(); return;
+  }
+  // 원장 주소 형식: 잠실동 지번 → "본 176-8", 삼전동 → "삼 64-8", 담당 아파트 → 동-호(저장 때 합침)
+  const m = jibun.match(/(잠실동|삼전동)\s+(\d+(?:-\d+)?)/);
+  const jb = m ? `${m[1] === '삼전동' ? '삼' : '본'} ${m[2]}` : '';
+  ADDR = { road, jibun, bldg, bname, hname, checked, aptKey, jb, dong: aptKey || (bname === '삼전동' ? '삼전동' : '잠실본동') };
+  if (aptKey){ aptBox.style.display = ''; document.getElementById('dong').focus(); }
+  else { detBox.style.display = ''; document.getElementById('detail').value = ''; }
+  updateMadae();
+}
+
+// ══ 품목 줄 ══
+function addRow(item){
+  const box = document.getElementById('items');
+  const r = document.createElement('div'); r.className = 'item';
+  r.innerHTML = `<input class="in nm" placeholder="품목명 (예: 소파)">
+    <div class="cnt"><input class="in" value="1" data-cnt aria-label="갯수"><div class="arr"><button type="button" tabindex="-1" data-up aria-label="하나 더">▲</button><button type="button" tabindex="-1" data-dn aria-label="하나 덜">▼</button></div></div>
+    <input class="in amt" readonly placeholder="금액" tabindex="-1">
+    <button class="del" type="button" aria-label="품목 지우기">×</button>
+    <div class="sugg"></div>`;
+  box.appendChild(r);
+  const nm = r.querySelector('.nm'), cnt = r.querySelector('[data-cnt]'), sg = r.querySelector('.sugg');
+  setupNum(cnt,false);
+  r.querySelector('[data-up]').onclick = () => { cnt.value = (parseInt(cnt.value)||0)+1; calc(); };
+  r.querySelector('[data-dn]').onclick = () => { cnt.value = Math.max(1,(parseInt(cnt.value)||1)-1); calc(); };
+  cnt.addEventListener('keydown', e => { if (e.key==='ArrowUp'){ e.preventDefault(); r.querySelector('[data-up]').click(); } if (e.key==='ArrowDown'){ e.preventDefault(); r.querySelector('[data-dn]').click(); } });
+  cnt.addEventListener('blur', () => { if (!(parseInt(cnt.value) > 0)) { cnt.value = 1; calc(); } });
+  r.querySelector('.del').onclick = () => { r.remove(); if (!document.querySelector('.item')) addRow(); calc(); updateMadae(); };
+  nm.addEventListener('input', () => {
+    delete r.dataset.price; r.dataset.name = '';
+    const q = nm.value.trim(); const res = findItems(q).slice(0, 30);
+    if (q.length < 2){ sg.classList.remove('on'); calc(); updateMadae(); return; }
+    sg.innerHTML = res.length ? res.map((x,i)=>`<div data-i="${i}"><span>${esc(x.name)}</span><b>${won(x.price)}</b></div>`).join('')
+                              : `<div class="none">목록에 없는 품목입니다. 전화로 문의해 주세요 (02-414-6221~2)</div>`;
+    sg.classList.add('on');
+    sg.querySelectorAll('[data-i]').forEach(d => d.onmousedown = e => { e.preventDefault(); setItem(r, res[+d.dataset.i]); sg.classList.remove('on'); });
+    calc(); updateMadae();
+  });
+  nm.addEventListener('blur', () => setTimeout(() => sg.classList.remove('on'), 150));
+  if (item) setItem(r, item);
+  return r;
+}
+function setItem(r, x){ r.querySelector('.nm').value = x.name; r.dataset.name = x.name; r.dataset.price = x.price; calc(); updateMadae(); }
+function rowsPicked(){ return [...document.querySelectorAll('.item')].filter(r => r.dataset.name); }
+function calc(){
+  let s = 0;
+  document.querySelectorAll('.item').forEach(r => {
+    const p = r.dataset.price == null ? null : +r.dataset.price;
+    const c = parseInt(r.querySelector('[data-cnt]').value) || 0;
+    r.querySelector('.amt').value = p == null ? '' : won(p * c);
+    if (p != null) s += p * c;
+  });
+  document.getElementById('sum').textContent = s.toLocaleString() + '원';
+  renderCart();
+}
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+// ══ 특수마대 배출일 — 잠실 그룹(본동·5단지·트리지움·레이크팰리스·우성4차·잠실현대) 화·목·일 / 삼전 그룹 월·수·금, 다다음 배출요일부터 ══
+function isMadae(n){ return /특수마대/.test(n||''); }
+function updateMadae(){
+  const has = rowsPicked().some(r => isMadae(r.dataset.name));
+  const box = document.getElementById('madaeBox'); box.classList.toggle('on', has);
+  if (!has) return;
+  const sam = ADDR ? (ADDR.dong === '삼전동' || ADDR.dong === '삼전현대') : false;
+  const days = sam ? [1,3,5] : [0,2,4];
+  const out = []; const d = new Date(); let skip = 1;
+  for (let i = 1; i < 40 && out.length < 5; i++){
+    const t = new Date(d); t.setDate(d.getDate()+i);
+    if (days.includes(t.getDay())){ if (skip-- > 0) continue; out.push(t); }
+  }
+  const W = '일월화수목금토';
+  document.getElementById('madaeDay').innerHTML = out.map(t => `<option value="${ymd(t)}">${t.getMonth()+1}/${t.getDate()}(${W[t.getDay()]})</option>`).join('');
+}
+
+// ══ 배출일: 내일부터 ══
+(() => { const t = new Date(); t.setDate(t.getDate()+1); const v = ymd(t); const e = document.getElementById('emit'); e.min = v; e.value = v; })();
+
+// ══ 가격표 보기 — PC: 떠 있는 창(이동·크기조절) / 폰: 아래에서 올라오는 판 ══
+let PT_CAT = '전체';
+function openPrice(){ document.getElementById('ptable').classList.add('on'); document.getElementById('ptDim').classList.add('on'); renderPrice(); renderCart(); }
+function closePrice(){ document.getElementById('ptable').classList.remove('on'); document.getElementById('ptDim').classList.remove('on'); }
+function renderPrice(){
+  const cats = ['전체', ...CAT_RULES.map(c => c[0]).filter(c => c !== '특수마대'), '생활·기타', '특수마대'];
+  const chips = document.getElementById('ptChips'); if (!chips) return;
+  chips.innerHTML = cats.map(c => `<button type="button" class="${c===PT_CAT?'on':''}" data-c="${c}">${c}</button>`).join('');
+  chips.querySelectorAll('button').forEach(b => b.onclick = () => { PT_CAT = b.dataset.c; renderPrice(); });
+  const q = document.getElementById('ptSearch').value.trim();
+  const hit = q.length >= 2 ? new Set(findItems(q).map(x => x.name)) : null;
+  let html = '';
+  cats.slice(1).forEach(c => {
+    if (PT_CAT !== '전체' && PT_CAT !== c) return;
+    const rows = PRICES.filter(x => x.cat === c && (!hit || hit.has(x.name))).sort((a,b) => a.name.localeCompare(b.name,'ko'));
+    if (!rows.length) return;
+    html += `<div class="pt-cat">${c}</div>` + rows.map(x => `<div class="pt-row" data-n="${esc(x.name)}"><span>${esc(x.name)}</span><em>${won(x.price)}<span class="plus">＋</span></em></div>`).join('');
+  });
+  document.getElementById('ptBody').innerHTML = html || `<div style="padding:16px;color:var(--warn);font-weight:700">찾는 품목이 없습니다. 전화로 문의해 주세요 (02-414-6221~2)</div>`;
+  document.querySelectorAll('.pt-row').forEach(el => el.onclick = () => addFromPrice(el.dataset.n));
+}
+function addFromPrice(n){
+  const x = PRICES.find(i => i.name === n); if (!x) return;
+  const same = rowsPicked().find(r => r.dataset.name === n);
+  if (same){ const c = same.querySelector('[data-cnt]'); c.value = (parseInt(c.value)||0) + 1; calc(); flash(`${n} 1개 더 담았습니다`); return; }
+  const empty = [...document.querySelectorAll('.item')].find(r => !r.querySelector('.nm').value.trim());
+  if (empty) setItem(empty, x); else addRow(x);
+  flash(`${n} 담았습니다`);
+}
+function renderCart(){
+  const el = document.getElementById('ptCart'); if (!el) return;
+  const n = rowsPicked().reduce((s,r) => s + (parseInt(r.querySelector('[data-cnt]').value)||0), 0);
+  el.textContent = n ? `${n}개 담음 · ${document.getElementById('sum').textContent}` : '담은 품목 없음';
+}
+(() => {   // PC: 제목줄 잡고 이동
+  const pt = document.getElementById('ptable'), hd = document.getElementById('ptHead');
+  let sx, sy, ox, oy, on = false;
+  hd.addEventListener('pointerdown', e => {
+    if (matchMedia('(max-width:760px)').matches || e.target.tagName === 'BUTTON') return;
+    on = true; const r = pt.getBoundingClientRect(); sx = e.clientX; sy = e.clientY; ox = r.left; oy = r.top;
+    pt.style.right = 'auto'; hd.setPointerCapture(e.pointerId);
+  });
+  hd.addEventListener('pointermove', e => { if (!on) return; pt.style.left = Math.max(0, ox + e.clientX - sx) + 'px'; pt.style.top = Math.max(0, oy + e.clientY - sy) + 'px'; });
+  hd.addEventListener('pointerup', () => on = false);
+})();
+
+// ══ 장난 접수 거르기 ══
+function badName(v){
+  v = v.trim();
+  if (v.length < 2) return true;
+  if (/[?!@#$%^&*()_+=<>~`"'\\/|{}\[\];:0-9]/.test(v)) return true;   // ?·숫자·특수문자
+  if (/[ㄱ-ㅎㅏ-ㅣ]/.test(v)) return true;                               // ㅋㅋ·ㅎㅎ 같은 자음·모음
+  if (/(.)\1\1/.test(v.replace(/\s/g,''))) return true;                 // 같은 글자 세 번 이상
+  return false;                                                         // 영어 이름은 통과
+}
+function badPhone(v){
+  const d = v.replace(/\D/g,'');
+  if (!/^010\d{8}$/.test(d)) return true;
+  const b = d.slice(3);
+  if (/^(\d)\1{7}$/.test(b)) return true;                                // 0000-0000
+  if (/^(\d)\1{3}/.test(b) && /(\d)\1{3}$/.test(b)) return true;         // 1111-2222
+  if ('0123456789012345'.includes(b) || '9876543210987654'.includes(b)) return true;   // 1234-5678
+  return false;
+}
+
+// ══ 접수 ══
+let busy = false;
+async function submitReq(){
+  if (busy) return;
+  const name = document.getElementById('name'), phone = document.getElementById('phone');
+  const nb = badName(name.value), pb = badPhone(phone.value);
+  name.classList.toggle('bad', nb); document.getElementById('nameErr').classList.toggle('on', nb);
+  phone.classList.toggle('bad', pb); document.getElementById('phoneErr').classList.toggle('on', pb);
+  const picked = rowsPicked();
+  const typed = [...document.querySelectorAll('.item')].filter(r => r.querySelector('.nm').value.trim() && !r.dataset.name);
+  if (!ADDR) return showMsg('주소를 확인해 주세요', ['주소검색으로 본에코 담당 구역(잠실본동·삼전동) 주소를 골라 주세요.']);
+  const dongV = document.getElementById('dong').value.trim(), hoV = document.getElementById('ho').value.trim();
+  if (ADDR.aptKey && (!dongV || !hoV)) return showMsg('동·호를 적어 주세요', ['아파트는 동과 호수를 숫자로 적어 주세요.']);
+  if (nb || pb){ (nb ? name : phone).focus(); return; }
+  if (typed.length) return showMsg('목록에 없는 품목이 있습니다', [`"${esc(typed[0].querySelector('.nm').value)}" — 목록에서 골라 주시거나, 목록에 없는 품목은 전화로 문의해 주세요 (02-414-6221~2).`]);
+  if (!picked.length) return showMsg('품목을 골라 주세요', ['버리실 품목을 한 개 이상 골라 주세요. 📋 가격표 보기에서 눌러 담을 수도 있습니다.']);
+  const emit = document.getElementById('emit').value;
+  if (!emit || emit < document.getElementById('emit').min) return showMsg('배출일을 확인해 주세요', ['배출일은 내일부터 고를 수 있습니다.']);
+
+  busy = true; const btn = document.getElementById('goBtn'); btn.disabled = true; btn.textContent = '접수 중…';
+  try {
+    const today = ymd(new Date()), tel = phone.value.replace(/\D/g,'');
+    // 같은 번호 하루 접수 수 — 5번째부터 막음
+    const cntRef = db.ref(`${DB_CNT}/${today}/${tel}`);
+    const tx = await cntRef.transaction(v => ((v || 0) >= MAX_PER_DAY) ? undefined : (v || 0) + 1);
+    if (!tx.committed) { showMsg('접수 확인이 필요합니다', ['같은 번호로 오늘 여러 번 접수되었습니다. 전화로 문의해 주세요.', '<b style="font-size:20px">02-414-6221~2</b>']); return; }
+
+    const 주소 = ADDR.aptKey ? `${dongV}-${hoV}` : (ADDR.jb || ADDR.jibun);
+    const detail = ADDR.aptKey ? '' : document.getElementById('detail').value.trim();
+    const memo = document.getElementById('memo').value.trim();
+    const 비고 = [detail, memo].filter(Boolean).join(' / ');
+    const toItem = r => ({ 품목: r.dataset.name, 금액: (+r.dataset.price).toLocaleString() + '원', 개수: String(parseInt(r.querySelector('[data-cnt]').value) || 1) });
+    const base = { 성명: name.value.trim(), 전화번호: phone.value.trim(), 주소, _dong: ADDR.dong,
+      주소원문: `${ADDR.road}${ADDR.bldg ? ' ' + ADDR.bldg : ''}`, 지번원문: ADDR.jibun, 행정동: ADDR.hname || '', 구역확인: ADDR.checked ? '행정동' : '법정동만',
+      비고, 접수시각: firebase.database.ServerValue.TIMESTAMP, 상태: 'new' };
+    const general = picked.filter(r => !isMadae(r.dataset.name)), madae = picked.filter(r => isMadae(r.dataset.name));
+    const sumOf = rs => rs.reduce((s,r) => s + (+r.dataset.price) * (parseInt(r.querySelector('[data-cnt]').value)||1), 0);
+    const writes = [];
+    if (general.length) writes.push({ ...base, _items: general.map(toItem), 총금액: sumOf(general).toLocaleString() + '원', 배출일: emit });
+    if (madae.length)   writes.push({ ...base, _items: madae.map(toItem), 총금액: '0원', 배출일: document.getElementById('madaeDay').value, 특수마대: true });
+    for (const w of writes) await db.ref(`${DB_REQ}/${today}`).push(w);
+
+    const sum = sumOf(general);
+    showDlg(`<h3>접수되었습니다</h3>
+      ${sum > 0 ? `<p>아래 계좌로 입금해 주시면 확인 후 수거합니다.</p>
+      <div class="acct"><div>본에코(주) 국민은행</div><b>080-25-0007-681</b><div class="big">${sum.toLocaleString()}원</div></div>
+      <p><b>입금자명은 신청자 성명(${esc(name.value.trim())})으로</b> 보내 주세요.<br>입금 확인 후 배출일 다음날부터 3영업일 안에 수거합니다.</p>`
+      : `<p>무상 품목이라 입금 없이 수거합니다. 배출일에 내놓아 주세요.</p>`}
+      ${madae.length ? `<p style="margin-top:8px">특수마대는 고르신 배출일(${esc(document.getElementById('madaeDay').selectedOptions[0]?.textContent || '')})에 내놓아 주세요.</p>` : ''}
+      <div class="row"><button class="pri" type="button" onclick="closeDlg();resetForm()">확인</button></div>`);
+  } catch(e){
+    showMsg('접수하지 못했습니다', ['잠시 후 다시 시도해 주시거나 전화로 문의해 주세요 (02-414-6221~2).']);
+  } finally { busy = false; btn.disabled = false; btn.textContent = '접수하고 입금계좌 보기'; }
+}
+function resetForm(){ location.reload(); }
+function showMsg(t, lines){ showDlg(`<h3>${t}</h3>${lines.map(l=>`<p>${l}</p>`).join('')}<div class="row"><button class="pri" type="button" onclick="closeDlg()">확인</button></div>`); }
+function showDlg(h){ document.getElementById('dlg').innerHTML = h; document.getElementById('ov').classList.add('on'); }
+function closeDlg(){ document.getElementById('ov').classList.remove('on'); }
+function flash(t){
+  let f = document.getElementById('flash');
+  if (!f){ f = document.createElement('div'); f.id = 'flash'; f.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 18px;border-radius:10px;font-weight:700;z-index:200;font-size:14px'; document.body.appendChild(f); }
+  f.textContent = t; f.style.display = 'block'; clearTimeout(f._t); f._t = setTimeout(() => f.style.display = 'none', 1400);
+}
+document.getElementById('ov').addEventListener('click', e => { if (e.target.id === 'ov') closeDlg(); });
+document.getElementById('addrOv').addEventListener('click', e => { if (e.target.id === 'addrOv') closeAddr(); });
+// 가격표 불러오기 — 원장 가격표 관리에 저장된 게 있으면 그걸 쓰고, 없으면 기본표
+loadPrices(PRICE_LIST);
+db.ref(DB_PRICE).once('value').then(s => { const v = s.val(); if (v) loadPrices(Array.isArray(v) ? v : Object.values(v)); }).catch(() => {});
+addRow();
+</script>
+</body>
+</html>
