@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>본에코(주) 대형폐기물 접수</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,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">
+<meta name="description" content="송파구 잠실본동·삼전동 대형폐기물 인터넷 접수 — 본에코(주)">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f0f4f8; --card:#ffffff; --line:#e5e7eb; --ink:#111827; --sub:#4b5563; --muted:#6b7280;
+  --teal:#1a56db; --teal-l:#e8f0fe;   /* 디지털원장과 같은 파랑 */ --warn:#b45309; --warn-l:#fef3c7; --bad:#dc2626; --bad-l:#fee2e2;
+  --font:'Noto Sans KR',-apple-system,'Malgun Gothic',sans-serif;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --bg:#f0f4f8; } }
+:root[data-theme="dark"]{ --bg:#f0f4f8; }
+html{ scroll-padding-top:env(safe-area-inset-top,0px); }
+*{ box-sizing:border-box; margin:0; padding:0; }
+body{ font-family:var(--font); background:var(--bg); color:var(--ink); font-size:16px; line-height:1.55; }
+button,input,textarea,select{ font-family:inherit; font-size:inherit; color:inherit; }
+button{ cursor:pointer; }
+:focus-visible{ outline:3px solid #60a5fa; outline-offset:2px; }
+
+.demo{ background:#334155; color:#fff; font-size:13px; text-align:center; padding:7px 12px; }
+header{ background:var(--teal); color:#fff; }
+.hd{ max-width:1100px; margin:0 auto; padding:18px 20px; display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+.hd h1{ font-size:24px; font-weight:900; letter-spacing:-.5px; }
+.brand{ display:flex; align-items:center; gap:12px; }
+.logo{ width:52px; height:52px; object-fit:contain; flex-shrink:0; }   /* 로고 바깥 흰 배경은 이미지에서 지움 — 머리글 파랑이 그대로 보임 */
+@media (max-width:760px){ .logo{ width:44px; height:44px; } }
+.hd p{ font-size:14px; opacity:.9; margin-top:2px; }
+.hd .tel{ font-size:15px; font-weight:700; background:rgba(255,255,255,.14); padding:8px 14px; border-radius:10px; white-space:nowrap; }
+.hd .tel b{ font-size:18px; }
+
+main{ max-width:1100px; margin:0 auto; padding:20px; display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start; }
+.col{ display:flex; flex-direction:column; gap:16px; min-width:0; }
+.card{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px 20px; }
+.card h2{ font-size:17px; font-weight:900; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+label.lb{ display:block; font-size:14px; font-weight:700; color:var(--sub); margin:12px 0 5px; }
+label.lb:first-of-type{ margin-top:0; }
+.in{ width:100%; border:1.5px solid var(--line); border-radius:10px; padding:12px 14px; background:#fff; min-height:48px; }
+.in:focus{ border-color:var(--teal); outline:none; box-shadow:0 0 0 3px var(--teal-l); }
+.in[readonly]{ background:#f3f7fb; color:var(--sub); }
+textarea.in{ resize:vertical; min-height:72px; }
+.help{ font-size:13px; color:var(--muted); margin-top:5px; }
+.err{ font-size:13px; color:var(--bad); font-weight:700; margin-top:5px; display:none; }
+.err.on{ display:block; }
+.in.bad{ border-color:var(--bad); }
+
+.addr-row{ display:flex; gap:8px; }
+.btn-search{ flex:0 0 auto; background:var(--teal); color:#fff; border:none; border-radius:10px; padding:0 18px; font-weight:900; min-height:48px; }
+.two{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.blocked{ background:var(--bad-l); border:1.5px solid #fca5a5; color:#991b1b; border-radius:10px; padding:12px 14px; font-size:14px; font-weight:700; margin-top:10px; display:none; line-height:1.6; }
+.blocked a{ color:#991b1b; }
+.blocked.on{ display:block; }
+
+.btn-price{ background:var(--teal-l); color:var(--teal); border:1.5px solid #b9cdf7; border-radius:10px; padding:7px 12px; font-size:14px; font-weight:900; white-space:nowrap; }
+.item{ display:grid; grid-template-columns:minmax(0,1fr) 92px 96px 44px; gap:8px; margin-bottom:8px; position:relative; }
+.item .amt{ text-align:right; }
+.cnt{ position:relative; }
+.cnt input{ text-align:center; padding-right:30px; }
+.arr{ position:absolute; right:4px; top:4px; bottom:4px; width:22px; display:flex; flex-direction:column; gap:2px; }
+.arr button{ flex:1; border:none; background:#eef3f8; border-radius:5px; font-size:9px; color:var(--sub); padding:0; }
+.del{ border:none; background:var(--bad-l); color:var(--bad); border-radius:10px; font-size:18px; font-weight:900; }
+.sugg{ position:absolute; left:0; top:50px; z-index:20; background:#fff; border:1.5px solid var(--line); border-radius:10px; box-shadow:0 8px 24px rgba(15,23,42,.12); width:100%; max-height:240px; overflow:auto; display:none; }
+.sugg.on{ display:block; }
+.sugg div{ padding:10px 12px; display:flex; justify-content:space-between; gap:10px; border-bottom:1px solid #eef3f8; cursor:pointer; font-size:15px; }
+.sugg div:hover{ background:var(--teal-l); }
+.sugg .none{ color:var(--warn); cursor:default; font-weight:700; font-size:14px; }
+.sugg .none:hover{ background:#fff; }
+.add-item{ width:100%; border:1.5px dashed #b9cdf7; background:#f5f8ff; color:var(--teal); border-radius:10px; padding:11px; font-weight:900; }
+.madae{ background:var(--warn-l); border:1.5px solid #fcd34d; border-radius:10px; padding:12px 14px; margin-top:12px; display:none; }
+.madae.on{ display:block; }
+.madae b{ color:var(--warn); }
+
+.total{ display:flex; justify-content:space-between; align-items:baseline; padding:4px 0 12px; }
+.total span{ font-weight:700; color:var(--sub); }
+.total strong{ font-size:28px; font-weight:900; color:var(--teal); }
+.go{ width:100%; border:none; background:var(--teal); color:#fff; border-radius:12px; padding:16px; font-size:18px; font-weight:900; }
+.note{ font-size:13px; color:var(--muted); margin-top:10px; line-height:1.6; }
+
+/* 창·판 공통 */
+.ov{ position:fixed; inset:0; background:rgba(15,23,42,.45); z-index:100; display:none; align-items:center; justify-content:center; padding:16px; }
+.ov.on{ display:flex; }
+.dlg{ background:#fff; border-radius:16px; padding:22px 24px; width:480px; max-width:100%; max-height:90vh; overflow:auto; }
+.dlg h3{ font-size:20px; font-weight:900; margin-bottom:10px; }
+.dlg p{ font-size:15px; color:var(--sub); line-height:1.7; }
+.dlg .big{ font-size:22px; font-weight:900; color:var(--ink); margin:10px 0; }
+.dlg .acct{ background:var(--teal-l); border-radius:12px; padding:14px 16px; margin:12px 0; }
+.dlg .acct b{ font-size:20px; }
+.dlg .row{ display:flex; gap:10px; margin-top:16px; }
+.dlg .row button{ flex:1; border:none; border-radius:12px; padding:14px; font-weight:900; font-size:16px; }
+.pri{ background:var(--teal); color:#fff; }
+.sec{ background:#eef3f8; color:var(--ink); }
+.pick{ display:flex; flex-direction:column; gap:8px; margin-top:10px; }
+.pick button{ text-align:left; border:1.5px solid var(--line); background:#fff; border-radius:10px; padding:12px 14px; font-size:15px; }
+.pick button small{ display:block; color:var(--muted); font-size:13px; }
+
+/* 가격표 — PC: 떠 있는 창(이동·크기조절) */
+.ptable{ position:fixed; z-index:90; top:120px; right:24px; width:420px; height:520px; min-width:320px; min-height:300px; max-width:95vw; max-height:90vh;
+  background:#fff; border:1.5px solid var(--line); border-radius:14px; box-shadow:0 16px 40px rgba(15,23,42,.2); display:none; flex-direction:column; resize:both; overflow:hidden; }
+.ptable.on{ display:flex; }
+.pt-head{ background:var(--teal); color:#fff; padding:10px 14px; display:flex; align-items:center; justify-content:space-between; cursor:move; user-select:none; }
+.pt-head b{ font-size:16px; }
+.pt-head button{ background:rgba(255,255,255,.2); border:none; color:#fff; border-radius:8px; padding:5px 10px; font-weight:900; }
+.pt-tools{ padding:10px 12px; border-bottom:1px solid var(--line); }
+.pt-tools input{ width:100%; border:1.5px solid var(--line); border-radius:10px; padding:10px 12px; }
+.chips{ display:flex; gap:6px; margin-top:8px; overflow-x:auto; padding-bottom:2px; }
+.chips button{ flex:0 0 auto; border:1.5px solid var(--line); background:#fff; border-radius:20px; padding:5px 12px; font-size:14px; font-weight:700; color:var(--sub); }
+.chips button.on{ background:var(--teal); color:#fff; border-color:var(--teal); }
+.pt-body{ flex:1; overflow:auto; padding:4px 0; }
+.pt-cat{ font-size:14px; font-weight:900; color:var(--teal); padding:10px 14px 4px; background:#f7fafd; position:sticky; top:0; }
+.pt-row{ display:flex; justify-content:space-between; gap:10px; padding:9px 14px; border-bottom:1px solid #eef3f8; cursor:pointer; font-size:15px; }
+.pt-row:nth-child(even){ background:#f5f8ff; }
+.pt-row:hover{ background:var(--teal-l); }
+.pt-row em{ font-style:normal; font-weight:900; white-space:nowrap; }
+.pt-row .plus{ color:var(--teal); font-weight:900; margin-left:6px; }
+.pt-foot{ display:none; }
+
+footer{ text-align:center; color:var(--muted); font-size:14px; padding:10px 20px 30px; }
+
+/* 폰 */
+@media (max-width:760px){
+  .hd h1{ font-size:20px; }
+  main{ grid-template-columns:1fr; padding:14px; gap:14px; }
+  .item{ grid-template-columns:minmax(0,1fr) 72px 44px; grid-template-areas:"nm nm nm" "cn am dl"; }
+  .item .nm{ grid-area:nm; } .item .cnt{ grid-area:cn; } .item .amt{ grid-area:am; } .item .del{ grid-area:dl; }
+  .item{ grid-template-columns:90px minmax(0,1fr) 48px; }
+  .arr{ display:none; }
+  .cnt input{ padding-right:14px; }
+  .sugg{ top:50px; }
+  /* 가격표 — 폰: 아래에서 올라오는 판 */
+  .ptable{ left:0; right:0; top:auto; bottom:0; width:100%; height:82vh; max-width:100%; border-radius:18px 18px 0 0; resize:none; }
+  .pt-head{ cursor:default; }
+  .pt-head::before{ content:''; position:absolute; left:50%; top:6px; width:40px; height:4px; margin-left:-20px; background:rgba(255,255,255,.5); border-radius:4px; }
+  .pt-head{ position:relative; padding-top:16px; }
+  .pt-foot{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 14px; border-top:1.5px solid var(--line); background:#fff; }
+  .pt-foot span{ font-weight:900; }
+  .pt-foot button{ border:none; background:var(--teal); color:#fff; border-radius:10px; padding:12px 22px; font-weight:900; font-size:16px; }
+  .pt-dim{ position:fixed; inset:0; background:rgba(15,23,42,.4); z-index:89; display:none; }
+  .pt-dim.on{ display:block; }
+}
+@media (prefers-reduced-motion: no-preference){ .ptable.on{ animation:pop .18s ease-out; } @keyframes pop{ from{ transform:translateY(12px); opacity:.6 } to{ transform:none; opacity:1 } } }
+
+.go:disabled{opacity:.6;}
+.gk-yes,.gk-no{ cursor:pointer; font-weight:800; }
+.gk-yes.on{ background:var(--teal); color:#fff; border-color:var(--teal); } .gk-no.on{ background:var(--bad-l); color:var(--bad); border-color:#fca5a5; }
+.copy{ border:1.5px solid #b9cdf7; background:#fff; color:var(--teal); border-radius:8px; padding:5px 10px; font-size:14px; font-weight:900; cursor:pointer; white-space:nowrap; }
+</style>
+</head>
+<body>
+<header><div class="hd">
+  <div class="brand"><img class="logo" src="logo.png" alt="본에코 로고"><div><h1>본에코(주) 대형폐기물 접수</h1><p>잠실본동 · 삼전동 대형폐기물 수거 (송파구 위탁업체)</p></div></div>
+  <div class="tel">문의 <b>02-414-6221~2</b></div>
+</div></header>
+
+<main>
+  <div class="col">
+    <section class="card">
+      <h2>배출 주소</h2>
+      <label class="lb">주소</label>
+      <div class="addr-row">
+        <button class="btn-search" type="button" onclick="openAddr()">주소검색</button>
+        <input class="in" id="addr" readonly placeholder="주소검색을 눌러 주세요" onclick="openAddr()">
+      </div>
+      <div class="blocked" id="blocked"></div>
+      <div id="aptBox" style="display:none">
+        <label class="lb">동 · 호</label>
+        <div class="two"><input class="in" id="dong" placeholder="동 (예: 520)" data-num><input class="in" id="ho" placeholder="호 (예: 1203)" data-num></div>
+      </div>
+      <!-- 잠실역 지하상가: 몇 번 출구? (5번만 본에코 담당) -->
+      <div id="stationBox" style="display:none">
+        <label class="lb">상세주소 — 몇 번 출구에 내놓으시나요?</label>
+        <select class="in" id="stExit" onchange="onStationExit()">
+          <option value="">출구를 골라 주세요</option>
+          <option value="1">1번 출구</option>
+          <option value="2">2번 출구</option>
+          <option value="3">3번 출구</option>
+          <option value="4">4번 출구</option>
+          <option value="5">5번 출구</option>
+          <option value="6">6번 출구</option>
+          <option value="7">7번 출구</option>
+          <option value="8">8번 출구</option>
+          <option value="9">9번 출구</option>
+          <option value="10">10번 출구</option>
+          <option value="11">11번 출구</option>
+          <option value="12">12번 출구</option>
+        </select>
+      </div>
+      <!-- 가락시장: 강동수산만 본에코 담당 — 상호명·기둥 번호 필수 -->
+      <div id="garakBox" style="display:none">
+        <label class="lb">상세주소 — 강동수산 건물인가요?</label>
+        <div class="two"><button type="button" class="in gk-yes" onclick="onGarak(true)">예, 강동수산</button><button type="button" class="in gk-no" onclick="onGarak(false)">아니요</button></div>
+        <div id="garakMore" style="display:none">
+          <label class="lb">상호명</label>
+          <input class="in" id="gkShop" placeholder="예: ○○수산">
+          <label class="lb">몇 번 기둥에 내놓으시나요?</label>
+          <input class="in" id="gkPillar" placeholder="기둥 번호 (예: 12)" data-num>
+        </div>
+      </div>
+      <div id="detailBox" style="display:none">
+        <label class="lb">상세주소 <span style="font-weight:500;color:var(--muted)">(선택)</span></label>
+        <input class="in" id="detail" placeholder="건물 이름, 동·호수 (예: B동 201호)">
+        <div class="help">안 적어도 접수됩니다.</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>신청자</h2>
+      <label class="lb">성명</label>
+      <input class="in" id="name" placeholder="홍길동" autocomplete="name">
+      <div class="err" id="nameErr">성명을 정확히 입력해 주세요.</div>
+      <label class="lb">휴대전화</label>
+      <input class="in" id="phone" placeholder="010-0000-0000" data-tel autocomplete="tel">
+      <div class="err" id="phoneErr">휴대전화 번호를 정확히 입력해 주세요.</div>
+      <div class="help">수거 관련 연락에만 씁니다.</div>
+    </section>
+
+    <section class="card">
+      <h2>배출위치 · 메모</h2>
+      <textarea class="in" id="memo" placeholder="예: 1층 분리수거장 옆, 현관 앞"></textarea>
+    </section>
+  </div>
+
+  <div class="col">
+    <section class="card">
+      <h2>버리실 품목 <button class="btn-price" type="button" onclick="openPrice()">📋 가격표 보기</button></h2>
+      <div id="items"></div>
+      <button class="add-item" type="button" onclick="addRow()">+ 품목 추가</button>
+      <div class="help">품목명을 두 글자 이상 치면 목록이 뜹니다. 목록에서 고르면 금액이 자동으로 들어갑니다.</div>
+      <div class="madae" id="madaeBox">
+        <b>특수마대 배출일</b> — 동네별로 정해진 요일에만 내놓을 수 있습니다.
+        <select class="in" id="madaeDay" style="margin-top:8px"></select>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>배출일</h2>
+      <input class="in" type="date" id="emit">
+      <div class="help">내일부터 고를 수 있습니다. 입금이 확인되면 배출일 다음날부터 3영업일 안에 수거합니다.</div>
+    </section>
+
+    <section class="card">
+      <div class="total"><span>총 금액</span><strong id="sum">0원</strong></div>
+      <button class="go" id="goBtn" type="button" onclick="submitReq()">접수하고 입금계좌 보기</button>
+      <p class="note">입금이 확인되어야 수거가 진행됩니다. 입금자명은 신청자 성명으로 보내 주세요.</p>
+    </section>
+  </div>
+</main>
+<footer>본에코(주) · 평일 09:00~18:00 · 문의 02-414-6221~2</footer>
+
+<div class="pt-dim" id="ptDim" onclick="closePrice()"></div>
+<div class="ptable" id="ptable" role="dialog" aria-label="가격표">
+  <div class="pt-head" id="ptHead"><b>📋 대형폐기물 가격표</b><button type="button" onclick="closePrice()">닫기</button></div>
+  <div class="pt-tools">
+    <input id="ptSearch" placeholder="품목 찾기 (예: 소파, 쇼파, 캐리어)" oninput="renderPrice()">
+    <div class="chips" id="ptChips"></div>
+  </div>
+  <div class="pt-body" id="ptBody"></div>
+  <div class="pt-foot"><span id="ptCart">담은 품목 없음</span><button type="button" onclick="closePrice()">완료</button></div>
+</div>
+
+<div class="ov" id="ov"><div class="dlg" id="dlg"></div></div>
+<div class="ov" id="addrOv"><div class="dlg" style="padding:12px;width:520px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin:4px 6px 10px"><b style="font-size:18px">주소검색</b><button type="button" class="sec" style="border:none;border-radius:10px;padding:8px 14px;font-weight:900" onclick="closeAddr()">닫기</button></div>
+  <div id="addrEmbed" style="height:460px;max-height:70vh"></div>
+</div></div>
+
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+// ══ Firebase (원장·수거앱과 같은 프로젝트) ══
+const firebaseConfig = {
+  apiKey:            "AIzaSyD4hPKN8cdtnsVACdvBxDfoR33mAOYEuco",
+  authDomain:        "boneco-wonjang.firebaseapp.com",
+  databaseURL:       "https://boneco-wonjang-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:         "boneco-wonjang",
+  storageBucket:     "boneco-wonjang.firebasestorage.app",
+  messagingSenderId: "463413861191",
+  appId:             "1:463413861191:web:c6a68b67fe000baae64a62"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const KAKAO_API_KEY = '3c1012691c2c9f444b70b2c4ce936c98';   // 원장과 같은 키 (행정동 확인용)
+const DB_REQ   = 'public_requests';   // 본에코홈 접수함 — 원장에서 확인 후 접수목록으로 전송
+const DB_CNT   = 'public_counts';     // 전화번호별 하루 접수 수 (5번째부터 막음)
+const DB_PRICE = 'price_table';       // 원장 가격표 관리에서 저장하는 가격표 (없으면 아래 기본표)
+const MAX_PER_DAY = 4;
+
+// ══ 가격표 — 원장(디지털원장) PRICE_LIST 그대로 ══
+const PRICE_LIST = [
+  {item:"(입)간판",spec:"40cm ×100cm 당",name:"(입)간판 (40cm ×100cm 당)",price:4000},
+  {item:"(입)간판",spec:"가장 긴면 1m 미만",name:"(입)간판 (가장 긴면 1m 미만)",price:1000},
+  {item:"(입)간판",spec:"가장 긴면 1m 이상",name:"(입)간판 (가장 긴면 1m 이상)",price:2000},
+  {item:"(입)간판",spec:"고무통 입간판",name:"(입)간판 (고무통 입간판)",price:5000},
+  {item:"DVD,비디오(VTR)",spec:"",name:"DVD,비디오(VTR)",price:0},
+  {item:"TV",spec:"25인치 미만",name:"TV (25인치 미만)",price:3000},
+  {item:"TV",spec:"25인치 이상",name:"TV (25인치 이상)",price:5000},
+  {item:"TV",spec:"42인치 이상",name:"TV (42인치 이상)",price:7000},
+  {item:"TV받침",spec:"",name:"TV받침",price:3000},
+  {item:"가방류",spec:"가장긴면 50cm 미만",name:"가방류 (가장긴면 50cm 미만)",price:2000},
+  {item:"가방류",spec:"가장긴면 50cm 이상",name:"가방류 (가장긴면 50cm 이상)",price:3000},
+  {item:"가스레인지",spec:"",name:"가스레인지",price:0},
+  {item:"가스오븐렌지",spec:"높이 1m 미만",name:"가스오븐렌지 (높이 1m 미만)",price:0},
+  {item:"가스오븐렌지",spec:"높이 1m 이상",name:"가스오븐렌지 (높이 1m 이상)",price:5000},
+  {item:"가습기",spec:"",name:"가습기",price:0},
+  {item:"거실장",spec:"너비 120cm 미만",name:"거실장 (너비 120cm 미만)",price:4000},
+  {item:"거실장",spec:"너비 120cm 이상",name:"거실장 (너비 120cm 이상)",price:6000},
+  {item:"거실장",spec:"너비 180cm 이상",name:"거실장 (너비 180cm 이상)",price:10000},
+  {item:"거울",spec:"가장 긴면 50cm미만",name:"거울 (가장 긴면 50cm미만)",price:1000},
+  {item:"거울",spec:"가장 긴면 50cm이상",name:"거울 (가장 긴면 50cm이상)",price:2000},
+  {item:"게시판(화이트보드)",spec:"가장 긴면 1m미만",name:"게시판(화이트보드) (가장 긴면 1m미만)",price:1000},
+  {item:"게시판(화이트보드)",spec:"가장 긴면 1m이상",name:"게시판(화이트보드) (가장 긴면 1m이상)",price:2000},
+  {item:"게임기오락기",spec:"50cm 미만",name:"게임기오락기 (50cm 미만)",price:3000},
+  {item:"게임기오락기",spec:"50cm 이상",name:"게임기오락기 (50cm 이상)",price:5000},
+  {item:"게임기오락기",spec:"전문 업소용",name:"게임기오락기 (전문 업소용)",price:12000},
+  {item:"고무통",spec:"지름 1m 이상",name:"고무통 (지름 1m 이상)",price:5000},
+  {item:"고무통",spec:"지름 50cm미만",name:"고무통 (지름 50cm미만)",price:3000},
+  {item:"고무통",spec:"지름 50cm이상",name:"고무통 (지름 50cm이상)",price:4000},
+  {item:"공기청정기",spec:"가장긴면 1m미만",name:"공기청정기 (가장긴면 1m미만)",price:0},
+  {item:"공기청정기",spec:"가장긴면 1m이상",name:"공기청정기 (가장긴면 1m이상)",price:4000},
+  {item:"공기청정기",spec:"영업용",name:"공기청정기 (영업용)",price:15000},
+  {item:"교자상․밥상",spec:"4인 미만",name:"교자상․밥상 (4인 미만)",price:1500},
+  {item:"교자상․밥상",spec:"4인 이상",name:"교자상․밥상 (4인 이상)",price:2000},
+  {item:"교자상․밥상",spec:"차식탁 (다과상)",name:"교자상․밥상 (차식탁 (다과상))",price:1000},
+  {item:"금고(가정용)",spec:"가장 긴면 1m 미만",name:"금고(가정용) (가장 긴면 1m 미만)",price:15000},
+  {item:"금고(가정용)",spec:"가장 긴면 30cm 미만",name:"금고(가정용) (가장 긴면 30cm 미만)",price:10000},
+  {item:"기름탱크",spec:"400L 미만",name:"기름탱크 (400L 미만)",price:4000},
+  {item:"기름탱크",spec:"400L 이상",name:"기름탱크 (400L 이상)",price:7000},
+  {item:"김치냉장고",spec:"130L 미만",name:"김치냉장고 (130L 미만)",price:3000},
+  {item:"김치냉장고",spec:"130L 이상",name:"김치냉장고 (130L 이상)",price:5000},
+  {item:"난로",spec:"가스",name:"난로 (가스)",price:2000},
+  {item:"난로",spec:"벽걸이",name:"난로 (벽걸이)",price:0},
+  {item:"난로",spec:"석유",name:"난로 (석유)",price:2000},
+  {item:"난로",spec:"전기",name:"난로 (전기)",price:0},
+  {item:"냉장고",spec:"300L 미만",name:"냉장고 (300L 미만)",price:5000},
+  {item:"냉장고",spec:"300L 이상",name:"냉장고 (300L 이상)",price:7000},
+  {item:"냉장고",spec:"500L 이상",name:"냉장고 (500L 이상)",price:10000},
+  {item:"냉장고",spec:"영업용 (대형)",name:"냉장고 (영업용 (대형))",price:20000},
+  {item:"노트북컴퓨터",spec:"",name:"노트북컴퓨터",price:0},
+  {item:"녹즙기",spec:"",name:"녹즙기",price:0},
+  {item:"다리미",spec:"",name:"다리미",price:0},
+  {item:"다리미판",spec:"",name:"다리미판",price:1000},
+  {item:"도마",spec:"가정용 나무도마",name:"도마 (가정용 나무도마)",price:1000},
+  {item:"도마",spec:"업소용 나무도마",name:"도마 (업소용 나무도마)",price:2000},
+  {item:"돗자리(대자리,놀이매트)",spec:"1㎡당",name:"돗자리(대자리,놀이매트) (1㎡당)",price:1000},
+  {item:"라지에터",spec:"",name:"라지에터",price:4000},
+  {item:"라켓",spec:"배드민턴 라켓",name:"라켓 (배드민턴 라켓)",price:500},
+  {item:"라켓",spec:"테니스 라켓",name:"라켓 (테니스 라켓)",price:1000},
+  {item:"렌지대수납장",spec:"",name:"렌지대수납장",price:4000},
+  {item:"마네킹",spec:"1m 미만",name:"마네킹 (1m 미만)",price:3000},
+  {item:"마네킹",spec:"1m 이상",name:"마네킹 (1m 이상)",price:5000},
+  {item:"모뎀",spec:"",name:"모뎀",price:0},
+  {item:"목욕탕수건함",spec:"",name:"목욕탕수건함",price:1000},
+  {item:"문갑",spec:"",name:"문갑",price:3000},
+  {item:"문짝",spec:"",name:"문짝",price:4000},
+  {item:"물탱크",spec:"0.5톤 미만",name:"물탱크 (0.5톤 미만)",price:3000},
+  {item:"물탱크",spec:"0.5톤 이상",name:"물탱크 (0.5톤 이상)",price:4000},
+  {item:"물탱크",spec:"1톤당",name:"물탱크 (1톤당)",price:6000},
+  {item:"믹서기",spec:"",name:"믹서기",price:0},
+  {item:"바둑판",spec:"두께 12mm",name:"바둑판 (두께 12mm)",price:1000},
+  {item:"바둑판",spec:"두께 60mm 이상",name:"바둑판 (두께 60mm 이상)",price:2000},
+  {item:"발마사지기계",spec:"",name:"발마사지기계",price:0},
+  {item:"방석",spec:"겨울용",name:"방석 (겨울용)",price:1000},
+  {item:"방석",spec:"여름용",name:"방석 (여름용)",price:500},
+  {item:"배기후드",spec:"",name:"배기후드",price:2000},
+  {item:"베개(라텍스베개)",spec:"",name:"베개(라텍스베개)",price:1000},
+  {item:"벽시계",spec:"길이 1m미만, 지름 28cm미만",name:"벽시계 (길이 1m미만, 지름 28cm미만)",price:1000},
+  {item:"벽시계",spec:"길이 1m이상, 지름 28cm이상",name:"벽시계 (길이 1m이상, 지름 28cm이상)",price:2000},
+  {item:"변기",spec:"양변기",name:"변기 (양변기)",price:8000},
+  {item:"변기",spec:"좌변기",name:"변기 (좌변기)",price:5000},
+  {item:"병풍",spec:"2폭당",name:"병풍 (2폭당)",price:1000},
+  {item:"보온밥통",spec:"",name:"보온밥통",price:0},
+  {item:"보일러",spec:"16kcal/h 미만",name:"보일러 (16kcal/h 미만)",price:10000},
+  {item:"보일러",spec:"16kcal/h 이상",name:"보일러 (16kcal/h 이상)",price:12000},
+  {item:"보행기",spec:"",name:"보행기",price:2000},
+  {item:"복사기",spec:"영업용",name:"복사기 (영업용)",price:10000},
+  {item:"블라인드",spec:"1㎡당",name:"블라인드 (1㎡당)",price:1000},
+  {item:"비닐옷장(비키니옷장)",spec:"",name:"비닐옷장(비키니옷장)",price:3000},
+  {item:"비데",spec:"",name:"비데",price:1000},
+  {item:"빨래건조대",spec:"길이 1m 미만",name:"빨래건조대 (길이 1m 미만)",price:1000},
+  {item:"빨래건조대",spec:"길이 1m 이상",name:"빨래건조대 (길이 1m 이상)",price:2000},
+  {item:"서랍장",spec:"4단 이하",name:"서랍장 (4단 이하)",price:3000},
+  {item:"서랍장",spec:"5단 이상",name:"서랍장 (5단 이상)",price:5000},
+  {item:"선풍기",spec:"가정용",name:"선풍기 (가정용)",price:0},
+  {item:"선풍기",spec:"업소용(스탠드형)",name:"선풍기 (업소용(스탠드형))",price:3000},
+  {item:"세면대",spec:"세면대 세트",name:"세면대 (세면대 세트)",price:3000},
+  {item:"세탁기",spec:"10kg 이상",name:"세탁기 (10kg 이상)",price:4000},
+  {item:"세탁기",spec:"10kg 이하",name:"세탁기 (10kg 이하)",price:3000},
+  {item:"소화기",spec:"대형(20㎏ 이상)",name:"소화기 (대형(20㎏ 이상))",price:3000},
+  {item:"소화기",spec:"소형(4.5㎏ 이하)",name:"소화기 (소형(4.5㎏ 이하))",price:1000},
+  {item:"소화기",spec:"중형 (4.5㎏초과 20㎏미만)",name:"소화기 (중형 (4.5㎏초과 20㎏미만))",price:2000},
+  {item:"쇼파",spec:"1인용",name:"쇼파 (1인용)",price:4000},
+  {item:"쇼파",spec:"2인용",name:"쇼파 (2인용)",price:7000},
+  {item:"쇼파",spec:"3인용",name:"쇼파 (3인용)",price:10000},
+  {item:"쇼파",spec:"4인용",name:"쇼파 (4인용)",price:13000},
+  {item:"쇼파",spec:"스툴",name:"쇼파 (스툴)",price:3000},
+  {item:"수도호스",spec:"10m 당",name:"수도호스 (10m 당)",price:1000},
+  {item:"스캐너",spec:"",name:"스캐너",price:0},
+  {item:"스키",spec:"스키(부츠별도)",name:"스키 (스키(부츠별도))",price:3000},
+  {item:"스키",spec:"스키부츠",name:"스키 (스키부츠)",price:2000},
+  {item:"스탠드옷걸이",spec:"가정용(행거)",name:"스탠드옷걸이 (가정용(행거))",price:2000},
+  {item:"식기건조기",spec:"높이 1m 미만",name:"식기건조기 (높이 1m 미만)",price:0},
+  {item:"식기건조기",spec:"높이 1m 이상",name:"식기건조기 (높이 1m 이상)",price:5000},
+  {item:"식기세척기",spec:"높이 1m 미만",name:"식기세척기 (높이 1m 미만)",price:0},
+  {item:"식기세척기",spec:"높이 1m 이상",name:"식기세척기 (높이 1m 이상)",price:5000},
+  {item:"식탁(나무)",spec:"3인 이하",name:"식탁(나무) (3인 이하)",price:3000},
+  {item:"식탁(나무)",spec:"4인 이상",name:"식탁(나무) (4인 이상)",price:4000},
+  {item:"식탁(나무)",spec:"6인 이상",name:"식탁(나무) (6인 이상)",price:5000},
+  {item:"식탁(대리석)",spec:"4인 이상",name:"식탁(대리석) (4인 이상)",price:10000},
+  {item:"식탁(대리석)",spec:"6인 이상",name:"식탁(대리석) (6인 이상)",price:13000},
+  {item:"신발장",spec:"높이 1.5m 미만",name:"신발장 (높이 1.5m 미만)",price:2000},
+  {item:"신발장",spec:"높이 1.5m 이상",name:"신발장 (높이 1.5m 이상)",price:4000},
+  {item:"싱크대",spec:"개당",name:"싱크대 (개당)",price:5000},
+  {item:"쌀통",spec:"",name:"쌀통",price:3000},
+  {item:"쓰레기통",spec:"가정용",name:"쓰레기통 (가정용)",price:1000},
+  {item:"쓰레기통",spec:"사무실 옥외용",name:"쓰레기통 (사무실 옥외용)",price:2000},
+  {item:"아이스박스",spec:"30L 미만",name:"아이스박스 (30L 미만)",price:1000},
+  {item:"아이스박스",spec:"30L 이상",name:"아이스박스 (30L 이상)",price:2000},
+  {item:"아이스박스",spec:"50L 이상",name:"아이스박스 (50L 이상)",price:3000},
+  {item:"안마기",spec:"",name:"안마기",price:2000},
+  {item:"안마의자",spec:"",name:"안마의자",price:10000},
+  {item:"액자",spec:"가장 긴면 100cm초과",name:"액자 (가장 긴면 100cm초과)",price:3000},
+  {item:"액자",spec:"가장 긴면 50cm미만",name:"액자 (가장 긴면 50cm미만)",price:1000},
+  {item:"액자",spec:"가장 긴면 50cm이상",name:"액자 (가장 긴면 50cm이상)",price:2000},
+  {item:"어항(수족관)",spec:"가장 긴면 1m미만",name:"어항(수족관) (가장 긴면 1m미만)",price:1000},
+  {item:"어항(수족관)",spec:"가장 긴면 1m이상",name:"어항(수족관) (가장 긴면 1m이상)",price:5000},
+  {item:"어항(수족관)",spec:"영업용, 2m이상",name:"어항(수족관) (영업용, 2m이상)",price:15000},
+  {item:"에어컨",spec:"264㎡ 이상",name:"에어컨 (264㎡ 이상)",price:9000},
+  {item:"에어컨",spec:"66㎡ 미만",name:"에어컨 (66㎡ 미만)",price:4000},
+  {item:"에어컨",spec:"66㎡ 이상",name:"에어컨 (66㎡ 이상)",price:6000},
+  {item:"에어컨실외기",spec:"1m 미만",name:"에어컨실외기 (1m 미만)",price:0},
+  {item:"에어컨실외기",spec:"1m 이상",name:"에어컨실외기 (1m 이상)",price:2000},
+  {item:"영업용프린터",spec:"높이 1m 미만",name:"영업용프린터 (높이 1m 미만)",price:3000},
+  {item:"영업용프린터",spec:"높이 1m 이상",name:"영업용프린터 (높이 1m 이상)",price:5000},
+  {item:"오디오본체",spec:"본체 1m 미만",name:"오디오본체 (본체 1m 미만)",price:0},
+  {item:"오디오본체",spec:"본체 1m 이상",name:"오디오본체 (본체 1m 이상)",price:4000},
+  {item:"오디오스피커",spec:"스피커 1m 미만",name:"오디오스피커 (스피커 1m 미만)",price:0},
+  {item:"오디오스피커",spec:"스피커 1m 이상",name:"오디오스피커 (스피커 1m 이상)",price:1000},
+  {item:"온수기",spec:"",name:"온수기",price:2000},
+  {item:"온풍기",spec:"264㎡ 이상",name:"온풍기 (264㎡ 이상)",price:8000},
+  {item:"온풍기",spec:"66㎡ 미만",name:"온풍기 (66㎡ 미만)",price:3000},
+  {item:"온풍기",spec:"66㎡ 이상",name:"온풍기 (66㎡ 이상)",price:5000},
+  {item:"올갠",spec:"일반용",name:"올갠 (일반용)",price:10000},
+  {item:"올갠",spec:"전자식",name:"올갠 (전자식)",price:5000},
+  {item:"욕조",spec:"유 아 용",name:"욕조 (유 아 용)",price:3000},
+  {item:"욕조",spec:"일 반 용",name:"욕조 (일 반 용)",price:5000},
+  {item:"우산",spec:"어린이용",name:"우산 (어린이용)",price:0},
+  {item:"우산",spec:"일반용",name:"우산 (일반용)",price:1000},
+  {item:"유리",spec:"0.5㎡ 당",name:"유리 (0.5㎡ 당)",price:1000},
+  {item:"유모차",spec:"1인용",name:"유모차 (1인용)",price:2000},
+  {item:"유모차",spec:"2인용",name:"유모차 (2인용)",price:4000},
+  {item:"의자",spec:"1인용",name:"의자 (1인용)",price:2000},
+  {item:"의자",spec:"장의자",name:"의자 (장의자)",price:6000},
+  {item:"의자",spec:"회전의자",name:"의자 (회전의자)",price:5000},
+  {item:"이불",spec:"겨울용",name:"이불 (겨울용)",price:2000},
+  {item:"인형",spec:"",name:"인형",price:1000},
+  {item:"자동판매기",spec:"음료 담배",name:"자동판매기 (음료 담배)",price:15000},
+  {item:"자동판매기",spec:"자가 소형",name:"자동판매기 (자가 소형)",price:3000},
+  {item:"자전거",spec:"성인용",name:"자전거 (성인용)",price:3000},
+  {item:"자전거",spec:"아동용 2륜",name:"자전거 (아동용 2륜)",price:2000},
+  {item:"자전거",spec:"아동용 3륜",name:"자전거 (아동용 3륜)",price:2000},
+  {item:"장난감",spec:"길이 50cm미만",name:"장난감 (길이 50cm미만)",price:1000},
+  {item:"장난감",spec:"길이 50cm이상",name:"장난감 (길이 50cm이상)",price:2000},
+  {item:"장롱",spec:"너비 100cm 미만(쪽당)",name:"장롱 (너비 100cm 미만(쪽당))",price:10000},
+  {item:"장롱",spec:"너비 100cm 이상(쪽당)",name:"장롱 (너비 100cm 이상(쪽당))",price:15000},
+  {item:"장식장",spec:"높이 120cm미만",name:"장식장 (높이 120cm미만)",price:4000},
+  {item:"장식장",spec:"높이 120cm이상",name:"장식장 (높이 120cm이상)",price:6000},
+  {item:"장식장",spec:"높이 180cm이상",name:"장식장 (높이 180cm이상)",price:10000},
+  {item:"장식장",spec:"오디오용",name:"장식장 (오디오용)",price:3000},
+  {item:"장판",spec:"3.3㎡당",name:"장판 (3.3㎡당)",price:2000},
+  {item:"장판",spec:"옥 자석 온수 등 1인용",name:"장판 (옥 자석 온수 등 1인용)",price:4000},
+  {item:"장판",spec:"옥 자석 온수 등 2인용",name:"장판 (옥 자석 온수 등 2인용)",price:7000},
+  {item:"장판",spec:"전기장판(1인용)",name:"장판 (전기장판(1인용))",price:2000},
+  {item:"장판",spec:"전기장판(2인용)",name:"장판 (전기장판(2인용))",price:3000},
+  {item:"재봉틀",spec:"(재봉틀대)",name:"재봉틀 ((재봉틀대))",price:2000},
+  {item:"전기담요",spec:"1인용",name:"전기담요 (1인용)",price:1000},
+  {item:"전기담요",spec:"2인용",name:"전기담요 (2인용)",price:2000},
+  {item:"전기밥솥",spec:"(보온밥솥)",name:"전기밥솥 ((보온밥솥))",price:0},
+  {item:"전기판넬",spec:"3.3㎡당",name:"전기판넬 (3.3㎡당)",price:2000},
+  {item:"전기히터",spec:"",name:"전기히터",price:0},
+  {item:"전자레인지",spec:"",name:"전자레인지",price:0},
+  {item:"전자시계",spec:"",name:"전자시계",price:0},
+  {item:"전화기․휴대폰",spec:"",name:"전화기․휴대폰",price:0},
+  {item:"정수기",spec:"높이 1m 미만",name:"정수기 (높이 1m 미만)",price:0},
+  {item:"정수기",spec:"높이 1m 이상",name:"정수기 (높이 1m 이상)",price:4000},
+  {item:"조명기구",spec:"샹드레아",name:"조명기구 (샹드레아)",price:2000},
+  {item:"조명기구",spec:"폭, 높이 1m미만",name:"조명기구 (폭, 높이 1m미만)",price:1000},
+  {item:"조명기구",spec:"폭, 높이 1m이상",name:"조명기구 (폭, 높이 1m이상)",price:2000},
+  {item:"진열대(목재)",spec:"1㎡ 당",name:"진열대(목재) (1㎡ 당)",price:5000},
+  {item:"창문",spec:"",name:"창문",price:2000},
+  {item:"책상",spec:"서랍 없음",name:"책상 (서랍 없음)",price:3000},
+  {item:"책상",spec:"양수",name:"책상 (양수)",price:8000},
+  {item:"책상",spec:"컴퓨터 책상",name:"책상 (컴퓨터 책상)",price:3000},
+  {item:"책상",spec:"편수",name:"책상 (편수)",price:5000},
+  {item:"책장",spec:"4단 이하",name:"책장 (4단 이하)",price:2000},
+  {item:"책장",spec:"90cm×180cm 미만",name:"책장 (90cm×180cm 미만)",price:5000},
+  {item:"책장",spec:"90cm×180cm 이상",name:"책장 (90cm×180cm 이상)",price:8000},
+  {item:"천막",spec:"길이 6m 미만",name:"천막 (길이 6m 미만)",price:5000},
+  {item:"천막",spec:"길이 6m 이상",name:"천막 (길이 6m 이상)",price:7000},
+  {item:"청소기",spec:"가정용",name:"청소기 (가정용)",price:0},
+  {item:"청소기",spec:"영업용",name:"청소기 (영업용)",price:4000},
+  {item:"침대(돌,옥,황토침대)",spec:"1인용 돌, 옥, 황토",name:"침대(돌,옥,황토침대) (1인용 돌, 옥, 황토)",price:20000},
+  {item:"침대(돌,옥,황토침대)",spec:"2인용 돌, 옥, 황토",name:"침대(돌,옥,황토침대) (2인용 돌, 옥, 황토)",price:30000},
+  {item:"침대(목재)",spec:"1인용 매트리스",name:"침대(목재) (1인용 매트리스)",price:5000},
+  {item:"침대(목재)",spec:"1인용 침대 틀",name:"침대(목재) (1인용 침대 틀)",price:5000},
+  {item:"침대(목재)",spec:"2인용 매트리스",name:"침대(목재) (2인용 매트리스)",price:8000},
+  {item:"침대(목재)",spec:"2인용 침대 틀",name:"침대(목재) (2인용 침대 틀)",price:7000},
+  {item:"침대(목재)",spec:"어린이 2층",name:"침대(목재) (어린이 2층)",price:15000},
+  {item:"침대(목재)",spec:"유아용",name:"침대(목재) (유아용)",price:3000},
+  {item:"카세트라디오",spec:"",name:"카세트라디오",price:0},
+  {item:"카시트",spec:"",name:"카시트",price:2000},
+  {item:"카페트",spec:"3.3㎡당",name:"카페트 (3.3㎡당)",price:2000},
+  {item:"캐비넷(파일)",spec:"3단 이하",name:"캐비넷(파일) (3단 이하)",price:2000},
+  {item:"캐비넷(파일)",spec:"4단 이상",name:"캐비넷(파일) (4단 이상)",price:3000},
+  {item:"캐비넷(파일)",spec:"90cm×180cm",name:"캐비넷(파일) (90cm×180cm)",price:4000},
+  {item:"커튼",spec:"2m 미만",name:"커튼 (2m 미만)",price:1000},
+  {item:"커튼",spec:"2m 이상",name:"커튼 (2m 이상)",price:2000},
+  {item:"커튼봉",spec:"",name:"커튼봉",price:1000},
+  {item:"커피포트",spec:"",name:"커피포트",price:0},
+  {item:"컬러박스(공간박스)",spec:"2단 미만",name:"컬러박스(공간박스) (2단 미만)",price:1000},
+  {item:"컬러박스(공간박스)",spec:"3단 이상",name:"컬러박스(공간박스) (3단 이상)",price:2000},
+  {item:"컴퓨터",spec:"",name:"컴퓨터",price:0},
+  {item:"컴퓨터복합기",spec:"",name:"컴퓨터복합기",price:0},
+  {item:"컴퓨터오락기",spec:"",name:"컴퓨터오락기",price:0},
+  {item:"컴퓨터키보드",spec:"",name:"컴퓨터키보드",price:0},
+  {item:"킥보드",spec:"",name:"킥보드",price:2000},
+  {item:"타이어",spec:"지름 110cm이상",name:"타이어 (지름 110cm이상)",price:6000},
+  {item:"타이어",spec:"지름 60cm 미만",name:"타이어 (지름 60cm 미만)",price:3000},
+  {item:"타이어",spec:"지름 60cm 이상",name:"타이어 (지름 60cm 이상)",price:5000},
+  {item:"탁구대",spec:"",name:"탁구대",price:7000},
+  {item:"탁자",spec:"10인용 미만",name:"탁자 (10인용 미만)",price:6000},
+  {item:"탁자",spec:"10인용 이상",name:"탁자 (10인용 이상)",price:8000},
+  {item:"탁자",spec:"2인용",name:"탁자 (2인용)",price:3000},
+  {item:"탁자",spec:"응접용",name:"탁자 (응접용)",price:3000},
+  {item:"탁자",spec:"협 탁",name:"탁자 (협 탁)",price:2000},
+  {item:"탈수기",spec:"가정용",name:"탈수기 (가정용)",price:0},
+  {item:"텐트",spec:"4인용 미만",name:"텐트 (4인용 미만)",price:3000},
+  {item:"텐트",spec:"4인용 이상",name:"텐트 (4인용 이상)",price:4000},
+  {item:"토스터기",spec:"",name:"토스터기",price:0},
+  {item:"파티션",spec:"1㎡당",name:"파티션 (1㎡당)",price:2000},
+  {item:"팩시밀리",spec:"가정용",name:"팩시밀리 (가정용)",price:0},
+  {item:"팩시밀리",spec:"사무용",name:"팩시밀리 (사무용)",price:2500},
+  {item:"팬히터",spec:"벽걸이형",name:"팬히터 (벽걸이형)",price:2000},
+  {item:"프린터",spec:"가정용",name:"프린터 (가정용)",price:0},
+  {item:"피아노",spec:"디지털",name:"피아노 (디지털)",price:5000},
+  {item:"피아노",spec:"일반",name:"피아노 (일반)",price:16000},
+  {item:"항아리",spec:"높이 50cm 미만",name:"항아리 (높이 50cm 미만)",price:3000},
+  {item:"항아리",spec:"높이 50cm 이상",name:"항아리 (높이 50cm 이상)",price:5000},
+  {item:"행거",spec:"1단 행거",name:"행거 (1단 행거)",price:2000},
+  {item:"행거",spec:"2단 행거",name:"행거 (2단 행거)",price:3000},
+  {item:"헤어드라이어",spec:"",name:"헤어드라이어",price:0},
+  {item:"헬스기구",spec:"런닝머신",name:"헬스기구 (런닝머신)",price:15000},
+  {item:"헬스기구",spec:"스텝퍼",name:"헬스기구 (스텝퍼)",price:4000},
+  {item:"헬스기구",spec:"헬스자전거",name:"헬스기구 (헬스자전거)",price:7000},
+  {item:"화분",spec:"지름 50cm 미만",name:"화분 (지름 50cm 미만)",price:1000},
+  {item:"화분",spec:"지름 50cm 이상",name:"화분 (지름 50cm 이상)",price:2000},
+  {item:"화장대(경대)",spec:"가정용",name:"화장대(경대) (가정용)",price:3000},
+  {item:"화환",spec:"",name:"화환",price:3000},
+  {item:"환풍기",spec:"가정용",name:"환풍기 (가정용)",price:0},
+  {item:"환풍기",spec:"업소용(대형)",name:"환풍기 (업소용(대형))",price:3000},
+  {item:"휠체어",spec:"",name:"휠체어",price:3000},
+  {item:"휴대폰충전기",spec:"",name:"휴대폰충전기",price:0},
+  {item:"특수마대",spec:"",name:"특수마대",price:0},
+  // [9_30] 조례에 없지만 자주 들어오는 품목 (가격표 관리에서 고칠 수 있게 될 예정)
+  {item:"캐리어",spec:"기내용",name:"캐리어 (기내용)",price:2000,alias:["케리어"]},
+  {item:"캐리어",spec:"화물용",name:"캐리어 (화물용)",price:3000,alias:["케리어"]},
+  {item:"스탠드조명",spec:"",name:"스탠드조명",price:3000},
+  {item:"모니터",spec:"",name:"모니터",price:3000},
+];
+
+// 분류 (가격표 보기용)
+const CAT_RULES = [
+  ['가구', /거실장|교자상|문갑|서랍장|쇼파|식탁|신발장|장롱|장식장|책상|책장|침대|탁자|화장대|의자|렌지대|옷장|옷걸이|행거|컬러박스|캐비넷|진열대|싱크대|수건함|파티션|TV받침|병풍|금고/],
+  ['가전', /TV|DVD|비디오|레인지|렌지|가습기|청정기|냉장고|컴퓨터|녹즙기|다리미$|믹서|밥통|밥솥|복사기|비데|선풍기|세탁기|탈수기|스캐너|식기|안마|에어컨|실외기|프린터|오디오|온수기|온풍기|전기|전자|전화기|정수기|청소기|라디오|커피포트|토스터|팩시밀리|히터|드라이어|환풍기|모뎀|게임기|오락기|난로|라지에터|보일러|후드|판매기|충전기|마사지|모니터|조명/],
+  ['운동·유아', /자전거|유모차|보행기|카시트|킥보드|스키|라켓|헬스|탁구대|텐트|휠체어|바둑판|장난감|인형/],
+  ['특수마대', /특수마대/],
+];
+const catOf = it => (CAT_RULES.find(([, re]) => re.test(it)) || ['생활·기타'])[0];
+// 다른 이름 (쇼파=소파, 캐리어=가방류 …) — 가격표 관리에서 품목별로 더 넣을 수 있게 됨
+const ALIAS = { '소파':'쇼파', '쇼파':'쇼파', '케리어':'캐리어', '여행가방':'가방류', '장농':'장롱', '티비':'TV', '텔레비전':'TV', '에어콘':'에어컨', '전자렌지':'전자레인지' };   // 표기만 다른 이름
+
+let PRICES = [];      // {name, item, spec, price, cat, al:[]}
+function loadPrices(list){
+  // 가격표 관리에서 숨긴 품목은 안 보임
+  PRICES = list.filter(x => x && x.name && !x.hidden).map(x => ({ name:x.name, item:x.item||x.name, spec:x.spec||'', price:+x.price||0, cat:x.cat||catOf(x.item||x.name), al:x.alias||[] }));
+  renderPrice();
+}
+
+const norm = s => String(s||'').replace(/[\s()·․,]/g,'').toLowerCase();
+function findItems(q){
+  let k = norm(q); if (k.length < 2) return [];
+  const aliasTo = Object.entries(ALIAS).filter(([a]) => norm(a).includes(k) || k.includes(norm(a))).map(([, t]) => norm(t));
+  return PRICES.filter(x => norm(x.name).includes(k) || aliasTo.some(t => norm(x.item).includes(t)) || x.al.some(a => norm(a).includes(k)));
+}
+const won = n => n === 0 ? '무상' : n.toLocaleString() + '원';
+const isTouch = () => { try { return matchMedia('(pointer: coarse)').matches && !matchMedia('(pointer: fine)').matches; } catch(e){ return false; } };
+const ymd = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+
+// ══ 숫자칸: PC는 한글 자판 유지(글자칸+숫자만), 폰은 숫자 키패드 ══
+function setupNum(el, tel){
+  if (isTouch()) el.setAttribute('inputmode', tel ? 'tel' : 'numeric');
+  el.addEventListener('input', () => {
+    let v = el.value.replace(/[^0-9]/g,'');
+    if (tel){ v = v.slice(0,11); el.value = v.length > 7 ? v.replace(/^(\d{3})(\d{3,4})(\d{4})$/,'$1-$2-$3') : v.length > 3 ? v.replace(/^(\d{3})(\d+)/,'$1-$2') : v; }
+    else el.value = v;
+    calc();
+  });
+}
+document.querySelectorAll('[data-num]').forEach(e => setupNum(e,false));
+setupNum(document.getElementById('phone'), true);
+
+// ══ 주소 — 카카오(다음) 주소검색 → 담당 구역 확인 ══
+//   담당: 행정동 잠실본동·삼전동 + 담당 아파트 단지(원장·수거앱과 같은 목록)
+const APT_KEYS = [ [/주공\s*5단지|잠실\s*5단지|5단지/, '5단지'], [/트리지움/, '트리지움'], [/레이크\s*팰리스/, '레이크팰리스'],
+                   [/우성\s*4차/, '우성4차'], [/잠실\s*현대/, '잠실현대'], [/삼전\s*현대/, '삼전현대'] ];
+// [원장과 같은 표] 단지 정문 도로명 · 단지 지번 — 건물 이름이 "잠실주공아파트"처럼 와도 단지를 알아본다
+const APT_ROAD = { '송파대로 567':'5단지', '잠실로 62':'트리지움', '잠실로 88':'레이크팰리스',
+                   '백제고분로18길 30':'우성4차', '백제고분로18길 7':'잠실현대', '백제고분로22길 39':'삼전현대' };
+const APT_JIBUN = { '잠실동': { 27:'5단지', 35:'트리지움', 44:'레이크팰리스', 320:'우성4차', 331:'잠실현대' }, '삼전동': { 39:'삼전현대' } };
+// [원장과 같은 표] 담당 아님: 잠실동 19=엘스 / 22=리센츠 / 40=갤러리아팰리스 — 카카오 확인이 안 될 때도 막는다
+const NOT_OURS_JIBUN = { '잠실동': [19, 22, 40] };
+const NOT_OURS_NAME = /엘스|리센츠(?!\s*빌)|갤러리아/;
+function notOurs(jibun, bldg){
+  const m = String(jibun||'').match(/(잠실동|삼전동)\s+(\d+)/);
+  if (m && (NOT_OURS_JIBUN[m[1]]||[]).includes(+m[2])) return true;
+  return NOT_OURS_NAME.test(bldg||'');
+}
+function aptOf(road, jibun, bldg){
+  const flat = String(road||'').replace(/\s+/g,'');
+  for (const k in APT_ROAD){ const kk = k.replace(/\s+/g,''); const i = flat.indexOf(kk); if (i >= 0 && !/\d/.test(flat.charAt(i + kk.length))) return APT_ROAD[k]; }
+  const m = String(jibun||'').match(/(잠실동|삼전동)\s+(\d+)/);
+  if (m && APT_JIBUN[m[1]] && APT_JIBUN[m[1]][+m[2]]) return APT_JIBUN[m[1]][+m[2]];
+  return (APT_KEYS.find(([re]) => re.test(bldg||'')) || [])[1] || '';
+}
+let ADDR = null;
+function openAddr(){
+  document.getElementById('addrOv').classList.add('on');
+  const box = document.getElementById('addrEmbed'); box.innerHTML = '';
+  new daum.Postcode({ oncomplete: onAddr, width:'100%', height:'100%' }).embed(box, { autoClose:false });
+}
+let GARAK = null;
+function notOurArea(){ const bl = document.getElementById('blocked'); bl.innerHTML = '저희(본에코) 담당 구역이 아닙니다.<br>송파구청 대형폐기물 인터넷 신청을 이용해 주세요. <a href="https://www.songpa.go.kr" target="_blank" rel="noopener">송파구청 바로가기</a>'; bl.classList.add('on'); }
+function onStationExit(){
+  const v = document.getElementById('stExit').value, bl = document.getElementById('blocked');
+  bl.classList.remove('on');
+  if (!v) return;
+  if (v !== '5'){ notOurArea(); return; }
+}
+function onGarak(yes){
+  document.querySelector('.gk-yes').classList.toggle('on', yes); document.querySelector('.gk-no').classList.toggle('on', !yes);
+  const bl = document.getElementById('blocked'); bl.classList.remove('on');
+  if (!yes){ ADDR = null; document.getElementById('garakMore').style.display = 'none'; notOurArea(); return; }
+  ADDR = { ...GARAK, special:'garak', dong:'가락시장', jb:'' };   // 주소 칸에는 상호명이 들어감(저장 때)
+  document.getElementById('garakMore').style.display = ''; document.getElementById('gkShop').focus();
+}
+function closeAddr(){ document.getElementById('addrOv').classList.remove('on'); }
+async function onAddr(d){
+  closeAddr();
+  const bl = document.getElementById('blocked'), aptBox = document.getElementById('aptBox'), detBox = document.getElementById('detailBox');
+  aptBox.style.display = 'none'; detBox.style.display = 'none'; bl.classList.remove('on'); ADDR = null;
+  const road = d.roadAddress || d.address || '', jibun = d.jibunAddress || d.autoJibunAddress || '';
+  const bname = d.bname || '', bldg = d.buildingName || '';
+  document.getElementById('addr').value = `${road}${bldg ? ' ' + bldg : ''}`;
+  const aptKey = aptOf(road, jibun, bldg);
+  // 행정동 확인 (카카오 로컬). 실패하면 법정동으로만 보고 사무실 확인 표시
+  let hname = '', checked = false;
+  try {
+    const r = await fetch(`https://dapi.kakao.com/v2/local/search/address.json?query=${encodeURIComponent(jibun || road)}&size=1`, { headers:{ Authorization:`KakaoAK ${KAKAO_API_KEY}` } });
+    if (r.ok){ const j = await r.json(); const a = j.documents && j.documents[0] && j.documents[0].address; if (a){ hname = a.region_3depth_h_name || ''; checked = true; } }
+  } catch(e){}
+  const inSongpa = /송파구/.test(road + jibun);
+  // 잠실역 지하상가 — 5번 출구만 담당: 출구를 물어서 5번이면 받는다
+  document.getElementById('stationBox').style.display = 'none'; document.getElementById('garakBox').style.display = 'none';
+  if (/잠실역|지하\s*상가/.test(bldg + ' ' + road + ' ' + (d.address||'')) || /신천동\s+8(?!\d|-)/.test(jibun)){
+    ADDR = { road, jibun, bldg, special:'station', dong:'5단지', jb:'잠실역지하상가' };   // 동 구분 5단지
+    document.getElementById('stExit').value = ''; document.getElementById('stationBox').style.display = '';
+    updateMadae(); return;
+  }
+  // 가락시장 — 강동수산만 담당: 강동수산인지 묻고 상호명·기둥 번호를 받는다
+  if (/가락\s*시장|가락몰|농수산물/.test(bldg + ' ' + road + ' ' + (d.address||'')) || /가락동\s+600(?!\d)/.test(jibun)){
+    ADDR = null; GARAK = { road, jibun, bldg };
+    document.getElementById('garakMore').style.display = 'none';
+    document.querySelectorAll('.gk-yes,.gk-no').forEach(b => b.classList.remove('on'));
+    document.getElementById('garakBox').style.display = '';
+    updateMadae(); return;
+  }
+  if (!checked && !aptKey){
+    bl.innerHTML = '주소 확인이 잠시 안 됩니다. <b>주소검색을 다시 눌러</b> 주세요.<br>계속 안 되면 전화로 문의해 주세요 (02-414-6221~2).';
+    bl.classList.add('on'); updateMadae(); return;
+  }
+  const inArea = inSongpa && !notOurs(jibun, bldg) && (aptKey || /^(잠실본동|삼전동)$/.test(hname));
+  if (!inArea){
+    const where = (notOurs(jibun, bldg) && bldg) ? bldg : (hname || bname || '이 주소');   // 엘스·리센츠 등은 단지 이름으로 안내
+    bl.innerHTML = `${where}은(는) 본에코 담당 구역이 아닙니다.<br>송파구청 대형폐기물 인터넷 신청을 이용해 주세요. <a href="https://www.songpa.go.kr" target="_blank" rel="noopener">송파구청 바로가기</a>`;
+    bl.classList.add('on'); updateMadae(); return;
+  }
+  // 원장 주소 형식: 잠실동 지번 → "본 176-8", 삼전동 → "삼 64-8", 담당 아파트 → 동-호(저장 때 합침)
+  const m = jibun.match(/(잠실동|삼전동)\s+(\d+(?:-\d+)?)/);
+  const jb = m ? `${m[1] === '삼전동' ? '삼' : '본'} ${m[2]}` : '';
+  ADDR = { road, jibun, bldg, bname, hname, checked, aptKey, jb, dong: aptKey || (bname === '삼전동' ? '삼전동' : '잠실본동') };
+  if (aptKey){ aptBox.style.display = ''; document.getElementById('dong').focus(); }
+  else { detBox.style.display = ''; document.getElementById('detail').value = ''; }
+  updateMadae();
+}
+
+// ══ 품목 줄 ══
+function addRow(item){
+  const box = document.getElementById('items');
+  const r = document.createElement('div'); r.className = 'item';
+  r.innerHTML = `<input class="in nm" placeholder="품목명 (예: 소파)">
+    <div class="cnt"><input class="in" value="1" data-cnt aria-label="갯수"><div class="arr"><button type="button" tabindex="-1" data-up aria-label="하나 더">▲</button><button type="button" tabindex="-1" data-dn aria-label="하나 덜">▼</button></div></div>
+    <input class="in amt" readonly placeholder="금액" tabindex="-1">
+    <button class="del" type="button" aria-label="품목 지우기">×</button>
+    <div class="sugg"></div>`;
+  box.appendChild(r);
+  const nm = r.querySelector('.nm'), cnt = r.querySelector('[data-cnt]'), sg = r.querySelector('.sugg');
+  setupNum(cnt,false);
+  r.querySelector('[data-up]').onclick = () => { cnt.value = (parseInt(cnt.value)||0)+1; calc(); };
+  r.querySelector('[data-dn]').onclick = () => { cnt.value = Math.max(1,(parseInt(cnt.value)||1)-1); calc(); };
+  cnt.addEventListener('keydown', e => { if (e.key==='ArrowUp'){ e.preventDefault(); r.querySelector('[data-up]').click(); } if (e.key==='ArrowDown'){ e.preventDefault(); r.querySelector('[data-dn]').click(); } });
+  cnt.addEventListener('blur', () => { if (!(parseInt(cnt.value) > 0)) { cnt.value = 1; calc(); } });
+  r.querySelector('.del').onclick = () => { r.remove(); if (!document.querySelector('.item')) addRow(); calc(); updateMadae(); };
+  nm.addEventListener('input', () => {
+    delete r.dataset.price; r.dataset.name = '';
+    const q = nm.value.trim(); const res = findItems(q).slice(0, 30);
+    if (q.length < 2){ sg.classList.remove('on'); calc(); updateMadae(); return; }
+    sg.innerHTML = res.length ? res.map((x,i)=>`<div data-i="${i}"><span>${esc(x.name)}</span><b>${won(x.price)}</b></div>`).join('')
+                              : `<div class="none">목록에 없는 품목입니다. 전화로 문의해 주세요 (02-414-6221~2)</div>`;
+    sg.classList.add('on');
+    sg.querySelectorAll('[data-i]').forEach(d => d.onmousedown = e => { e.preventDefault(); setItem(r, res[+d.dataset.i]); sg.classList.remove('on'); });
+    calc(); updateMadae();
+  });
+  nm.addEventListener('blur', () => setTimeout(() => sg.classList.remove('on'), 150));
+  if (item) setItem(r, item);
+  return r;
+}
+function setItem(r, x){ r.querySelector('.nm').value = x.name; r.dataset.name = x.name; r.dataset.price = x.price; calc(); updateMadae(); }
+function rowsPicked(){ return [...document.querySelectorAll('.item')].filter(r => r.dataset.name); }
+function calc(){
+  let s = 0;
+  document.querySelectorAll('.item').forEach(r => {
+    const p = r.dataset.price == null ? null : +r.dataset.price;
+    const c = parseInt(r.querySelector('[data-cnt]').value) || 0;
+    r.querySelector('.amt').value = p == null ? '' : won(p * c);
+    if (p != null) s += p * c;
+  });
+  document.getElementById('sum').textContent = s.toLocaleString() + '원';
+  renderCart();
+}
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+// ══ 특수마대 배출일 — 잠실 그룹(본동·5단지·트리지움·레이크팰리스·우성4차·잠실현대) 화·목·일 / 삼전 그룹 월·수·금, 다다음 배출요일부터 ══
+function isMadae(n){ return /특수마대/.test(n||''); }
+function updateMadae(){
+  const has = rowsPicked().some(r => isMadae(r.dataset.name));
+  const box = document.getElementById('madaeBox'); box.classList.toggle('on', has);
+  if (!has) return;
+  const sam = ADDR ? (ADDR.dong === '삼전동' || ADDR.dong === '삼전현대') : false;
+  const garak = ADDR && ADDR.dong === '가락시장';   // 가락시장은 요일 규칙 없이 다음날
+  const days = garak ? [0,1,2,3,4,5,6] : (sam ? [1,3,5] : [0,2,4]);
+  const out = []; const d = new Date(); let skip = garak ? 0 : 1;
+  for (let i = 1; i < 40 && out.length < 5; i++){
+    const t = new Date(d); t.setDate(d.getDate()+i);
+    if (days.includes(t.getDay())){ if (skip-- > 0) continue; out.push(t); }
+  }
+  const W = '일월화수목금토';
+  document.getElementById('madaeDay').innerHTML = out.map(t => `<option value="${ymd(t)}">${t.getMonth()+1}/${t.getDate()}(${W[t.getDay()]})</option>`).join('');
+}
+
+// ══ 배출일: 내일부터 ══
+(() => { const t = new Date(); t.setDate(t.getDate()+1); const v = ymd(t); const e = document.getElementById('emit'); e.min = v; e.value = v; })();
+
+// ══ 가격표 보기 — PC: 떠 있는 창(이동·크기조절) / 폰: 아래에서 올라오는 판 ══
+let PT_CAT = '전체';
+function openPrice(){ document.getElementById('ptable').classList.add('on'); document.getElementById('ptDim').classList.add('on'); renderPrice(); renderCart(); }
+function closePrice(){ document.getElementById('ptable').classList.remove('on'); document.getElementById('ptDim').classList.remove('on'); }
+function renderPrice(){
+  const cats = ['전체', ...CAT_RULES.map(c => c[0]).filter(c => c !== '특수마대'), '생활·기타', '특수마대'];
+  const chips = document.getElementById('ptChips'); if (!chips) return;
+  chips.innerHTML = cats.map(c => `<button type="button" class="${c===PT_CAT?'on':''}" data-c="${c}">${c}</button>`).join('');
+  chips.querySelectorAll('button').forEach(b => b.onclick = () => { PT_CAT = b.dataset.c; renderPrice(); });
+  const q = document.getElementById('ptSearch').value.trim();
+  const hit = q.length >= 2 ? new Set(findItems(q).map(x => x.name)) : null;
+  let html = '';
+  cats.slice(1).forEach(c => {
+    if (PT_CAT !== '전체' && PT_CAT !== c) return;
+    const rows = PRICES.filter(x => x.cat === c && (!hit || hit.has(x.name))).sort((a,b) => a.name.localeCompare(b.name,'ko'));
+    if (!rows.length) return;
+    html += `<div class="pt-cat">${c}</div>` + rows.map(x => `<div class="pt-row" data-n="${esc(x.name)}"><span>${esc(x.name)}</span><em>${won(x.price)}<span class="plus">＋</span></em></div>`).join('');
+  });
+  document.getElementById('ptBody').innerHTML = html || `<div style="padding:16px;color:var(--warn);font-weight:700">찾는 품목이 없습니다. 전화로 문의해 주세요 (02-414-6221~2)</div>`;
+  document.querySelectorAll('.pt-row').forEach(el => el.onclick = () => addFromPrice(el.dataset.n));
+}
+function addFromPrice(n){
+  const x = PRICES.find(i => i.name === n); if (!x) return;
+  const same = rowsPicked().find(r => r.dataset.name === n);
+  if (same){ const c = same.querySelector('[data-cnt]'); c.value = (parseInt(c.value)||0) + 1; calc(); flash(`${n} 1개 더 담았습니다`); return; }
+  const empty = [...document.querySelectorAll('.item')].find(r => !r.querySelector('.nm').value.trim());
+  if (empty) setItem(empty, x); else addRow(x);
+  flash(`${n} 담았습니다`);
+}
+function renderCart(){
+  const el = document.getElementById('ptCart'); if (!el) return;
+  const n = rowsPicked().reduce((s,r) => s + (parseInt(r.querySelector('[data-cnt]').value)||0), 0);
+  el.textContent = n ? `${n}개 담음 · ${document.getElementById('sum').textContent}` : '담은 품목 없음';
+}
+(() => {   // PC: 제목줄 잡고 이동
+  const pt = document.getElementById('ptable'), hd = document.getElementById('ptHead');
+  let sx, sy, ox, oy, on = false;
+  hd.addEventListener('pointerdown', e => {
+    if (matchMedia('(max-width:760px)').matches || e.target.tagName === 'BUTTON') return;
+    on = true; const r = pt.getBoundingClientRect(); sx = e.clientX; sy = e.clientY; ox = r.left; oy = r.top;
+    pt.style.right = 'auto'; hd.setPointerCapture(e.pointerId);
+  });
+  hd.addEventListener('pointermove', e => { if (!on) return; pt.style.left = Math.max(0, ox + e.clientX - sx) + 'px'; pt.style.top = Math.max(0, oy + e.clientY - sy) + 'px'; });
+  hd.addEventListener('pointerup', () => on = false);
+})();
+
+// ══ 장난 접수 거르기 ══
+function badName(v){
+  v = v.trim();
+  if (v.length < 2) return true;
+  if (/[?!@#$%^&*()_+=<>~`"'\\/|{}\[\];:0-9]/.test(v)) return true;   // ?·숫자·특수문자
+  if (/[ㄱ-ㅎㅏ-ㅣ]/.test(v)) return true;                               // ㅋㅋ·ㅎㅎ 같은 자음·모음
+  if (/(.)\1\1/.test(v.replace(/\s/g,''))) return true;                 // 같은 글자 세 번 이상
+  return false;                                                         // 영어 이름은 통과
+}
+function badPhone(v){
+  const d = v.replace(/\D/g,'');
+  if (!/^010\d{8}$/.test(d)) return true;
+  const b = d.slice(3);
+  if (/^(\d)\1{7}$/.test(b)) return true;                                // 0000-0000
+  if (/^(\d)\1{3}/.test(b) && /(\d)\1{3}$/.test(b)) return true;         // 1111-2222
+  if ('0123456789012345'.includes(b) || '9876543210987654'.includes(b)) return true;   // 1234-5678
+  return false;
+}
+
+// ══ 접수 ══
+let busy = false;
+async function submitReq(){
+  if (busy) return;
+  const name = document.getElementById('name'), phone = document.getElementById('phone');
+  const nb = badName(name.value), pb = badPhone(phone.value);
+  name.classList.toggle('bad', nb); document.getElementById('nameErr').classList.toggle('on', nb);
+  phone.classList.toggle('bad', pb); document.getElementById('phoneErr').classList.toggle('on', pb);
+  const picked = rowsPicked();
+  const typed = [...document.querySelectorAll('.item')].filter(r => r.querySelector('.nm').value.trim() && !r.dataset.name);
+  if (!ADDR) return showMsg('주소를 확인해 주세요', ['주소검색으로 본에코 담당 구역(잠실본동·삼전동) 주소를 골라 주세요.']);
+  const dongV = document.getElementById('dong').value.trim(), hoV = document.getElementById('ho').value.trim();
+  if (ADDR.aptKey && (!dongV || !hoV)) return showMsg('동·호를 적어 주세요', ['아파트는 동과 호수를 숫자로 적어 주세요.']);
+  if (nb || pb){ (nb ? name : phone).focus(); return; }
+  if (ADDR.special === 'station'){
+    if (document.getElementById('stExit').value !== '5') return showMsg('출구를 확인해 주세요', ['잠실역 지하상가는 <b>5번 출구</b>만 본에코 담당입니다.']);
+  }
+  if (ADDR.special === 'garak'){
+    if (!document.getElementById('gkShop').value.trim()) return showMsg('상호명을 적어 주세요', ['가락시장은 상호명이 있어야 찾아갈 수 있습니다.']);
+    if (!document.getElementById('gkPillar').value.trim()) return showMsg('기둥 번호를 적어 주세요', ['강동수산 몇 번 기둥에 내놓으시는지 적어 주세요.']);
+  }
+  if (!ADDR.special && /지하\s*상가|잠실역/.test(document.getElementById('memo').value + ' ' + (document.getElementById('detail').value || '')))
+    return showMsg('주소를 확인해 주세요', ['잠실역 지하상가는 주소검색에서 <b>잠실역</b>을 골라 주세요.']);
+  if (typed.length) return showMsg('목록에 없는 품목이 있습니다', [`"${esc(typed[0].querySelector('.nm').value)}" — 목록에서 골라 주시거나, 목록에 없는 품목은 전화로 문의해 주세요 (02-414-6221~2).`]);
+  if (!picked.length) return showMsg('품목을 골라 주세요', ['버리실 품목을 한 개 이상 골라 주세요. 📋 가격표 보기에서 눌러 담을 수도 있습니다.']);
+  const emit = document.getElementById('emit').value;
+  if (!emit || emit < document.getElementById('emit').min) return showMsg('배출일을 확인해 주세요', ['배출일은 내일부터 고를 수 있습니다.']);
+
+  busy = true; const btn = document.getElementById('goBtn'); btn.disabled = true; btn.textContent = '접수 중…';
+  try {
+    const today = ymd(new Date()), tel = phone.value.replace(/\D/g,'');
+    // 같은 번호 하루 접수 수 — 5번째부터 막음
+    const cntRef = db.ref(`${DB_CNT}/${today}/${tel}`);
+    const tx = await cntRef.transaction(v => ((v || 0) >= MAX_PER_DAY) ? undefined : (v || 0) + 1);
+    if (!tx.committed) { showMsg('접수 확인이 필요합니다', ['같은 번호로 오늘 여러 번 접수되었습니다. 전화로 문의해 주세요.', '<b style="font-size:20px">02-414-6221~2</b>']); return; }
+
+    // 가락시장: 주소 칸 = 상호명, 비고 = 몇 번 기둥 / 잠실역: 주소 칸 = 잠실역지하상가, 비고 = 5번 출구
+    const 주소 = ADDR.special === 'garak' ? document.getElementById('gkShop').value.trim()
+               : ADDR.special === 'station' ? ADDR.jb
+               : (ADDR.aptKey ? `${dongV}-${hoV}` : (ADDR.jb || ADDR.jibun));
+    const detail = ADDR.special === 'garak' ? `${document.getElementById('gkPillar').value.trim()}번 기둥`
+                 : ADDR.special === 'station' ? '5번 출구'
+                 : (ADDR.aptKey ? '' : document.getElementById('detail').value.trim());
+    const memo = document.getElementById('memo').value.trim();
+    const 비고 = [detail, memo].filter(Boolean).join(' / ');
+    const toItem = r => { const c = parseInt(r.querySelector('[data-cnt]').value) || 1, u = +r.dataset.price;
+      return { 품목: r.dataset.name, 개수: String(c), 단가: u, 금액: u * c ? (u * c).toLocaleString() + '원' : '무상' }; };
+    const 성명 = name.value.trim();
+    const base = { 성명, 전화번호: phone.value.trim(), 주소, _dong: ADDR.dong,
+      주소원문: `${ADDR.road}${ADDR.bldg ? ' ' + ADDR.bldg : ''}`, 지번원문: ADDR.jibun, 행정동: ADDR.hname || '', 구역확인: ADDR.checked ? '행정동' : '법정동만',
+      비고, 접수시각: firebase.database.ServerValue.TIMESTAMP, 상태: 'new' };
+    const general = picked.filter(r => !isMadae(r.dataset.name)), madae = picked.filter(r => isMadae(r.dataset.name));
+    const sumOf = rs => rs.reduce((s,r) => s + (+r.dataset.price) * (parseInt(r.querySelector('[data-cnt]').value)||1), 0);
+    const writes = [];
+    if (general.length) writes.push({ ...base, _items: general.map(toItem), 총금액: sumOf(general).toLocaleString() + '원', 배출일: emit });
+    if (madae.length)   writes.push({ ...base, _items: madae.map(toItem), 총금액: '0원', 배출일: document.getElementById('madaeDay').value, 특수마대: true });
+    for (const w of writes) await db.ref(`${DB_REQ}/${today}`).push(w);
+
+    const sum = sumOf(general);
+    showDlg(`<h3>접수되었습니다</h3>
+      ${sum > 0 ? `<p>아래 계좌로 입금해 주시면 확인 후 수거합니다.</p>
+      <div class="acct"><div>본에코(주) 국민은행</div>
+        <div style="display:flex;align-items:center;gap:10px;"><b>080-25-0007-681</b>
+          <button type="button" class="copy" onclick="copyAcct(this)" aria-label="계좌번호 복사">📋 복사</button></div>
+        <div class="big">${sum.toLocaleString()}원</div></div>
+      <p><b>입금자명은 신청자 성명(${esc(name.value.trim())})으로</b> 보내 주세요.<br>입금 확인 후 배출일 다음날부터 3영업일 안에 수거합니다.</p>`
+      : `<p>무상 품목이라 입금 없이 수거합니다. 배출일에 내놓아 주세요.</p>`}
+      ${madae.length ? `<p style="margin-top:8px">특수마대는 고르신 배출일(${esc(document.getElementById('madaeDay').selectedOptions[0]?.textContent || '')})에 내놓아 주세요.</p>` : ''}
+      <div class="row"><button class="pri" type="button" onclick="closeDlg();resetForm()">확인</button></div>`);
+  } catch(e){
+    showMsg('접수하지 못했습니다', ['잠시 후 다시 시도해 주시거나 전화로 문의해 주세요 (02-414-6221~2).']);
+  } finally { busy = false; btn.disabled = false; btn.textContent = '접수하고 입금계좌 보기'; }
+}
+function resetForm(){ location.reload(); }
+// 계좌번호 복사 — 숫자만 복사해 은행앱 계좌번호 칸에 그대로 붙여넣기 되게
+function copyAcct(btn){
+  const t = '080250007681';
+  const done = () => { btn.textContent = '✅ 복사됨'; flash('계좌번호를 복사했습니다 — 은행앱에 붙여넣기 하세요'); setTimeout(() => btn.textContent = '📋 복사', 2000); };
+  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(t).then(done).catch(fallback); else fallback();
+  function fallback(){ const ta = document.createElement('textarea'); ta.value = t; ta.style.cssText = 'position:fixed;opacity:0'; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); done(); } catch(e){ flash('복사가 안 됩니다 — 080-25-0007-681 을 직접 입력해 주세요'); } ta.remove(); }
+}
+function showMsg(t, lines){ showDlg(`<h3>${t}</h3>${lines.map(l=>`<p>${l}</p>`).join('')}<div class="row"><button class="pri" type="button" onclick="closeDlg()">확인</button></div>`); }
+function showDlg(h){ document.getElementById('dlg').innerHTML = h; document.getElementById('ov').classList.add('on'); }
+function closeDlg(){ document.getElementById('ov').classList.remove('on'); }
+function flash(t){
+  let f = document.getElementById('flash');
+  if (!f){ f = document.createElement('div'); f.id = 'flash'; f.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 18px;border-radius:10px;font-weight:700;z-index:200;font-size:14px'; document.body.appendChild(f); }
+  f.textContent = t; f.style.display = 'block'; clearTimeout(f._t); f._t = setTimeout(() => f.style.display = 'none', 1400);
+}
+document.getElementById('ov').addEventListener('click', e => { if (e.target.id === 'ov') closeDlg(); });
+document.getElementById('addrOv').addEventListener('click', e => { if (e.target.id === 'addrOv') closeAddr(); });
+// 가격표 불러오기 — 원장 가격표 관리에 저장된 게 있으면 그걸 쓰고, 없으면 기본표
+loadPrices(PRICE_LIST);
+db.ref(DB_PRICE).once('value').then(s => { const v = s.val(); if (v) loadPrices(Array.isArray(v) ? v : Object.values(v)); }).catch(() => {});
+addRow();
+</script>
+</body>
+</html>
