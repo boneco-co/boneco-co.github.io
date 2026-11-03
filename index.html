@@ -131,6 +131,8 @@ textarea.in{ resize:vertical; min-height:72px; }
 .dlg .row{ display:flex; gap:10px; margin-top:16px; }
 .dlg .row button{ flex:1; border:none; border-radius:12px; padding:14px; font-weight:900; font-size:16px; }
 .pri{ background:var(--teal); color:#fff; }
+.dlg .row button:not(.pri){ background:#eef2f6; color:#334155; }
+.done-big{ font-size:30px; font-weight:900; color:#15803d; text-align:center; padding:6px 0 14px; letter-spacing:-.5px; }
 .sec{ background:#eef3f8; color:var(--ink); }
 .pick{ display:flex; flex-direction:column; gap:8px; margin-top:10px; }
 .pick button{ text-align:left; border:1.5px solid var(--line); background:#fff; border-radius:10px; padding:12px 14px; font-size:15px; }
@@ -300,7 +302,7 @@ footer{ text-align:center; color:var(--muted); font-size:14px; padding:10px 20px
     </section>
   </div>
 </main>
-<footer>본에코(주) · 평일 09:00~18:00 · 문의 02-414-6221~2 · <a href="#" onclick="event.preventDefault();showPrivacy()" style="color:inherit">개인정보 처리방침</a> <span style="font-size:11px;color:#9ca3af;margin-left:6px">v1019a</span></footer>
+<footer>본에코(주) · 평일 09:00~18:00 · 문의 02-414-6221~2 · <a href="#" onclick="event.preventDefault();showPrivacy()" style="color:inherit">개인정보 처리방침</a> <span style="font-size:11px;color:#9ca3af;margin-left:6px">v1103a</span></footer>
 
 <div class="pt-dim" id="ptDim" onclick="closePrice()"></div>
 <div class="ptable" id="ptable" role="dialog" aria-label="가격표">
@@ -908,9 +910,49 @@ function badPhone(v){
 }
 
 // ══ 접수 ══
-let busy = false;
+// [11_3] 버튼을 누르는 즉시 잠그고 '접수 중…' — 확인 창이 떠도 두 번 눌리지 않게. 접수가 끝나면 잠긴 채 '✅ 접수 완료'
+let busy = false, SUBMITTED = false;
+const GO_TXT = '접수하고 입금계좌 보기';
 async function submitReq(){
-  if (busy) return;
+  if (busy || SUBMITTED) return;
+  busy = true; const btn = document.getElementById('goBtn'); btn.disabled = true; btn.textContent = '접수 중…';
+  let ok = false;
+  try { ok = await submitInner(); } catch(e){ ok = false; }
+  finally {
+    busy = false;
+    if (ok){ SUBMITTED = true; btn.disabled = true; btn.textContent = '✅ 접수 완료'; }
+    else { btn.disabled = false; btn.textContent = GO_TXT; }
+  }
+}
+// [11_3] 같은 이름·전화·품목·금액으로 이미 접수된 건 확인 — 이 기기 기록(30일) + 오늘 접수함(읽을 수 있을 때만)
+const DUP_KEY = 'bon_sent';
+const normName = s => String(s || '').replace(/\s+/g, '');
+function sigOf(name, tel, items, total){
+  const it = items.map(i => `${i.품목}x${i.개수}`).sort().join(',');
+  return [normName(name), String(tel || '').replace(/\D/g, ''), it, String(total || '').replace(/\D/g, '')].join('|');
+}
+function sentLocal(){ try { const a = JSON.parse(localStorage.getItem(DUP_KEY) || '[]'); const cut = Date.now() - 30*864e5; return Array.isArray(a) ? a.filter(x => x && x.at > cut) : []; } catch(e){ return []; } }
+function rememberSent(sigs, no){ try { const a = sentLocal(); sigs.forEach(s => a.push({ s, at: Date.now(), no: no || '' })); localStorage.setItem(DUP_KEY, JSON.stringify(a.slice(-50))); } catch(e){} }
+async function findDup(sigs){
+  const loc = sentLocal().find(x => sigs.includes(x.s));
+  if (loc) return loc;
+  try {   // 손님 권한으로 접수함을 못 읽으면(보안 규칙) 조용히 넘어간다
+    const snap = await Promise.race([db.ref(`${DB_REQ}/${ymd(new Date())}`).once('value'), new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 4000))]);
+    let hit = null;
+    snap.forEach(c => { const v = c.val() || {}; if (!hit && sigs.includes(sigOf(v.성명, v.전화번호, v._items || [], v.총금액))) hit = { no: v.접수번호 || '' }; });
+    return hit;
+  } catch(e){ return null; }
+}
+function askDup(dup){
+  return new Promise(res => {
+    window._dupAns = v => { closeDlg(); res(v); };
+    showDlg(`<h3 style="color:var(--warn)">⚠️ 같은 내용으로 접수된 건이 있습니다</h3>
+      <p>같은 이름·전화번호·품목·금액으로 이미 접수되었습니다${dup && dup.no ? ` (접수번호 <b>${esc(dup.no)}</b>)` : ''}.</p>
+      <p>같은 물건을 한 번 더 접수하시면 수수료가 두 번 나갈 수 있습니다. 다른 물건이면 그대로 접수하셔도 됩니다.</p>
+      <div class="row"><button type="button" onclick="_dupAns(false)">취소</button><button class="pri" type="button" onclick="_dupAns(true)">그래도 접수</button></div>`);
+  });
+}
+async function submitInner(){
   const name = document.getElementById('name'), phone = document.getElementById('phone');
   const nb = badName(name.value), pb = badPhone(phone.value);
   name.classList.toggle('bad', nb); document.getElementById('nameErr').classList.toggle('on', nb);
@@ -936,10 +978,21 @@ async function submitReq(){
   const emit = document.getElementById('emit').value;
   if (!emit || emit < document.getElementById('emit').min) return showMsg('배출일을 확인해 주세요', ['배출일은 내일부터 고를 수 있습니다.']);
 
-  busy = true; const btn = document.getElementById('goBtn'); btn.disabled = true; btn.textContent = '접수 중…';
   try {
     await AUTH_READY;
     const today = ymd(new Date()), tel = phone.value.replace(/\D/g,'');
+    // [11_3] 같은 내용 접수 확인 (접수 수를 세기 전에)
+    {
+      const tItem = r => ({ 품목: r.dataset.name, 개수: String(parseInt(r.querySelector('[data-cnt]').value) || 1) });
+      const tSum = rs => rs.reduce((s,r) => s + (+r.dataset.price) * (parseInt(r.querySelector('[data-cnt]').value)||1), 0);
+      const g = picked.filter(r => !isMadae(r.dataset.name)), m = picked.filter(r => isMadae(r.dataset.name));
+      const sigs = [];
+      if (g.length) sigs.push(sigOf(name.value, tel, g.map(tItem), tSum(g).toLocaleString() + '원'));
+      if (m.length) sigs.push(sigOf(name.value, tel, m.map(tItem), '0원'));
+      window._pendingSigs = sigs;
+      const dup = await findDup(sigs);
+      if (dup && !(await askDup(dup))) return false;
+    }
     // 같은 번호 하루 접수 수 — 5번째부터 막음
     const cntRef = db.ref(`${DB_CNT}/${today}/${tel}`);
     const tx = await cntRef.transaction(v => ((v || 0) >= MAX_PER_DAY) ? undefined : (v || 0) + 1);
@@ -975,9 +1028,11 @@ async function submitReq(){
     if (general.length) writes.push({ ...base, _items: general.map(toItem), 총금액: sumOf(general).toLocaleString() + '원', 배출일: emit });
     if (madae.length)   writes.push({ ...base, _items: madae.map(toItem), 총금액: '0원', 배출일: document.getElementById('madaeDay').value, 특수마대: true });
     for (const w of writes) await db.ref(`${DB_REQ}/${today}`).push(w);
+    rememberSent(window._pendingSigs || [], bonNo);
 
     const sum = sumOf(general);
-    showDlg(`<h3>접수되었습니다</h3>
+    DONE_SHOWN = true;
+    showDlg(`<div class="done-big">✅ 접수 완료</div>
       ${bonNo ? `<div class="bonno"><div class="bl">접수번호</div>
         <div class="br"><b>${esc(bonNo)}</b><button type="button" class="copy" onclick="copyBonNo(this,'${esc(bonNo)}')" aria-label="접수번호 복사">📋 복사</button></div>
         <div class="bs">이 화면을 캡처해 두시면 편합니다</div></div>` : ''}
@@ -993,10 +1048,13 @@ async function submitReq(){
         ? `폐기물에 <b>'${esc(bonNo)}'</b> 접수번호를 적은 종이를 붙여 배출장소(지정한 곳)에 내놓아 주세요.`
         : `폐기물에 <b>'${ADDR.aptKey ? `${esc(dongV)}동 ${esc(hoV)}호 ` : ''}신고완료'</b>라고 적은 종이를 붙여 배출장소(지정한 곳)에 내놓아 주세요.`}</p>
       <div class="row"><button class="pri" type="button" onclick="closeDlg();resetForm()">확인</button></div>`);
+    return true;
   } catch(e){
     showMsg('접수하지 못했습니다', ['잠시 후 다시 시도해 주시거나 전화로 문의해 주세요 (02-414-6221~2).']);
-  } finally { busy = false; btn.disabled = false; btn.textContent = '접수하고 입금계좌 보기'; }
+    return false;
+  }
 }
+let DONE_SHOWN = false;
 function resetForm(){ location.reload(); }
 function showPrivacy(){
   showDlg(`<h3>개인정보 처리방침</h3>
@@ -1030,7 +1088,8 @@ function flash(t){
   if (!f){ f = document.createElement('div'); f.id = 'flash'; f.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 18px;border-radius:10px;font-weight:700;z-index:200;font-size:14px'; document.body.appendChild(f); }
   f.textContent = t; f.style.display = 'block'; clearTimeout(f._t); f._t = setTimeout(() => f.style.display = 'none', 1400);
 }
-document.getElementById('ov').addEventListener('click', e => { if (e.target.id === 'ov') closeDlg(); });
+// 완료 화면은 바깥을 눌러 닫아도 새 접수 화면으로 (같은 내용이 다시 눌리지 않게)
+document.getElementById('ov').addEventListener('click', e => { if (e.target.id === 'ov'){ closeDlg(); if (DONE_SHOWN) resetForm(); } });
 document.getElementById('addrOv').addEventListener('click', e => { if (e.target.id === 'addrOv') closeAddr(); });
 // 가격표 불러오기 — 원장 가격표 관리에 저장된 게 있으면 그걸 쓰고, 없으면 기본표
 loadPrices(PRICE_LIST);
