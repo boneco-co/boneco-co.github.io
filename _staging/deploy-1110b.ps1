@@ -19,7 +19,6 @@ $g = Get-ChildItem -Path 'D:\','C:\Users' -Directory -Filter '.git' -Recurse -Fo
 if (-not $g) { Write-Host '부장님 저장소 폴더를 못 찾았습니다.' -ForegroundColor Red; return }
 Set-Location (Split-Path $g.FullName -Parent)
 if (-not (git config user.email)) { git config user.name '본에코'; git config user.email 'boneco-co@users.noreply.github.com' }
-git am --abort 2>$null
 git pull --ff-only
 $p = Join-Path $env:TEMP 'boss-1110b.patch'
 Invoke-WebRequest -UseBasicParsing "$base/boss-1110b.patch?v=1" -OutFile $p

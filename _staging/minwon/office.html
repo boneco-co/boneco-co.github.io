@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#137a82">
+<title>본에코 민원처리 — 사무실</title>
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/favicon.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="본에코 민원">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  .rx{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+  .wrap{max-width:min(98vw,1900px);padding-left:10px;padding-right:10px}   /* 원장처럼 화면 폭을 넓게 */
+  #hmap{height:460px;border-radius:12px;background:#dde3ea}
+  .hpin{position:relative;padding:5px 10px;border-radius:10px;color:#fff;font-weight:900;font-size:13px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35);cursor:pointer;white-space:nowrap}
+  .hpin .ty{position:absolute;top:-13px;right:-16px;display:flex;gap:2px}
+  .hpin .ty b{color:#fff;border:1.5px solid #fff;border-radius:999px;font-size:11px;font-weight:900;padding:1px 7px;line-height:1.3}
+  .hpop{background:#fff;border-radius:12px;padding:10px 12px;box-shadow:0 6px 20px rgba(0,0,0,.25);font-size:13px;min-width:200px;max-width:270px;line-height:1.55}
+  .dc-step{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;padding:14px 0;border-top:1px solid #eef2f6}
+  .dc-step .n{font-size:26px;font-weight:900;color:var(--acc)}
+  .kp{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px}
+  .kp div{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+  .kp span{display:block;font-size:13px;font-weight:800;color:var(--ink-2)}
+  .kp b{display:block;font-size:28px;font-weight:900;margin-top:2px}
+  .rt td{font-size:13px;white-space:nowrap;cursor:pointer}
+  .rt td.ad{font-weight:800;font-size:14px}
+  .rt tr:hover td{background:#eef6f7}
+  .rt .ty{display:inline-block;color:#fff;border-radius:999px;font-size:11px;font-weight:900;padding:1px 7px;margin-right:2px}
+  .rt .st{display:inline-block;border-radius:999px;font-size:12px;font-weight:900;padding:2px 9px}
+  .rt .st.done{background:var(--ok-bg);color:var(--ok)} .rt .st.open{background:var(--bad-bg);color:var(--bad)} .rt .st.part{background:#fef3c7;color:#a16207}
+  @media(max-width:1000px){.rx{grid-template-columns:1fr} .rx > .left{order:2}}   /* 세로 화면: 민원 접수가 위, 현황이 아래 */
+  .f2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .fcard > .frow + .frow{margin-top:22px}     /* 줄 간격 균등 */
+  @media(max-width:600px){.f2{grid-template-columns:1fr}}
+  .dt-row{display:grid;grid-template-columns:1.4fr 1fr;gap:8px}
+  .lbl{display:flex;align-items:center;gap:8px}
+  .msel{position:relative}
+  .msel-btn{text-align:left;cursor:pointer;background:#fff;padding-right:34px;position:relative}
+  .msel-btn::after{content:'▾';position:absolute;right:13px;top:50%;transform:translateY(-50%);color:var(--mute)}
+  .msel-btn.has{color:var(--acc);font-weight:800;background:var(--acc-bg);border-color:var(--acc-line)}
+  .msel-list{display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);background:#fff;border:1.5px solid var(--acc-line);
+    border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.12);padding:6px;z-index:60}
+  .msel.open .msel-list{display:block}
+  .msel-list button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:none;background:none;
+    padding:10px 12px;border-radius:8px;font-size:15px;font-weight:700;color:var(--ink-2)}
+  .msel-list button:hover{background:#f5f8fc}
+  .msel-list button i{width:18px;height:18px;border:2px solid var(--line);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-size:12px}
+  .msel-list button.on{color:var(--acc);background:var(--acc-bg)}
+  .msel-list button.on i{background:var(--acc);border-color:var(--acc);color:#fff}
+  .msel-list button.on i::before{content:'✓'}
+  .tel-row{display:flex;align-items:center;gap:8px}
+  .tel-row b{font-size:16px;color:var(--ink-2);white-space:nowrap}
+  .sub-box{background:#f3f7fb;border-radius:12px;padding:10px 12px;margin-top:8px}
+  .addr-row{display:flex;gap:8px}
+  .addr-res{margin-top:7px;font-size:13px;font-weight:700;padding:8px 11px;border-radius:10px;display:none}
+  .addr-res.ok{display:block;background:var(--ok-bg);color:var(--ok)}
+  .addr-res.bad{display:block;background:var(--bad-bg);color:var(--bad)}
+  .addr-res.warn{display:block;background:var(--warn-bg);color:var(--warn)}
+  .sugg{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+  .sugg button{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:4px 11px;font-size:13px;font-weight:700}
+  textarea.in{min-height:76px;resize:vertical;line-height:1.5}
+  .plan{background:var(--acc-bg);color:var(--ink);border:1px solid var(--acc-line);border-radius:12px;padding:12px 14px}
+  .plan h4{font-size:12px;color:var(--acc);font-weight:800;margin-bottom:6px}
+  .plan .pl{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;margin:4px 0}
+  .plan .pl i{width:10px;height:10px;border-radius:50%;display:inline-block}
+  .plan .pl small{color:var(--mute);font-weight:600}
+  .done{background:var(--ok-bg);border:1px solid #B5E2CB;border-radius:14px;padding:14px;margin-bottom:12px;display:none}
+  .done b{font-size:22px;color:var(--ok)}
+  .mc{border:1px solid var(--line);border-left:5px solid var(--line);border-radius:12px;padding:11px 12px;margin-bottom:8px;background:#fff;cursor:pointer}
+  .mc:hover{background:#F8FAFC}
+  .mc .t{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--mute);font-weight:700}
+  .mc .a{font-size:15px;font-weight:800;margin:3px 0}
+  .mc .c{font-size:13px;color:var(--ink-2)}
+  .tm{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;margin-right:8px}
+  .tm i{width:8px;height:8px;border-radius:50%;display:inline-block}
+  .pc-ov{position:fixed;inset:0;background:rgba(15,22,34,.55);z-index:700;display:none;align-items:center;justify-content:center;padding:16px}
+  .pc-ov.on{display:flex}
+  .pc-box{background:#fff;border-radius:16px;padding:12px;width:min(540px,100%)}
+  #today tr[data-id]{cursor:pointer;user-select:none} #today tr[data-id]:hover td{background:#eef6f7}
+</style>
+</head>
+<body>
+<div class="boot" id="boot">확인 중…</div>
+<div id="hd"></div>
+<nav class="tabs">
+  <button class="tab" data-tab="input">✏️ 접수</button>
+  <button class="tab" data-tab="result">📋 결과확인</button>
+  <button class="tab" data-tab="holiday">📅 휴일관리</button>
+  <button class="tab" data-tab="photo">🖨 사진대지</button>
+  <button class="tab mgr" data-tab="month" style="display:none">🗄 데이터 정리</button>
+</nav>
+<main class="wrap">
+  <div class="note warn" id="dc-alert" style="display:none;cursor:pointer;margin-bottom:12px"></div>
+  <section class="pane" id="pane-input">
+    <div class="rx">
+      <!-- 왼쪽: 현황 숫자 + 최근 접수 표 (디지털원장 첫 화면 방식) -->
+      <div class="left">
+        <div class="kp">
+          <div><span>오늘 접수</span><b id="k-recv">0</b></div>
+          <div><span>오늘 처리</span><b id="k-done" style="color:var(--ok)">0</b></div>
+          <div><span>미처리 (오늘까지)</span><b id="k-open" style="color:var(--bad)">0</b></div>
+          <div><span>내일 예정</span><b id="k-next" style="color:var(--acc)">0</b></div>
+        </div>
+        <div class="done" id="done"></div>
+        <div class="card">
+          <div class="card-t"><span>최근 접수 <span class="muted" id="today-cnt" style="display:none"></span></span><span class="muted" style="font-weight:600">방금 저장한 건이 맨 위 · 더블클릭하면 수정창</span></div>
+          <div id="dup"></div>
+          <div class="tbl-wrap"><table class="tbl rt"><thead><tr><th>시각</th><th>접수번호</th><th>유형</th><th>주소</th><th>종류</th><th>담당</th><th>처리</th></tr></thead>
+            <tbody id="today"><tr><td colspan="7" class="muted">불러오는 중…</td></tr></tbody></table></div>
+        </div>
+        <!-- 전체 민원 지도: 미처리 전부 + 오늘 처리 (처리 초록 · 미처리 빨강, 오른쪽 위 민원성상) -->
+        <div class="card">
+          <div class="card-t"><span>민원 지도 <span class="muted" style="font-weight:600">전체 팀 · 미처리 전부 + 오늘 처리</span></span>
+            <span class="muted" style="font-weight:700"><span style="color:#dc2626">●</span> 미처리 <b id="hm-open">0</b> · <span style="color:#16a34a">●</span> 처리 <b id="hm-done">0</b></span></div>
+          <div id="hmap"></div>
+        </div>
+      </div>
+
+      <!-- 접수 입력 -->
+      <div class="card fcard">
+        <div class="card-t">민원 접수 <button class="btn sm orange" id="clear">🗑 지우기</button></div>
+
+        <div class="f2 frow">
+          <div>
+            <div class="lbl">접수일시</div>
+            <div class="dt-row">
+              <input class="in" type="date" id="f-date">
+              <input class="in" type="time" id="f-time">
+            </div>
+          </div>
+          <div>
+            <div class="lbl">민원유형</div>
+            <div class="chips" id="f-kind">
+              <button type="button" class="chip on" data-k="개인">👤 개인</button>
+              <button type="button" class="chip" data-k="기관">🏛 기관</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="f2 frow">
+          <div>
+            <div class="lbl"><span id="tel-lbl">민원인번호</span>
+              <label id="hide-wrap" style="display:none;margin-left:auto;font-size:12px;font-weight:700;color:var(--ink-2)"><input type="checkbox" id="f-hide"> 민원인 미공개</label></div>
+            <div class="tel-row"><b id="tel-pre">010-</b><input class="in" id="f-tel" inputmode="tel" maxlength="13" placeholder="뒤 8자리" autocomplete="off"></div>
+          </div>
+          <div>
+            <div class="lbl">민원종류 <span class="muted">(여러 개 고를 수 있음)</span></div>
+            <div class="msel" id="msel">
+              <button type="button" class="in msel-btn" id="f-types-btn">민원종류 선택</button>
+              <div class="msel-list" id="f-types"></div>
+            </div>
+            <div class="sub-box" id="etc-box" style="display:none">
+              <div class="lbl" style="margin-top:0">기타 — 담당 팀</div>
+              <select class="in" id="f-etc"></select>
+            </div>
+            <div class="sub-box" id="cont-box" style="display:none">
+              <div class="lbl" style="margin-top:0">공용용기 — 요청 내용 <span class="muted">(꼭 고르기)</span></div>
+              <div class="chips" id="f-cont">
+                <button type="button" class="chip" data-c="파손">파손</button>
+                <button type="button" class="chip" data-c="분실">분실</button>
+                <button type="button" class="chip" data-c="신규">신규</button>
+              </div>
+            </div>
+            <div class="sub-box" id="large-box" style="display:none">
+              <div class="lbl" style="margin-top:0">대형폐기물 처리</div>
+              <div class="chips" id="f-large">
+                <button type="button" class="chip on" data-m="next">대형팀 · 다음 근무일</button>
+                <button type="button" class="chip" data-m="today">🚨 대형팀 · 오늘 긴급</button>
+                <button type="button" class="chip" data-m="day">기동반 (작은 물건·리프트)</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 기관 -->
+        <div class="frow" id="g-box" style="display:none">
+          <div class="f2">
+            <div><div class="lbl">기관</div><select class="in" id="f-agency"></select></div>
+            <div><div class="lbl">주무관 이름</div><input class="in" id="f-officer" lang="ko" autocomplete="off"></div>
+          </div>
+        </div>
+
+        <div class="f2 frow">
+          <div>
+            <div class="lbl">주소</div>
+            <div class="addr-row">
+              <button type="button" class="btn dark" id="f-search" style="white-space:nowrap">🔍 주소검색</button>
+              <select class="in" id="f-dong" style="width:auto;flex:0 0 auto"></select>
+              <input class="in" id="f-addr" lang="ko" autocomplete="off" placeholder="199 / 514-1302">
+            </div>
+            <div class="addr-res" id="addr-res"></div>
+          </div>
+          <div>
+            <div class="lbl">위치 설명 <span class="muted">(선택)</span></div>
+            <input class="in" id="f-place" lang="ko" autocomplete="off" placeholder="예: OO빌라 앞 전봇대, 분리수거장 옆">
+          </div>
+        </div>
+        <div class="frow">
+          <div class="lbl">민원내용</div>
+          <textarea class="in" id="f-content" lang="ko"></textarea>
+        </div>
+
+        <div class="frow plan" id="plan"><h4>배정 미리보기</h4><div id="plan-body" class="muted">민원종류를 고르면 보입니다</div></div>
+        <div class="frow">
+          <button class="btn primary block" id="f-save">💾 접수 저장</button>
+          <div class="err" id="f-err"></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="pane" id="pane-result">
+    <div class="card">
+      <div class="card-t">결과확인</div>
+      <div id="results"></div>
+    </div>
+    <div class="card" id="log-card" style="display:none"><div class="card-t">담당 변경·삭제 기록</div><div id="as-log"><div class="muted">불러오는 중…</div></div></div>
+  </section>
+
+  <!-- 휴일관리 (관리자·사무실) -->
+  <section class="pane" id="pane-holiday">
+    <div class="card">
+      <div class="card-t">휴일관리</div>
+      <div class="note info hol-help">
+        <b>날짜를 누를 때마다</b> &nbsp;휴무 → 정상 근무 → 원래대로 바뀝니다.<br>
+        휴무로 정한 날에는 그 날 배정될 민원이 <b>다음 근무일</b>로 넘어갑니다. (이미 접수된 민원은 그대로 — 필요하면 결과확인에서 담당 변경)<br>
+        설·추석은 기본으로 쉬고, 그 밖의 공휴일은 근무입니다. 공휴일에 쉬려면 그 날을 눌러 휴무로 바꿔 주세요.
+      </div>
+      <div class="cal-legend">
+        <span><i style="background:#ef4444;border-color:#dc2626"></i>쉬는 날 (설·추석 기본 휴무, 지정 휴무·임시공휴일)</span>
+        <span><i style="background:#fee2e2;border-color:#fca5a5"></i>공휴일 (근무)</span>
+        <span><i style="background:var(--ok-bg);border-color:#86efac"></i>정상 근무 (지정)</span>
+      </div>
+      <div class="cal-nav">
+        <button class="btn sm" id="cal-prev">◀</button>
+        <select class="in" id="cal-y"></select>
+        <select class="in" id="cal-m"></select>
+        <button class="btn sm" id="cal-next">▶</button>
+        <button class="btn sm primary" id="cal-today">오늘</button>
+      </div>
+      <div id="cal"></div>
+    </div>
+  </section>
+
+  <!-- 관리자: 사진대지 · 데이터 정리 (M5) -->
+  <section class="pane" id="pane-photo"><div class="card"><div class="card-t">사진대지 <span class="muted">평가서류용 A4 — 한 장에 3건 (처리 전 · 처리 후)</span></div><div id="ps"></div></div></section>
+  <section class="pane" id="pane-month">
+    <div class="card">
+      <div class="card-t">📷 사진 저장 공간</div>
+      <div class="gauge"><i id="g-bar" style="width:0"></i></div>
+      <div class="muted" id="g-txt">-</div>
+      <div class="note warn" id="g-warn" style="display:none;margin-top:10px"></div>
+    </div>
+    <div class="card"><div class="card-t">데이터 정리 <span class="muted">한 달에 한 번 — 사진은 PC에 받아 두고 서버에서 지웁니다 (글 기록은 2년 보관)</span></div><div id="dc"></div></div>
+  </section>
+</main>
+
+
+<!-- 다음 우편번호 -->
+<div class="pc-ov" id="pc-ov"><div class="pc-box">
+  <div class="row" style="justify-content:space-between;margin:2px 4px 8px"><b>주소검색</b><button class="btn sm" id="pc-x">닫기</button></div>
+  <div id="pc" style="height:460px;max-height:70vh"></div>
+</div></div>
+
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://t1.kakaocdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script src="assets/config.js"></script>
+<script src="assets/seed.js"></script>
+<script src="assets/geo-data.js"></script>
+<script src="assets/assign.js"></script>
+<script src="assets/address.js"></script>
+<script src="assets/core.js"></script>
+<script src="assets/results.js"></script>
+<script src="assets/admin.js"></script>
+<script src="assets/photosheet.js"></script>
+<script src="assets/cleanup.js"></script>
+<script>
+(async function () {
+  const p = await MW.guard(['office', 'manager']);
+  const { C, db, esc, cref, toast, ymd } = MW;
+  const $ = id => document.getElementById(id);
+  // [11_3] 프로그램 관리자는 ?as=manager 면 현장관리자 화면, 아니면 사무실 화면
+  const mgr = p.role === 'manager' || (p.role === 'dev' && MW.devAs() === 'manager');
+  MW.header(p, mgr ? '관리자' : '사무실');
+  // [11_4] 수거앱 알림 칸(unseen) 맞추기 — '미처리 민원' 목록과 같게: 미처리인데 빠진 건은 넣고(접수시각 포함), 처리된 건은 뺀다.
+  //   (11/2~11/3 버전은 열어 보면 지웠기 때문에 한 번 맞춰 준다. 사무실 화면을 열 때 조용히 한 번)
+  (async () => {
+    try {
+      const since = ymd(new Date(Date.now() - 60 * 864e5));
+      const [ts, us] = await Promise.all([cref('tasks').orderByChild('workDate').startAt(since).once('value'), cref('unseen').once('value')]);
+      const T0 = ts.val() || {}, U0 = us.val() || {}, uu = {};
+      Object.entries(T0).forEach(([tid, t]) => {
+        if (!t || !t.team || !t.workDate) return;
+        const open = t.state !== 'done' && t.state !== 'fail', u = U0[tid];
+        if (open && (!u || u.team !== t.team || u.workDate !== t.workDate || !u.recvAt)) uu['c/' + C.company + '/unseen/' + tid] = { team: t.team, shift: t.shift || '', workDate: t.workDate, recvAt: t.recvAt || 0 };
+        if (!open && u) uu['c/' + C.company + '/unseen/' + tid] = null;
+      });
+      Object.entries(U0).forEach(([tid]) => { if (!T0[tid]) uu['c/' + C.company + '/unseen/' + tid] = null; });   // 지워진 민원·60일 넘은 건
+      if (Object.keys(uu).length) await db.ref().update(uu);
+    } catch (e) { console.warn('알림 칸 맞추기 실패', e); }
+  })();
+  // 관리자 탭(데이터 정리)은 관리자만 — 한 화면에 합침
+  document.querySelectorAll('.tab.mgr').forEach(b => b.style.display = mgr ? '' : 'none');
+  if (['assign', 'risk'].concat(mgr ? [] : ['month']).indexOf(MW.ls.get('mw_tab_' + location.pathname, '')) >= 0) MW.ls.set('mw_tab_' + location.pathname, 'input');
+  MW.tabs();
+  const ADM = MW_ADMIN.init(p);
+  // 사진대지 (사무실·관리자 — R-91): 탭을 처음 열 때 불러온다 / 데이터 정리는 관리자만
+  let psOn = false;
+  const psTab = document.querySelector('.tab[data-tab="photo"]'), psMount = () => { if (psOn) return; psOn = true; MW_SHEET.mount($('ps'), { me: p }); };
+  psTab.addEventListener('click', psMount); if (psTab.classList.contains('on')) psMount();
+  if (mgr) MW_CLEANUP.init(p);
+  // 결과확인: 탭을 처음 열 때 불러온다 (접수만 할 때는 데이터를 받지 않음). 관리자는 주무관·담당 변경까지
+  let resMounted = false, RES = null;
+  const mountRes = () => { if (resMounted) return RES; resMounted = true; return RES = MW_RESULTS.mount($('results'), { admin: mgr, canAssign: mgr, canDelete: mgr, me: p }); };
+  document.querySelector('.tab[data-tab="result"]').addEventListener('click', mountRes);
+  if (document.querySelector('.tab[data-tab="result"]').classList.contains('on')) mountRes();
+
+  let S = MW_SEED;                 // 서버 설정이 오면 바꾼다
+  let kind = '개인', types = [], largeMode = 'next';
+  let addr = null;                 // 해석된 주소
+  let pin = null;                  // {lat,lng,fixed}
+  let todayList = {};
+
+  // ── 설정 ──
+  cref('settings').on('value', s => { const v = s.val(); if (v) S = MW_withSeed(v); fillLists(); renderPlan(); });
+  function teamsSorted() { return Object.entries(S.teams).sort((a, b) => (a[1].order || 0) - (b[1].order || 0)); }
+  function fillLists() {
+    $('f-types').innerHTML = S.types.map(t => '<button type="button" class="' + (types.indexOf(t) >= 0 ? 'on' : '') + '" data-t="' + esc(t) + '"><i></i>' + esc(t) + '</button>').join('');
+    $('f-types').querySelectorAll('button').forEach(b => b.onclick = () => toggleType(b.dataset.t));
+    typesLabel();
+    const keep = $('f-etc').value;
+    $('f-etc').innerHTML = teamsSorted().map(([k, t]) => '<option value="' + k + '">' + esc(t.name) + '</option>').join('');
+    if (keep) $('f-etc').value = keep;
+    const ka = $('f-agency').value;
+    $('f-agency').innerHTML = (S.agencies || []).map(a => '<option>' + esc(a) + '</option>').join('');
+    if (ka) $('f-agency').value = ka;
+  }
+
+  // ── 접수일시: 직접 고치기 전까지는 지금 시각을 따라간다 ──
+  const toLocalInput = d => ymd(d) + 'T' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+  // 접수일시: 원장처럼 날짜 칸 + 시각 칸. 직접 고치기 전까지는 지금 시각을 따라간다
+  function tickTime() {
+    if ($('f-date').dataset.touched) return;
+    const v = toLocalInput(new Date()).split('T');
+    $('f-date').value = v[0]; $('f-time').value = v[1];
+  }
+  const recvAtOf = () => new Date($('f-date').value + 'T' + ($('f-time').value || '00:00'));
+  ['f-date', 'f-time'].forEach(id => $(id).addEventListener('input', () => { $('f-date').dataset.touched = '1'; renderPlan(); }));
+  // 민원종류 드롭다운 (여러 개 선택)
+  function typesLabel() {
+    const b = $('f-types-btn');
+    b.textContent = types.length ? types.map(t => t === '공용용기' && contReason ? t + '(' + contReason + ')' : t).join(', ') : '민원종류 선택';
+    b.classList.toggle('has', types.length > 0);
+  }
+  $('f-types-btn').onclick = e => {
+    e.stopPropagation(); $('msel').classList.toggle('open');
+    if (types.indexOf('공용용기') >= 0) $('cont-box').style.display = '';   // 다시 열면 요청 내용도 바꿀 수 있게
+  };
+  document.addEventListener('click', e => { if (!$('msel').contains(e.target)) $('msel').classList.remove('open'); });
+  setInterval(() => { tickTime(); renderPlan(); }, 30000);
+  tickTime();
+
+  // ── 유형 ──
+  $('f-kind').querySelectorAll('.chip').forEach(b => b.onclick = () => {
+    kind = b.dataset.k;
+    $('f-kind').querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === b));
+    $('g-box').style.display = kind === '기관' ? '' : 'none';
+    $('hide-wrap').style.display = kind === '기관' ? 'inline-flex' : 'none';
+    if (kind === '개인' && $('f-hide').checked) { $('f-hide').checked = false; telMode(); }
+  });
+  // 민원인 미공개(기관): 같은 칸에 구청번호를 받는다 — 앞자리 02-, 보통 2147-xxxx
+  function telMode() {
+    const h = $('f-hide').checked;
+    $('tel-pre').textContent = h ? '02-' : '010-';
+    $('tel-lbl').textContent = h ? '구청번호' : '민원인번호';
+    $('f-tel').placeholder = h ? '2147-xxxx' : '뒤 8자리';
+  }
+  $('f-hide').onchange = () => { $('f-tel').value = ''; telMode(); checkDup(); $('f-tel').focus(); };
+
+  // ── 민원종류 ──
+  function toggleType(t) {
+    const i = types.indexOf(t);
+    if (i >= 0) types.splice(i, 1); else types.push(t);
+    types.sort((a, b) => S.types.indexOf(a) - S.types.indexOf(b));
+    $('f-types').querySelectorAll('button').forEach(b => b.classList.toggle('on', types.indexOf(b.dataset.t) >= 0));
+    typesLabel();
+    $('etc-box').style.display = types.indexOf('기타') >= 0 ? '' : 'none';
+    $('large-box').style.display = types.indexOf('대형') >= 0 ? '' : 'none';
+    if (types.indexOf('공용용기') < 0) { contReason = ''; $('f-cont').querySelectorAll('.chip').forEach(x => x.classList.remove('on')); }
+    $('cont-box').style.display = types.indexOf('공용용기') >= 0 && !contReason ? '' : 'none';
+    typesLabel();
+    renderPlan();
+  }
+  let contReason = '';
+  // 파손·분실·신규를 고르면 고르는 창은 닫고, 민원종류 칸에 '공용용기(파손)'처럼 보인다
+  $('f-cont').querySelectorAll('.chip').forEach(b => b.onclick = e => {
+    e.stopPropagation();
+    contReason = b.dataset.c;
+    $('f-cont').querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === b));
+    $('cont-box').style.display = 'none'; $('msel').classList.remove('open');
+    typesLabel();
+  });
+  $('f-etc').onchange = renderPlan;
+  $('f-large').querySelectorAll('.chip').forEach(b => b.onclick = () => {
+    largeMode = b.dataset.m;
+    $('f-large').querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === b));
+    renderPlan();
+  });
+
+  // ── 전화번호: 010- 뒤 8자리만 (다른 번호는 그대로) ──
+  function fmtTel(el) {
+    let v = el.value.replace(/[^0-9]/g, '');
+    if (v.startsWith('010') && v.length > 8) v = v.slice(3);
+    if ($('f-hide').checked && v.startsWith('02') && v.length > 8) v = v.slice(2);
+    el.value = v.length > 4 && v.length <= 8 ? v.slice(0, 4) + '-' + v.slice(4) : v;
+  }
+  function fullTel(el, pre) {
+    const v = el.value.replace(/[^0-9]/g, '');
+    if (!v) return '';
+    if (v.length === 8) return (pre || '010') + '-' + v.slice(0, 4) + '-' + v.slice(4);
+    if (pre === '02' && v.length === 7) return '02-' + v.slice(0, 3) + '-' + v.slice(3);
+    if (v.startsWith('02') && v.length >= 9) return v.replace(/^(02)(\d{3,4})(\d{4})$/, '$1-$2-$3');
+    return v.replace(/^(\d{3})(\d{3,4})(\d{4})$/, '$1-$2-$3');
+  }
+  $('f-tel').addEventListener('input', () => { fmtTel($('f-tel')); checkDup(); });
+
+  // ── 주소 ──
+  function showAddr(a) {
+    const el = $('addr-res');
+    el.className = 'addr-res';
+    if (!a) { el.textContent = ''; return; }
+    if (!a.ours) { el.className = 'addr-res bad'; el.textContent = '❌ ' + (a.reason || '담당 구역이 아닙니다'); return; }
+    el.className = 'addr-res ' + (a.warn ? 'warn' : 'ok');
+    el.textContent = (a.warn ? '⚠️ ' + a.warn : '✅ 우리 구역 · ' + (a.hdong || '') + ' · ' + a.text) + (a.note ? ' — ' + a.note : '');
+  }
+  // 주소: [동 구분] + 줄여 쓰기 (원장 접수페이지 방식), 그 밖의 주소는 🔍 주소검색
+  //   주소검색으로 채운 경우 칸에는 검색 결과가 들어가고, 아파트는 뒤에 동·호를 이어 쓴다
+  // 원장 동 구분과 같은 목록·이름 (가락시장 = 강동수산만 담당)
+  const DONG_OPTS = [['', '동 구분'], ['잠실본동', '잠실동'], ['삼전동', '삼전동']]
+    .concat(Object.keys(MW_GEO.apts).map(k => [k, k === '5단지' ? '5단지아파트' : k]))
+    .concat([['가락시장', '가락시장']]);
+  const DONG_PREFIX = k => k === '잠실본동' ? '본' : k === '삼전동' ? '삼' : k ? MW_GEO.apts[k].short : '';
+  $('f-dong').innerHTML = DONG_OPTS.map(([v, t]) => '<option value="' + esc(v) + '">' + esc(t) + '</option>').join('');
+  let addrBase = '';               // 주소검색으로 채운 앞부분
+  let addrT = null;
+  $('f-addr').addEventListener('input', () => {
+    clearTimeout(addrT);
+    addrT = setTimeout(onAddrTyped, 400);
+  });
+  // 동 구분은 골라도 되고, 안 고르면 입력한 글자(본·삼·단지 이름)로 자동 선택된다
+  function addrPlaceholder() { $('f-addr').placeholder = '직접입력'; }
+  $('f-dong').onchange = () => { addrBase = ''; addr = null; pin = null; addrPlaceholder(); onAddrTyped(); $('f-addr').focus(); };
+  addrPlaceholder();
+  function onAddrTyped() {
+    const v = $('f-addr').value.trim();
+    const pv = MW_ADDR.parseShort(v);
+    if ($('f-dong').value === '가락시장' && (!pv || pv.special === 'garak')) {   // 가락시장: 칸에는 상호명만 (강동수산 건물)
+      const g = MW_ADDR.parseShort('가락시장');
+      const shop = v.replace(/가락\s*시장|\(?강동수산\)?/g, '').trim();
+      g.text = g.text + (shop ? ' ' + shop : ''); g.note = '가락시장은 강동수산 건물만 담당입니다';
+      addrBase = ''; addr = g; showAddr(g); checkDup();
+      if (!pin) locate(g);
+      return;
+    }
+    if (!v) { addr = null; pin = null; addrBase = ''; showAddr(null); hideMap(); checkDup(); return; }
+    if (!addrBase || !v.startsWith(addrBase.trim())) {
+      // 줄여 쓰기: 동 구분 + 입력 → 안 되면 입력만으로 ('본 199' '주공 514-1302' 처럼 써도 됨)
+      addrBase = '';
+      const sel = $('f-dong').value;
+      // 입력에 본·삼·단지 이름이 있으면 그것이 우선, 없으면 고른 동 구분을 앞에 붙여 해석
+      let a = MW_ADDR.parseShort(v);
+      if (!a && sel) a = MW_ADDR.parseShort(DONG_PREFIX(sel) + ' ' + v);
+      if (a) $('f-dong').value = a.kind === 'apt' ? a.apt : a.special === 'garak' ? '가락시장'
+        : (a.hdong === '삼전동' || a.law === '삼전동') ? '삼전동' : (a.kind === 'house' && a.law) ? '잠실본동' : $('f-dong').value;
+      if (a && a.special === 'garak') return onAddrTyped();   // 가락시장으로 바뀌면 상호명까지 다시 읽기
+      if (!a) {
+        addr = null; pin = null; hideMap();
+        showAddr({ ours: false, reason: sel ? '번지(예: 199, 64-8) 또는 동-호(예: 514-1302)로 적어 주세요'
+          : /^\d/.test(v) ? '앞에 본·삼·단지 이름을 붙이거나(예: 본 199, 트리 320-1203) 동 구분을 골라 주세요'
+          : '알아보지 못한 주소입니다 — 🔍 주소검색을 눌러 주세요' });
+        checkDup(); return;
+      }
+      const same = addr && addr.kind === a.kind && addr.apt === a.apt && addr.aptDong === a.aptDong && addr.jibun === a.jibun;
+      addr = same ? Object.assign({}, addr, a, { note: addr.note || '' }) : a;   // 검색으로 얻은 도로명 등은 유지
+      showAddr(addr); checkDup();
+      if (!same || !pin) { pin = null; locate(addr); }
+      return;
+    }
+    addr.text = v;
+    if (addr.kind === 'apt') {     // 아파트: 이어 쓴 동·호로 핀을 그 동에 옮긴다
+      const m = v.slice(addrBase.length).match(/(\d{1,3})\s*동?\s*[- ]?\s*(\d{1,4})?/);
+      const dong = m ? m[1] : '', ho = m && m[2] ? m[2] : '';
+      if (dong !== addr.aptDong) {
+        addr.aptDong = dong; addr.ho = ho;
+        addr.warn = dong && !MW_GEO.aptDongs[addr.apt][dong] ? MW_GEO.apts[addr.apt].short + ' ' + dong + '동은 동 목록에 없습니다 — 동 번호를 확인해 주세요' : '';
+        if (!(pin && pin.fixed)) locate(addr);
+      } else addr.ho = ho;
+      addr.note = dong ? '' : '동·호를 이어서 적어 주세요';
+      showAddr(addr);
+    }
+    checkDup();
+  }
+  async function locate(a) {
+    let c = MW_ADDR.coordOf(a);
+    if (!c) {
+      const k = MW_ADDR.cacheKey(a);
+      const cached = (await cref('geo/coordCache/' + k).once('value')).val();
+      c = cached || await MW_ADDR.geocode(a, C.kakao.restKey);
+      if (c && !cached) cref('geo/coordCache/' + k).set({ lat: c.lat, lng: c.lng }).catch(() => {});
+      if (c) c.exact = true;
+    }
+    if (addr !== a) return;     // 그새 주소가 바뀌었으면 버림
+    if (!c) { const d = MW_GEO.dongCenter[a.hdong] || MW_GEO.dongCenter['잠실본동']; c = { lat: d.lat, lng: d.lng, exact: false }; }
+    pin = { lat: c.lat, lng: c.lng, fixed: false, exact: !!c.exact };
+    showMap(pin);
+  }
+
+  // 다음 우편번호
+  $('f-search').onclick = () => {
+    $('pc-ov').classList.add('on');
+    const box = $('pc'); box.innerHTML = '';
+    new daum.Postcode({ width: '100%', height: '100%', oncomplete: async d => {
+      $('pc-ov').classList.remove('on');
+      $('addr-res').className = 'addr-res warn'; $('addr-res').textContent = '구역 확인 중…';
+      // 접수페이지 방식: 행정동 확인 → 담당 구역 판정 → 원장 주소 형식(본 199 / 삼 64-8 / 단지 동-호)으로 바꿔 넣고 동 구분 자동 선택
+      const hd = await MW_ADDR.hdongOf(d, C.kakao.restKey);
+      const a = MW_ADDR.fromPostcode(d, hd);
+      const full = (a.road || d.address || '') + (d.buildingName ? ' ' + d.buildingName : '');
+      addr = null; pin = null; addrBase = ''; hideMap();
+      if (a.kind !== 'special' && a.kind !== 'apt' && !hd) {
+        $('f-addr').value = ''; $('f-dong').value = '';
+        showAddr({ ours: false, reason: full + ' — 주소 확인이 잠시 안 됩니다. 🔍 주소검색을 다시 눌러 주세요' });
+        return;
+      }
+      if (a.kind === 'apt' && a.ours) {            // 담당 아파트: 동 구분 = 단지, 칸에는 동-호만
+        $('f-dong').value = a.apt; $('f-addr').value = '';
+        addr = a; showAddr(Object.assign({}, a, { note: '동-호를 적어 주세요' })); checkDup();
+        $('f-addr').focus(); locate(a); return;
+      }
+      if (a.kind === 'house' && a.ours && a.jibun) {  // 잠실동·삼전동 지번: 동 구분 + 번지
+        $('f-dong').value = a.law === '삼전동' ? '삼전동' : '잠실본동';
+        $('f-addr').value = a.jibun;
+        addr = a; a.note = '검색: ' + full; showAddr(a); checkDup();
+        locate(a); return;
+      }
+      // 특수 장소·담당 아닌 주소: 검색 결과를 그대로 칸에 넣는다 (담당 아니면 빨간 안내)
+      addrBase = a.kind === 'special' ? a.text : full;
+      a.text = addrBase;
+      addr = a;
+      $('f-addr').value = addrBase; $('f-dong').value = a.special === 'garak' ? '가락시장' : '';
+      showAddr(a); checkDup();
+      await locate(a);
+    } }).embed(box, { autoClose: false });
+  };
+  $('pc-x').onclick = () => $('pc-ov').classList.remove('on');
+
+  // 카카오 지도 (작게) — 핀 끌어서 고치기
+  // 접수 화면에는 지도를 띄우지 않는다 — 좌표는 저장만 해서 현장앱 지도에 쓴다
+  function showMap() {}
+  function hideMap() {}
+
+  // ── 배정 미리보기 ──
+  const DAY = ['일', '월', '화', '수', '목', '금', '토'];
+  function planNow() {
+    if (!types.length) return [];
+    const recvAt = isNaN(recvAtOf()) ? new Date() : recvAtOf();
+    return MW_ASSIGN.assign({ recvAt, types, etcTeam: $('f-etc').value, largeMode },
+      { teams: S.teams, typeTeam: S.typeTeam, rules: S.rules, holidays: S.holidays || {}, defaultOff: S.defaultOff || MW_SEED.defaultOff });
+  }
+  function dateLabel(ds) {
+    const d = new Date(ds + 'T00:00'), t = ymd(new Date());
+    const rel = ds === t ? '오늘' : ds === ymd(new Date(Date.now() + 864e5)) ? '내일' : (d.getMonth() + 1) + '/' + d.getDate();
+    return rel + '(' + DAY[d.getDay()] + ')';
+  }
+  function renderPlan() {
+    const pl = planNow();
+    $('plan-body').innerHTML = pl.length ? pl.map(x => {
+      const t = S.teams[x.team] || {};
+      const when = x.shift === 'night' ? dateLabel(x.workDate) + ' 밤' : dateLabel(x.workDate) + (x.shift === 'large' ? ' 06~15시' : ' 주간');
+      return '<div class="pl"><i style="background:' + esc(t.color || '#999') + '"></i>' + esc(x.types.join('·')) + ' → ' + esc(t.name || x.team)
+        + ' <small>' + esc(when) + (x.urgent ? ' · 🚨 긴급' : '') + ' · 기한 ' + esc(dateLabel(x.dueDate)) + '</small></div>';
+    }).join('') : '<span class="muted">민원종류를 고르면 보입니다</span>';
+  }
+
+  // ── 저장 ──
+  async function nextNo(d) {
+    const key = ymd(d).replace(/-/g, '');
+    const r = await cref('seq/' + key).transaction(v => (v || 0) + 1);
+    return '민원' + key.slice(4) + '-' + r.snapshot.val();
+  }
+  function kindLabel(k, agency) { return k === '기관' ? '기관(' + agency + ')' : '개인'; }
+
+  $('f-save').onclick = async () => {
+    const err = $('f-err'); err.textContent = '';
+    const recvAt = recvAtOf();
+    if (isNaN(recvAt)) { err.textContent = '접수일시를 확인해 주세요'; return; }
+    if (!types.length) { err.textContent = '민원종류를 하나 이상 골라 주세요'; return; }
+    if (types.indexOf('공용용기') >= 0 && !contReason) { err.textContent = '공용용기 요청 내용(파손·분실·신규)을 골라 주세요'; return; }
+    clearTimeout(addrT); onAddrTyped();
+    if (!addr) { err.textContent = '🔍 주소검색 버튼으로 주소를 골라 주세요'; return; }
+    if (!$('f-content').value.trim()) { err.textContent = '민원내용을 입력해 주세요'; return; }
+    if (!addr.ours && !confirm('담당 구역이 아닌 주소입니다. 그래도 접수할까요?')) return;
+    const telEl = $('f-tel');
+    const hidden = kind === '기관' && $('f-hide').checked;
+    const tel = fullTel(telEl, hidden ? '02' : '010');   // 미공개면 구청번호
+    const plan = planNow();
+
+    $('f-save').disabled = true; err.textContent = '저장 중…';
+    try {
+      if (!pin) await locate(addr);
+      const TS = firebase.database.ServerValue.TIMESTAMP;
+      const agency = kind === '기관' ? $('f-agency').value : '';
+      const a = {
+        text: addr.text, kind: addr.kind, hdong: addr.hdong || '', ours: !!addr.ours,
+        apt: addr.apt || '', aptDong: addr.aptDong || '', ho: addr.ho || '', law: addr.law || '', jibun: addr.jibun || '',
+        road: addr.road || '', jibunFull: addr.jibunFull || '', special: addr.special || '',
+        lat: pin ? pin.lat : null, lng: pin ? pin.lng : null, exact: !!(pin && pin.exact), fixed: !!(pin && pin.fixed)
+      };
+      // 담당 팀이 여럿이면 팀마다 따로 한 건 (접수번호도 따로 — R-115). 예: 재활용 + 공용용기 → 민원1023-4, 민원1023-5
+      const place = $('f-place').value.trim(), content = $('f-content').value.trim();
+      const up = {}, made = [];
+      for (const x of plan) {
+        const no = await nextNo(recvAt), id = cref('minwon').push().key, tid = id + '_' + x.team;
+        const hasCont = x.types.indexOf('공용용기') >= 0;
+        const rec = {
+          no, recvAt: recvAt.getTime(), createdAt: TS, staff: p.label, staffUid: p.uid,
+          kind, agency, officer: kind === '기관' ? $('f-officer').value.trim() : '',
+          tel, telHidden: hidden, addr: a, place, content,
+          types: x.types.slice(), etcTeam: x.types.indexOf('기타') >= 0 ? $('f-etc').value : '',
+          largeMode: x.types.indexOf('대형') >= 0 ? largeMode : '',
+          contReason: hasCont ? contReason : '',
+          status: 'open', tasks: {}
+        };
+        rec.tasks[tid] = true;
+        // 현장에 보낼 요약 — 주무관 이름은 넣지 않는다 (R-24)
+        const summary = {
+          addrText: a.text, kindLabel: kindLabel(kind, agency), tel: hidden ? '민원인 미공개' + (tel ? ' · 구청 ' + tel : '') : tel,
+          contReason: rec.contReason, place, content, lat: a.lat, lng: a.lng, exact: a.exact
+        };
+        up['c/' + C.company + '/tasks/' + tid] = {
+          minwonId: id, no, team: x.team, shift: x.shift, workDate: x.workDate, dueDate: x.dueDate,
+          types: x.types, urgent: x.urgent, state: 'sent', createdAt: TS, recvAt: rec.recvAt, summary
+        };
+        up['c/' + C.company + '/minwon/' + id] = rec;
+        made.push({ no, team: x.team, types: x.types });
+      }
+      await db.ref().update(up);
+      // [11_2→11_4] 수거앱 [📋민원] 알림용 '미처리 민원' 칸 — 팀·근무일·접수시각만 (주소·이름 없음, 누구나 읽는 칸). 처리되면 현장앱이 지운다
+      try {
+        const uu = {};
+        Object.keys(up).forEach(k => { const mt = k.match(/\/tasks\/([^/]+)$/); if (mt) { const v = up[k]; uu['c/' + C.company + '/unseen/' + mt[1]] = { team: v.team, shift: v.shift || '', workDate: v.workDate, recvAt: v.recvAt || 0 }; } });
+        db.ref().update(uu).catch(() => {});
+      } catch (e) {}
+
+      $('done').style.display = 'block';
+      $('done').innerHTML = '접수 완료 ' + made.map(x => '<b>' + esc(x.no) + '</b>').join(' · ') + '<div class="muted" style="margin-top:4px">' + esc(a.text) + ' · '
+        + made.map(x => esc(x.types.join('·')) + ' → ' + esc((S.teams[x.team] || {}).name || x.team)).join(', ') + ' 에 전송했습니다</div>';
+      toast('✅ ' + made.map(x => x.no).join(', ') + ' 접수했습니다');
+      clearForm();
+    } catch (e) {
+      err.textContent = '저장하지 못했습니다: ' + (e.message || e);
+    } finally {
+      $('f-save').disabled = false;
+      if (err.textContent === '저장 중…') err.textContent = '';
+    }
+  };
+
+  function clearForm() {
+    types = []; largeMode = 'next'; addr = null; pin = null;
+    addrBase = ''; $('f-dong').value = ''; addrPlaceholder();
+    contReason = ''; $('f-cont').querySelectorAll('.chip').forEach(x => x.classList.remove('on')); $('cont-box').style.display = 'none';
+    ['f-tel', 'f-officer', 'f-addr', 'f-place', 'f-content'].forEach(id => $(id).value = '');
+    $('f-hide').checked = false; telMode();
+    delete $('f-date').dataset.touched; tickTime(); $('msel').classList.remove('open');
+    $('f-large').querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x.dataset.m === 'next'));
+    $('etc-box').style.display = 'none'; $('large-box').style.display = 'none';
+    showAddr(null); hideMap(); $('dup').innerHTML = '';
+    fillLists(); renderPlan();
+  }
+  $('clear').onclick = () => { if (confirm('입력한 내용을 지울까요?')) clearForm(); };
+
+  // ── 오늘 접수 (접수 건만 — R-59) ──
+  const start = new Date(); start.setHours(0, 0, 0, 0);
+  const TYPE_COL = { '생활': '#16a34a', '재활용': '#2563eb', '음식물': '#facc15', '공용용기': '#a16207', '특수마대': '#db2777', '대형': '#7c3aed', '기타': '#64748b' };
+  let TK = {};
+  cref('minwon').orderByChild('createdAt').startAt(start.getTime()).on('value', s => { todayList = s.val() || {}; drawToday(); checkDup(); });
+  cref('tasks').orderByChild('workDate').startAt(ymd(new Date(Date.now() - 30 * 864e5))).on('value', s => { TK = s.val() || {}; drawToday(); });
+  const isDone = t => t && (t.state === 'done' || t.state === 'fail');
+  function drawToday() {
+    // 현황 숫자 (처리 / 미처리 두 가지 — R-111)
+    const td = ymd(new Date()), tm1 = ymd(new Date(Date.now() + 864e5)), ts = Object.values(TK);
+    $('k-recv').textContent = Object.keys(todayList).length;
+    $('k-done').textContent = ts.filter(t => isDone(t) && (t.doneAt || 0) >= start.getTime()).length;
+    $('k-open').textContent = ts.filter(t => !isDone(t) && t.workDate <= td).length;
+    $('k-next').textContent = ts.filter(t => !isDone(t) && t.workDate === tm1).length;
+    // 오늘 접수 표 — 방금 저장한 건이 맨 위
+    const list = Object.entries(todayList).sort((a, b) => (b[1].createdAt || 0) - (a[1].createdAt || 0));
+    $('today-cnt').textContent = list.length + '건';
+    $('today').innerHTML = list.map(([id, m]) => {
+      const tm = new Date(m.recvAt), tids = Object.keys(m.tasks || {});
+      const teams = tids.map(tid => (TK[tid] && TK[tid].team) || tid.slice(id.length + 1));
+      const nd = tids.filter(tid => isDone(TK[tid])).length;
+      const st = nd === tids.length && tids.length ? '<span class="st done">✅ 처리</span>' : nd ? '<span class="st part">' + nd + '/' + tids.length + ' 처리</span>' : '<span class="st open">미처리</span>';
+      return '<tr data-id="' + id + '">'
+        + '<td>' + String(tm.getHours()).padStart(2, '0') + ':' + String(tm.getMinutes()).padStart(2, '0') + '</td>'
+        + '<td><b>' + esc(String(m.no || '').replace('민원', '')) + '</b></td>'
+        + '<td>' + esc(m.kind === '기관' ? m.agency : '개인') + '</td>'
+        + '<td class="ad">' + esc(m.addr && m.addr.text) + '</td>'
+        + '<td>' + (m.types || []).map(x => '<span class="ty" style="background:' + (TYPE_COL[x] || '#64748b') + (x === '음식물' ? ';color:#3b2a00' : '') + '">' + esc(x === '공용용기' && m.contReason ? x + '(' + m.contReason + ')' : x) + '</span>').join('') + '</td>'
+        + '<td>' + teams.map(k => '<span style="color:' + esc((S.teams[k] || {}).color || '#999') + '">●</span> ' + esc((S.teams[k] || {}).name || k)).join('<br>') + '</td>'
+        + '<td>' + st + '</td></tr>';
+    }).join('') || '<tr><td colspan="7" class="muted" style="text-align:center;padding:20px">오늘 접수가 아직 없습니다</td></tr>';
+    $('today').querySelectorAll('tr[data-id]').forEach(el => el.ondblclick = () => mountRes().openById(el.dataset.id));
+    drawHomeMap();
+  }
+
+  // ── 전체 민원 지도 (접수 탭 왼쪽): 미처리 전부 + 오늘 처리, 같은 주소는 핀 하나 ──
+  let hmap = null, hovs = [], hpop = null, hfit = '', hT = null;
+  function drawHomeMap() { clearTimeout(hT); hT = setTimeout(drawHomeMapNow, 300); }
+  function drawHomeMapNow() {
+    if (!window.kakao || !kakao.maps || !kakao.maps.Map) {
+      if (!document.getElementById('kakao-sdk')) {
+        const sc = document.createElement('script'); sc.id = 'kakao-sdk';
+        sc.src = 'https://dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=' + C.kakao.jsKey;
+        sc.onload = () => kakao.maps.load(drawHomeMapNow);
+        document.head.appendChild(sc);
+      }
+      return;
+    }
+    if (!hmap) {
+      hmap = new kakao.maps.Map($('hmap'), { center: new kakao.maps.LatLng(37.5068, 127.0885), level: 6 });
+      kakao.maps.event.addListener(hmap, 'click', () => { if (hpop) { hpop.setMap(null); hpop = null; } });
+    }
+    hovs.forEach(o => o.setMap(null)); hovs = [];
+    const td = ymd(new Date());
+    const list = Object.entries(TK).map(([id, t]) => Object.assign({ id }, t))
+      .filter(t => t.summary && t.summary.lat && (isDone(t) ? (t.doneAt || 0) >= start.getTime() : t.workDate <= td));
+    $('hm-open').textContent = list.filter(t => !isDone(t)).length; $('hm-done').textContent = list.filter(isDone).length;
+    const spots = {};
+    list.forEach(t => { const k = t.summary.lat.toFixed(5) + ',' + t.summary.lng.toFixed(5); (spots[k] = spots[k] || []).push(t); });
+    const b = new kakao.maps.LatLngBounds();
+    Object.values(spots).forEach(ts => {
+      const s = ts[0].summary, open = ts.some(t => !isDone(t)), ll = new kakao.maps.LatLng(s.lat, s.lng);
+      const types = Array.from(new Set([].concat.apply([], ts.map(t => t.types || [])))).sort((x, y) => S.types.indexOf(x) - S.types.indexOf(y));
+      const el = document.createElement('div'); el.className = 'hpin'; el.style.background = open ? '#dc2626' : '#16a34a';
+      el.innerHTML = esc(String(s.addrText || '').replace(/\s*\d+호$/, '')) + (ts.length > 1 ? ' ×' + ts.length : '')
+        + '<span class="ty">' + types.map(x => '<b style="background:' + (TYPE_COL[x] || '#64748b') + (x === '음식물' ? ';color:#3b2a00' : '') + '">' + esc(x) + '</b>').join('') + '</span>';
+      el.onclick = () => {
+        if (hpop) hpop.setMap(null);
+        const d = document.createElement('div'); d.className = 'hpop';
+        d.innerHTML = '<b>' + esc(s.addrText) + '</b>' + ts.map(t => '<div style="border-top:1px solid #eef2f6;margin-top:5px;padding-top:5px">' + esc(t.no) + ' · ' + esc((t.types || []).join('·'))
+          + '<br>' + esc((S.teams[t.team] || {}).name || t.team) + ' · <b style="color:' + (isDone(t) ? '#16a34a' : '#dc2626') + '">' + (isDone(t) ? '처리' : '미처리') + '</b>'
+          + (t.doneBy ? ' · ' + esc(t.doneBy) : '') + (t.memo ? '<br>메모: ' + esc(t.memo) : '') + '</div>').join('');
+        d.onclick = e => e.stopPropagation();
+        hpop = new kakao.maps.CustomOverlay({ position: ll, content: d, yAnchor: 1.15, zIndex: 9 }); hpop.setMap(hmap);
+      };
+      const o = new kakao.maps.CustomOverlay({ position: ll, content: el, yAnchor: 1, zIndex: open ? 3 : 1 });
+      o.setMap(hmap); hovs.push(o); b.extend(ll);
+    });
+    const fk = Object.keys(spots).sort().join('|');
+    if (fk && fk !== hfit) { hfit = fk; if (Object.keys(spots).length > 1) hmap.setBounds(b, 50, 40, 30, 40); else { hmap.setLevel(4); hmap.setCenter(b.getCenter()); } }
+  }
+  // 접수 탭으로 돌아오면 지도 크기 다시 맞춤
+  document.querySelector('.tab[data-tab="input"]').addEventListener('click', () => setTimeout(() => { if (hmap) { hmap.relayout(); drawHomeMapNow(); } }, 50));
+
+  // 같은 번호·같은 주소 오늘 접수 알림 (막지는 않음 — S-54)
+  function checkDup() {
+    const tel = $('f-hide').checked ? '' : fullTel($('f-tel'));   // 구청번호는 중복 확인에서 뺀다
+    const at = addr && addr.text;
+    const hits = Object.values(todayList).filter(m => (tel && m.tel === tel) || (at && m.addr && m.addr.text === at));
+    $('dup').innerHTML = hits.length ? '<div class="note warn">⚠️ 오늘 같은 ' + (tel && hits.some(m => m.tel === tel) ? '전화번호' : '주소') + '로 접수된 민원이 '
+      + hits.length + '건 있습니다: ' + hits.map(m => esc(m.no)).join(', ') + '</div>' : '';
+  }
+
+  fillLists(); renderPlan();
+})();
+</script>
+</body>
+</html>
