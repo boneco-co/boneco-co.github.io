@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0F1622">
+<title>본에코 민원처리 — 로그인</title>
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/favicon.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="본에코 민원">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="login-bg">
+  <div class="login">
+    <img class="login-logo" src="icons/logo.png" alt="본에코 로고">
+    <h1>본에코 민원처리</h1>
+    <div class="sub">본에코(주)</div>
+
+    <div id="notice"></div>
+
+    <div class="chips" id="mode" style="margin-bottom:6px">
+      <button type="button" class="chip" data-mode="staff">🏢 사무실 · 관리자</button>
+      <button type="button" class="chip" data-mode="field">🚛 현장 차량</button>
+    </div>
+
+    <div class="pw-box">
+      <!-- 사무실·관리자: 본인 이름 -->
+      <div id="m-staff">
+        <div class="lbl">본인 이름</div>
+        <input class="in" id="name" lang="ko" autocomplete="off" placeholder="예: 김정섭">
+        <div class="chips" id="recent" style="margin-top:8px"></div>
+      </div>
+      <!-- 현장: 팀 + 차량번호 4자리 -->
+      <div id="m-field" style="display:none">
+        <div class="lbl">팀</div>
+        <div class="chips" id="teams"></div>
+        <div class="lbl">차량번호 뒤 4자리</div>
+        <input class="in" id="digits" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="예: 3456"
+               style="font-size:20px;font-weight:800;letter-spacing:4px">
+      </div>
+      <div id="m-dev" style="display:none">
+        <div class="pw-who">프로그램 관리자</div>
+      </div>
+
+      <div class="lbl">비밀번호</div>
+      <input class="in" type="password" id="pw" autocomplete="current-password" placeholder="처음이면 공통 처음 비밀번호">
+      <div class="err" id="err"></div>
+      <button class="btn primary block" id="go" style="margin-top:6px">로그인</button>
+      <p class="muted" style="margin-top:10px" id="hint">처음 쓰는 분은 공통 <b>처음 비밀번호</b>를 넣으면 계정이 자동으로 만들어집니다. 그다음부터는 같은 이름·차량으로 들어오면 됩니다.</p>
+    </div>
+
+    <div style="margin-top:26px;text-align:center">
+      <button class="link" id="dev-login">프로그램 관리자 로그인</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="assets/config.js"></script>
+<script src="assets/seed.js"></script>
+<script src="assets/core.js"></script>
+<script>
+(function () {
+  const { esc, ls, enter, signInDev, authErr, HOME, waitUser, loadProfile, resetKey } = MW;
+  const $ = id => document.getElementById(id);
+  let mode = ls.get('mw_login_mode', 'staff');   // 이 기기에서 마지막으로 쓴 방식 (현장 폰은 매일 같은 차량)
+  let team = ls.get('mw_login_team', '');
+
+  if (/expired=1/.test(location.search)) {
+    $('notice').innerHTML = '<div class="note info">근무 기준 시각이 지나 다시 로그인해야 합니다. 오늘 자료를 새로 받아옵니다.</div>';
+  }
+
+  // 시범 기간 잠금 — 원장·수거앱의 [민원] 버튼으로 들어온 직원이 로그인하지 못하게 (config.js testMode)
+  if (/[?&]tester=1\b/.test(location.search)) ls.set('mw_tester', '1');
+  if (/[?&]tester=0\b/.test(location.search)) ls.set('mw_tester', '');
+  // [11_5] 다른 앱 전환 버튼으로 들어오면(?from=sugeo|wonjang|risk, 사고관리앱은 ?name=) 기기의 시험용 표시(mw_tester)와 상관없이 잠금 안내.
+  //   예전엔 시험용으로 ?tester=1 을 연 폰·PC는 수거앱 [📋민원]에서 와도 잠금 대신 로그인창이 떴다. 프로그램 관리자 로그인은 언제나 열림.
+  const qs = new URLSearchParams(location.search);
+  const from = qs.get('from') || (qs.get('name') ? 'risk' : '');
+  const locked = !!MW_CONFIG.testMode && (!!from || ls.get('mw_tester', '') !== '1');
+  if (locked) {
+    $('notice').innerHTML = '<div class="note warn" style="font-size:17px;line-height:1.7;text-align:center">'
+      + '<b style="font-size:20px">🚧 테스트 중입니다</b><br>민원처리 프로그램은 아직 시험 중이라<br>현장·사무실은 로그인할 수 없습니다.<br>'
+      + '<span class="muted">관리자는 아래 <b>사무실·관리자</b>로 로그인할 수 있습니다.</span></div>';   // [11_10] 관리자는 열림
+    { const fc = $('mode').querySelector('[data-mode="field"]'); if (fc) fc.style.display = 'none'; }
+  }
+  // [11_5] 수거앱에서 오면 '🚛 현장 차량' 로그인만 (사무실·관리자 칸 숨김, 프로그램 관리자 로그인은 그대로)
+  if (from === 'sugeo') { const sc = $('mode').querySelector('[data-mode="staff"]'); if (sc) sc.style.display = 'none'; }
+
+  // 오늘 이미 로그인했으면 바로 시작 화면으로 (잠금 중에 다른 앱에서 왔으면 프로그램 관리자만)
+  waitUser().then(async u => {
+    if (!u) return;
+    const p = await loadProfile(u);
+    if (locked && from && (!p || (p.role !== 'dev' && p.role !== 'manager'))) return;   // [11_10] 관리자도 바로
+    if (p && p.active !== false && ls.get('mw_pass', '') === resetKey(p)) location.replace(HOME[p.role]);
+  });
+
+  // 팀 칩 (기본 설정의 팀 목록)
+  const teams = Object.entries(MW_SEED.teams).sort((a, b) => a[1].order - b[1].order);
+  $('teams').innerHTML = teams.map(([k, t]) =>
+    '<button type="button" class="chip" data-team="' + k + '"><span class="dot" style="background:' + t.color + '"></span>' + esc(t.name) + '</button>').join('');
+  $('teams').querySelectorAll('.chip').forEach(b => b.onclick = () => setTeam(b.dataset.team));
+  function setTeam(k) {
+    team = k;
+    $('teams').querySelectorAll('.chip').forEach(b => b.classList.toggle('on', b.dataset.team === k));
+  }
+
+  // 이 기기에서 썼던 이름 (빠르게 고르기)
+  function recentNames() { try { return JSON.parse(ls.get('mw_recent_names', '[]')); } catch (e) { return []; } }
+  function renderRecent() {
+    $('recent').innerHTML = recentNames().map(n => '<button type="button" class="chip" data-n="' + esc(n) + '">' + esc(n) + '</button>').join('');
+    $('recent').querySelectorAll('.chip').forEach(b => b.onclick = () => { $('name').value = b.dataset.n; $('pw').focus(); });
+  }
+
+  function setMode(m) {
+    mode = m;
+    $('mode').querySelectorAll('.chip').forEach(b => b.classList.toggle('on', b.dataset.mode === m));
+    $('m-staff').style.display = m === 'staff' ? '' : 'none';
+    $('m-field').style.display = m === 'field' ? '' : 'none';
+    $('m-dev').style.display = m === 'dev' ? '' : 'none';
+    $('hint').style.display = m === 'dev' ? 'none' : '';
+    document.querySelector('.pw-box').style.display = (locked && m === 'field') ? 'none' : '';   // [11_10] 사무실·관리자 칸은 열림(관리자만 통과)
+    // [11_3] 프로그램 관리자 로그인 때는 '테스트 중' 경고를 숨긴다 (잠금은 다른 계정에만)
+    if (locked) $('notice').style.display = m === 'dev' ? 'none' : '';
+    $('err').textContent = '';
+  }
+  $('mode').querySelectorAll('.chip').forEach(b => b.onclick = () => setMode(b.dataset.mode));
+  $('dev-login').onclick = () => { setMode('dev'); $('pw').focus(); };
+
+  async function go() {
+    const pw = $('pw').value, err = $('err');
+    if (locked && mode === 'field') { err.textContent = '🚧 테스트 중이라 로그인할 수 없습니다'; return; }
+    let o = null;
+    if (mode === 'staff') {
+      const name = $('name').value.trim().replace(/\s+/g, '');
+      if (!name) { err.textContent = '이름을 입력해 주세요'; return; }
+      o = { kind: 'staff', name };
+    } else if (mode === 'field') {
+      const d = $('digits').value.replace(/\D/g, '');
+      if (!team) { err.textContent = '팀을 골라 주세요'; return; }
+      if (d.length !== 4) { err.textContent = '차량번호 뒤 4자리를 입력해 주세요'; return; }
+      o = { kind: 'field', team, digits: d };
+    }
+    if (!pw) { err.textContent = '비밀번호를 입력해 주세요'; return; }
+    err.textContent = '확인 중…';
+    $('go').disabled = true;
+    try {
+      const p = o ? await enter(Object.assign(o, { pw })) : await signInDev(pw);
+      // [11_10] 시험 기간: 사무실·관리자 칸으로는 관리자(manager)만 들어감
+      if (locked && o && p.role !== 'manager') { try { await firebase.auth().signOut(); } catch (_) {} throw new Error('🚧 테스트 중이라 지금은 관리자만 로그인할 수 있습니다'); }
+      ls.set('mw_login_mode', mode === 'dev' ? ls.get('mw_login_mode', 'staff') : mode);
+      if (o && o.kind === 'staff') ls.set('mw_recent_names', JSON.stringify([o.name].concat(recentNames().filter(n => n !== o.name)).slice(0, 6)));
+      if (o && o.kind === 'field') { ls.set('mw_login_team', o.team); ls.set('mw_login_digits', o.digits); }
+      location.replace(HOME[p.role] || 'index.html');
+    } catch (e) {
+      err.textContent = e && e.code ? authErr(e) : (e.message || '로그인하지 못했습니다');
+      $('pw').value = '';
+    } finally {
+      $('go').disabled = false;
+    }
+  }
+  $('go').onclick = go;
+  ['pw', 'name', 'digits'].forEach(id => $(id).addEventListener('keydown', e => { if (e.key === 'Enter') go(); }));
+
+  renderRecent();
+  if (team) setTeam(team);
+  $('digits').value = ls.get('mw_login_digits', '');
+  setMode(mode === 'field' || from === 'sugeo' ? 'field' : 'staff');
+  // [10_29] 사고관리앱 [민원처리] 버튼으로 오면 이름이 채워져 있다 → 비밀번호만
+  { const nm = new URLSearchParams(location.search).get('name'); if (nm) { setMode('staff'); $('name').value = nm.trim(); $('pw').focus(); } }
+})();
+</script>
+<script>if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});</script>
+</body>
+</html>

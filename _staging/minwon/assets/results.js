@@ -313,7 +313,7 @@
           + '<td style="white-space:nowrap">' + by + '</td>'
           + '<td style="white-space:nowrap">' + esc(mdhm(t.doneAt)) + '</td>'
           + '<td><span class="rs-st ' + s + '">' + stTxt(r.t) + '</span></td>'
-          + '<td><div class="rs-ph">' + ph.map(([pid, v], j) => '<div class="t" data-ph="' + i + ':' + j + '" data-pid="' + esc(pid) + '" data-m="' + esc(v.m) + '"><img alt=""><i>' + (v.k === 'before' ? '전' : '후') + '</i></div>').join('') + (ph.length ? '' : '<span class="muted">-</span>') + '</div></td>'
+          + '<td><div class="rs-ph">' + ph.map(([pid, v], j) => '<div class="t" data-ph="' + i + ':' + j + '" data-pid="' + esc(pid) + '" data-m="' + esc(v.m) + '"><img alt=""><i>' + (v.k === 'before' ? '전' : v.k === 'visit' ? '방문' : '후') + '</i></div>').join('') + (ph.length ? '' : '<span class="muted">-</span>') + '</div></td>'
           + '<td style="max-width:220px">' + esc(t.memo || '') + '</td>'
           + '<td style="white-space:nowrap">' + esc(m.staff || '') + '</td>'
           + (admin ? '<td style="white-space:nowrap">' + esc(m.officer || '') + '</td>' : '')
@@ -370,6 +370,10 @@
           : row('민원유형', '<div class="ev"><b>개인</b></div>'))
         + row('위치 설명', '<input class="in" data-e="place" lang="ko" value="' + esc(m.place || '') + '" placeholder="예: 정문 옆 전봇대 아래">')
         + row('민원내용', '<textarea class="in" data-e="content" lang="ko">' + esc(m.content || '') + '</textarea>')
+        + row('방문결과', '<textarea class="in" data-e="visit" lang="ko" placeholder="예: 11/10 방문 — 경비실 확인, 다음 주 재방문">' + esc(m.visitResult || '') + '</textarea>'
+          + (m.visitBy ? '<div class="muted">' + esc(m.visitBy) + ' · ' + esc(mdhm(m.visitAt)) + '</div>' : ''))   // [11_10]
+        + row('사진', '<div class="rs-ph" data-e="phs"></div><label class="btn sm" style="margin-top:6px;display:inline-flex;gap:4px;cursor:pointer">📷 사진 넣기<input type="file" accept="image/*" multiple data-e="phin" style="display:none"></label>'
+          + (tids.length ? '' : '<div class="muted">담당 팀이 없는 민원은 사진을 넣을 수 없습니다</div>'))   // [11_10]
         + row('메모', '<input class="in" data-e="note" lang="ko" value="' + esc(m.note || '') + '" placeholder="예: 3번째 반복, 구청 계도 요청">')
         + row('담당·처리', tids.map(tid => {
           const t = TK(tid) || {}, s = stateOf(TK(tid)), tm = team(t.team);
@@ -448,6 +452,8 @@
         const bp = 'c/' + MW.C.company + '/', up = {}, mp = bp + 'minwon/' + mid + '/';
         up[mp + 'tel'] = tel; up[mp + 'place'] = place; up[mp + 'content'] = content; up[mp + 'editedAt'] = TS; up[mp + 'editedBy'] = (opt.me && opt.me.label) || '';
         up[mp + 'note'] = q('note') ? q('note').value.trim() : (m.note || '');   // [11_5] 관리 메모
+        { const vr = q('visit') ? q('visit').value.trim() : (m.visitResult || '');   // [11_10] 방문결과
+          if (vr !== (m.visitResult || '')) { up[mp + 'visitResult'] = vr; up[mp + 'visitAt'] = TS; up[mp + 'visitBy'] = (opt.me && opt.me.label) || ''; } }
         let kindLabel = '개인';
         if (m.kind === '기관') { up[mp + 'agency'] = q('agency').value; up[mp + 'officer'] = q('officer').value.trim(); kindLabel = '기관(' + q('agency').value + ')'; }
         if (addr) up[mp + 'addr'] = addr;
@@ -463,6 +469,48 @@
         catch (e) { err.textContent = '저장하지 못했습니다: ' + (e.message || e); }
       };
       ed.classList.add('on');
+      // [11_10] 사진: 이 민원의 사진(현장 전·후 + 사무실에서 넣은 방문 사진)을 보여 주고, [📷 사진 넣기]로 추가
+      (function photos() {
+        const box = q('phs'); if (!box) return;
+        const all = [];
+        tids.forEach(tid => Object.entries(((TK(tid) || {}).photos) || {}).forEach(([pid, v]) => all.push([pid, v])));
+        all.sort((x, y) => (x[1].at || 0) - (y[1].at || 0));
+        box.innerHTML = all.map(([pid, v]) => '<div class="t" data-pid="' + esc(pid) + '" data-m="' + esc(v.m) + '"><img alt=""><i>' + (v.k === 'before' ? '전' : v.k === 'visit' ? '방문' : '후') + '</i></div>').join('') || '<span class="muted">사진 없음</span>';
+        box.querySelectorAll('.t').forEach(el => { thumb(el); el.onclick = async () => {
+          const d = (await cref('photoData/' + el.dataset.m + '/' + el.dataset.pid).once('value')).val();
+          if (d && d.jpg) { const w = window.open(''); if (w) w.document.write('<img src="' + d.jpg + '" style="max-width:100%">'); }
+        }; });
+        const fin = q('phin'); if (!fin) return;
+        fin.onchange = async () => {
+          const files = Array.from(fin.files || []); fin.value = '';
+          const tid = tids[0]; if (!tid || !files.length) return;
+          const st = S.storage || MW_SEED.storage || { photoMaxSide: 1280, photoQuality: .72, thumbMaxSide: 240 };
+          const shrink = async (file, max, qq) => {
+            let bmp; try { bmp = await createImageBitmap(file, { imageOrientation: 'from-image' }); }
+            catch (e) { bmp = await new Promise((ok, no) => { const im = new Image(); im.onload = () => ok(im); im.onerror = no; im.src = URL.createObjectURL(file); }); }
+            const r0 = Math.min(1, max / Math.max(bmp.width, bmp.height)), cv = document.createElement('canvas');
+            cv.width = Math.round(bmp.width * r0); cv.height = Math.round(bmp.height * r0); cv.getContext('2d').drawImage(bmp, 0, 0, cv.width, cv.height);
+            return cv.toDataURL('image/jpeg', qq);
+          };
+          const bp = 'c/' + MW.C.company + '/', mk = ymd(new Date()).slice(0, 7);
+          let n = 0;
+          for (const f of files) {
+            try {
+              MW.toast('사진 저장 중…');
+              const jpg = await shrink(f, st.photoMaxSide || 1280, st.photoQuality || .72), th = await shrink(f, st.thumbMaxSide || 240, .7);
+              const pid = cref('photoData/' + mk).push().key, size = Math.round(jpg.length * .75), at = Date.now(), by = (MW.auth && MW.auth.currentUser && MW.auth.currentUser.uid) || '';
+              const up = {};
+              up[bp + 'photoData/' + mk + '/' + pid] = { jpg, taskId: tid, kind: 'visit', size, at, by };
+              up[bp + 'photoThumb/' + mk + '/' + pid] = { jpg: th, by };
+              up[bp + 'tasks/' + tid + '/photos/' + pid] = { k: 'visit', m: mk, size, at };
+              await MW.db.ref().update(up);
+              cref('usage/photoBytes').transaction(v => (v || 0) + size); cref('usage/photoCount').transaction(v => (v || 0) + 1);
+              n++;
+            } catch (e) { alert('사진을 넣지 못했습니다: ' + (e.message || e)); break; }
+          }
+          if (n) { MW.toast('📷 사진 ' + n + '장을 넣었습니다'); openById(mid); }
+        };
+      })();
       // [11_5] 위쪽: 이 주소 최근 1년 민원 내역 (최근 순) — 줄을 누르면 아래에서 그 건 확인·수정
       (async () => {
         const key = addrKey(a.text), hx = q('hist'); if (!hx || !key) return;
