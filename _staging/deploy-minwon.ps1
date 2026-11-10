@@ -17,6 +17,6 @@ foreach ($f in 'index.html','assets\results.js','assets\config.js') {
   Invoke-WebRequest -UseBasicParsing -Uri ("$base/" + ($f -replace '\\','/')) -OutFile $p
 }
 Set-Location $dir
-firebase deploy --only hosting
+firebase.cmd deploy --only hosting
 $v = (Invoke-WebRequest -UseBasicParsing 'https://boneco-minwon.web.app/assets/config.js').Content
 if ($v -match "v1110a") { Write-Host '✅ 배포 완료 v1110a' -ForegroundColor Green } else { Write-Host '사이트 버전 확인 실패' -ForegroundColor Yellow }
