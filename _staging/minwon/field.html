@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#137a82">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>본에코 민원처리 — 현장</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/favicon.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="본에코 민원">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  html,body{height:100%}
+  body{background:#fff;overflow:hidden}
+  /* 위 버튼 줄 (수거앱 방식) */
+  .top{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;gap:6px;align-items:center;background:#fff;
+    border-bottom:1px solid var(--line);padding:calc(env(safe-area-inset-top) + 8px) 8px 8px}
+  .hbtn{background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:15px;font-weight:800;
+    white-space:nowrap;min-height:42px;font-family:inherit}
+  .hbtn.on{background:var(--acc);border-color:var(--acc);color:#fff}
+  select.hbtn{-webkit-appearance:none;appearance:none;padding-right:26px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23667'/%3E%3C/svg%3E") no-repeat right 10px center}
+  .top .sp{flex:1}
+  /* [11_4] 야간팀 '오늘 민원' 줄 */
+  .top.night{flex-wrap:wrap}
+  .nightbar{flex-basis:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:2px 2px 4px}
+  .nb-today{font-size:22px;font-weight:900;color:var(--ink);letter-spacing:-.3px}
+  .nb-new{background:#c2410c;border-color:#c2410c;color:#fff;animation:nbBlink 1s steps(1,end) infinite}
+  @keyframes nbBlink{0%,100%{background:#c2410c;border-color:#c2410c}50%{background:#fff;color:#c2410c}}
+  .me{display:flex;align-items:center;gap:6px;font-size:13px}
+  .me i{width:8px;height:8px;border-radius:50%;background:#9ca3af}
+  .me.cn-on i{background:#22c55e}.me.cn-off i{background:#ef4444}
+  #fmap{position:fixed;top:var(--top,59px);left:0;right:0;bottom:0;background:#dde3ea}
+  #listv{position:fixed;top:var(--top,59px);left:0;right:0;bottom:0;overflow:auto;background:var(--paper);padding:12px 12px 40px;display:none}
+  body.list #listv{display:block}
+  body.list #legend{display:none}
+  .cnt{font-size:12px;font-weight:900;background:#0000000f;border-radius:999px;padding:1px 7px}
+  .newbar{display:none;position:fixed;top:calc(var(--top,59px) + 8px);left:8px;right:8px;z-index:60;background:#fff1e6;color:#c2410c;
+    border:1.5px solid #fdba8c;border-radius:12px;padding:10px 14px;font-weight:900;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.15)}
+  .sec{font-size:13px;font-weight:900;color:var(--mute);margin:16px 2px 8px}
+  .tk{display:block;width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-left:6px solid #22c55e;
+    border-radius:14px;padding:12px 14px;margin-bottom:10px;font:inherit;color:inherit}
+  .tk.a1{border-left-color:#eab308}.tk.a2{border-left-color:#dc2626}.tk.dn{border-left-color:#9ca3af;background:#fafbfc}
+  .tk.fl{border-left-color:#7c3aed;background:#fafbfc}
+  .tk .r1{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+  .tk .ad{font-size:17px;font-weight:900;line-height:1.35}
+  .tk .kd{font-size:13px;font-weight:800;color:var(--ink-2);white-space:nowrap}
+  .tk .r2{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;font-size:13px;font-weight:700;color:var(--ink-2)}
+  .tg{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:800;background:#f3f4f6}
+  .tg i{width:8px;height:8px;border-radius:50%;display:inline-block}
+  .tg.age0{background:#dcfce7;color:#15803d}.tg.age1{background:#fef9c3;color:#a16207}.tg.age2{background:#fee2e2;color:#b91c1c}
+  .tg.work{background:#e0f2fe;color:#0369a1}.tg.done{background:#f3f4f6;color:#4b5563}.tg.fail{background:#ede9fe;color:#6d28d9}
+  .tg.urg{background:#fee2e2;color:#b91c1c}
+  .empty{text-align:center;color:var(--mute);padding:28px 10px;font-weight:700}
+  /* 상세 (아래에서 올라오는 창) */
+  .sheet-bg{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:600;display:none}
+  .sheet{position:fixed;left:0;right:0;bottom:0;max-height:92vh;overflow:auto;background:#fff;border-radius:20px 20px 0 0;
+    z-index:601;padding:18px 16px calc(env(safe-area-inset-bottom) + 20px);display:none;max-width:680px;margin:0 auto}
+  .sheet.on,.sheet-bg.on{display:block}
+  .sh-ad{font-size:21px;font-weight:900;line-height:1.3}
+  .sh-sub{font-size:14px;font-weight:800;color:var(--ink-2);margin-top:4px}
+  .sh-row{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #eef2f6;font-size:15px}
+  .sh-row b{min-width:22px}
+  .navs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+  .navs a{display:flex;align-items:center;justify-content:center;min-height:46px;border-radius:12px;font-weight:900;text-decoration:none}
+  .nav-k{background:#fee500;color:#191600}.nav-n{background:#03c75a;color:#fff}
+  .ph-t{display:flex;justify-content:space-between;align-items:center;margin:14px 0 8px;font-weight:900}
+  .ph-list{display:flex;gap:8px;flex-wrap:wrap}
+  .ph{position:relative;width:84px;height:84px;border-radius:10px;overflow:hidden;background:#eef2f6}
+  .ph img{width:100%;height:100%;object-fit:cover;display:block}
+  .ph .x{position:absolute;top:3px;right:3px;width:24px;height:24px;border-radius:50%;border:none;background:rgba(0,0,0,.55);color:#fff;font-size:13px}
+  .ph.up{display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--mute);font-weight:800}
+  .cam{position:relative;overflow:hidden}
+  .cam input{position:absolute;inset:0;opacity:0}
+  .memo .chip{min-height:38px;padding:7px 12px;font-size:13px}
+  .acts{margin-top:4px}
+  .lb2{font-weight:900;margin:14px 0 8px}
+  /* 기간 고르기 창 */
+  .per{position:fixed;left:0;right:0;bottom:0;z-index:601;background:#fff;border-radius:20px 20px 0 0;padding:18px 16px calc(env(safe-area-inset-bottom) + 16px);
+    display:none;max-width:480px;margin:0 auto;max-height:85vh;overflow:auto}
+  .per.on{display:block}
+  .per-t{font-size:19px;font-weight:900;margin-bottom:12px}
+  .per-h{font-size:13px;font-weight:800;color:var(--mute);margin:12px 2px 6px}
+  .per-row{display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left;background:#f6f8fb;border:1px solid var(--line);
+    border-radius:12px;padding:13px 14px;margin-bottom:8px;font:inherit;font-size:16px;color:var(--ink)}
+  .per-row small{font-size:12px;color:var(--mute);font-weight:700}
+  .per-row .n{font-weight:900;color:var(--mute)}
+  .per-row.on{background:var(--acc);border-color:var(--acc);color:#fff}
+  .per-row.on small,.per-row.on .n{color:#e6f6f7}
+  .per-x{width:100%;margin-top:8px;min-height:48px;border:none;border-radius:12px;background:#475569;color:#fff;font:inherit;font-size:16px;font-weight:900}
+  .memo-box{margin-top:8px;min-height:70px;resize:vertical;line-height:1.5;background:#f8fafc}
+  .btn.fail{background:var(--pur-bg);border-color:#d6d0f7;color:var(--pur)}
+  .big{position:fixed;inset:0;background:#000;z-index:800;display:none;align-items:center;justify-content:center}
+  .big.on{display:flex}
+  .big img{max-width:100%;max-height:100%}
+  .big button{position:absolute;top:calc(env(safe-area-inset-top) + 12px);right:12px}
+  /* 지도 핀 (수거앱 방식): 번지 글자 + 오른쪽 위 민원성상 꼬리표, 색은 경과기간 */
+  .pin{position:relative;display:flex;flex-direction:column;align-items:center;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4));cursor:pointer}
+  .pin .bd{color:#fff;font-size:15px;font-weight:900;padding:6px 11px;border-radius:10px;white-space:nowrap;border:3px solid rgba(255,255,255,.92)}
+  .pin .tip{width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:9px solid rgba(255,255,255,.92);margin-top:-1px}
+  .pin .ty{position:absolute;top:-13px;right:-16px;display:flex;gap:2px;white-space:nowrap}
+  .pin .ty b,.typ b{color:#fff;border:1.5px solid #fff;border-radius:999px;font-size:11px;font-weight:900;padding:2px 7px;line-height:1.2}
+  .typ{display:inline-flex;gap:4px;flex-wrap:wrap}
+  .typ b{font-size:12px;border:none;padding:2px 9px}
+  .ph .pq{position:absolute;left:3px;bottom:3px;background:#c2410c;color:#fff;font-size:10px;font-weight:900;border-radius:5px;padding:1px 5px}
+  .clu{filter:drop-shadow(0 3px 6px rgba(0,0,0,.4));cursor:pointer}
+  .legend{position:fixed;left:8px;bottom:calc(env(safe-area-inset-bottom) + 10px);z-index:40;display:flex;gap:10px;flex-wrap:wrap;
+    font-size:12px;font-weight:800;color:var(--ink-2);background:rgba(255,255,255,.92);padding:6px 10px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:-1px}
+  .stat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .stat div{background:#f6f8fb;border-radius:12px;padding:12px;text-align:center}
+  .stat b{display:block;font-size:24px;font-weight:900}
+  .stat span{font-size:12px;color:var(--mute);font-weight:800}
+</style>
+</head>
+<body>
+<div class="boot" id="boot">확인 중…</div>
+<div class="top" id="top">
+  <button class="hbtn" id="b-list">리스트</button>
+  <button class="hbtn" id="b-per">오늘까지</button>
+  <select class="hbtn" id="b-team" aria-label="볼 팀"></select>
+  <span class="sp"></span>
+  <button class="hbtn" id="b-q" style="display:none;background:#fff7ed;border-color:#fdba8c;color:#c2410c">📴 대기 0</button>
+  <a class="hbtn" id="b-sugeo" style="display:none;text-decoration:none" target="bn_sugeo" rel="noopener">🚛 수거앱</a>
+  <button class="hbtn me" id="b-me"><i></i><span></span></button>
+</div>
+<div class="newbar" id="newbar"></div>
+<div id="fmap"></div>
+<div id="listv"><div id="list"><div class="empty">불러오는 중…</div></div></div>
+
+<!-- 기간 고르기 (수거앱 '수거일' 창과 같은 모양) -->
+<div class="sheet-bg" id="per-bg"></div>
+<div class="per" id="per">
+  <div class="per-t">보기</div>
+  <div id="per-body"></div>
+  <button class="per-x" id="per-x">닫기</button>
+</div>
+
+<!-- 상세 -->
+<div class="sheet-bg" id="sheet-bg"></div>
+<div class="sheet" id="sheet"></div>
+<div class="big" id="big"><img id="big-img" alt=""><button class="btn sm" id="big-x">닫기</button></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="assets/config.js"></script>
+<script src="assets/seed.js"></script>
+<script src="assets/core.js"></script>
+<script>
+// 신호 없이도 앱이 열리게 (sw.js)
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+(async function () {
+  // [11_10] 보기 모드 (?view=1): 종합예방관리대장 [🚛 민원 현장 화면]에서 관리자가 현장 화면을 그대로 본다 — 처리·사진·저장 막힘
+  const p = await MW.guard(/[?&]view=1\b/.test(location.search) ? ['field', 'manager'] : ['field']);
+  const VIEWONLY = /[?&]view=1\b/.test(location.search) && p.role !== 'field';
+  window.LGX_VIEW = VIEWONLY; window.LGX_WHO = p.label || '';
+  const { C, db, esc, cref, toast, ymd } = MW;
+  const $ = id => document.getElementById(id);
+  // 위 버튼 줄 (수거앱 방식): [리스트] [기간 ▾] [볼 팀 ▾] … [차량 · 연결 상태]
+  //   기본은 지도, [리스트]를 한 번 누르면 리스트, 다시 누르면 지도
+  // [10_28] 기동반·대형팀은 수거앱도 쓴다 → 위 줄에 [🚛 수거앱] 전환 버튼
+  if ((C.sugeoTeams || []).indexOf(p.team) >= 0 && C.links && C.links.sugeo) { $('b-sugeo').href = C.links.sugeo; $('b-sugeo').style.display = ''; }
+  // [11_3] 프로그램 관리자: 위 줄에 화면 바로가기 (팀이 없으므로 '전체'로 본다)
+  const isDev = p.role === 'dev' || VIEWONLY;   // [11_10] 보기 모드도 '전체'로 본다
+  // [11_4] 야간팀: 위쪽에 '오늘 민원 ○건' 줄 + 오후 3시 이후 접수 민원 알림
+  const isNight = p.role === 'field' && p.shift === 'night';
+  if (isNight) { $('top').classList.add('night'); $('top').insertAdjacentHTML('afterbegin', '<div class="nightbar" id="nightbar"><span class="nb-today">오늘 민원 확인 중…</span></div>'); setTimeout(() => pushInit(), 0); }   // [11_6] 푸시 알림 상태 확인
+  if (isDev && !VIEWONLY) $('b-me').insertAdjacentHTML('beforebegin', MW.devNav('hbtn'));
+  if (VIEWONLY) $('top').style.flexWrap = 'wrap';
+  if (VIEWONLY) $('top').insertAdjacentHTML('afterbegin', '<div style="width:100%;background:#fef3c7;color:#b45309;font-weight:800;font-size:14px;padding:6px 10px;display:flex;justify-content:space-between;gap:8px;align-items:center"><span>👀 보기 모드 · 민원 현장 화면 (처리·저장은 막혀 있어요)</span><button type="button" onclick="history.length>1?history.back():window.close()" style="border:1px solid #b45309;background:transparent;color:#b45309;border-radius:8px;padding:3px 9px;font-weight:800">← 대장으로</button></div>');
+  const setTop = () => document.documentElement.style.setProperty('--top', $('top').offsetHeight + 'px');
+  setTop(); window.addEventListener('resize', setTop);
+  function setMode(m) {
+    document.body.classList.toggle('list', m === 'list');
+    $('b-list').classList.toggle('on', m === 'list');
+    if (m === 'map' && map) setTimeout(() => { map.relayout(); drawMap(); }, 30);
+  }
+  $('b-list').onclick = () => setMode(document.body.classList.contains('list') ? 'map' : 'list');
+  $('b-me').querySelector('span').textContent = p.label || '';
+  $('b-me').onclick = () => {
+    const h = p.shift === 'night' ? C.reset.night : C.reset.day;
+    if (confirm((p.label || '') + '\n매일 ' + String(h).padStart(2, '0') + ':00 에 다시 로그인합니다.\n\n지금 로그아웃할까요?')) MW.logout();
+  };
+  let online = false;
+  db.ref('.info/connected').on('value', s => {
+    online = !!s.val(); $('b-me').className = 'hbtn me ' + (online ? 'cn-on' : 'cn-off');
+    if (online) setTimeout(flush, 500);
+  });
+
+  let S = MW_SEED;
+  cref('settings').on('value', s => { const v = s.val(); if (v) S = MW_withSeed(v); render(); });
+  const team = k => (S.teams && S.teams[k]) || { name: k, color: '#64748b' };
+  const TS = () => firebase.database.ServerValue.TIMESTAMP;
+  const DAY = ['일', '월', '화', '수', '목', '금', '토'];
+  const addD = (d, n) => { const r = new Date(d); r.setDate(r.getDate() + n); return r; };
+  const dLabel = ds => { const d = new Date(ds + 'T00:00'); return (d.getMonth() + 1) + '/' + d.getDate() + '(' + DAY[d.getDay()] + ')'; };
+  const hm = t => { const d = new Date(t); return (d.getMonth() + 1) + '/' + d.getDate() + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };
+
+  // 오늘 근무일: 야간은 낮 12시 전이면 전날 밤 근무
+  function workToday(shift) {
+    const n = new Date();
+    return ymd(shift === 'night' && n.getHours() < 12 ? addD(n, -1) : n);
+  }
+  const daysBetween = (a, b) => Math.round((new Date(b + 'T00:00') - new Date(a + 'T00:00')) / 864e5);
+  const ageOf = t => Math.max(0, daysBetween(t.workDate, workToday(t.shift)));   // 0 당일 / 1 / 2+
+  const isOpen = t => t.state !== 'done' && t.state !== 'fail';
+
+  // ── 데이터: 최근 2주 근무일의 작업 (미처리는 계속 보이고, 처리한 건은 2주) ──
+  // 볼 팀: 'all' 또는 팀 키. 로그인할 때마다 처음엔 내 팀 (같은 로그인 동안은 고른 것 유지)
+  const VKEY = 'mw_fview_' + MW.resetKey(p);
+  $('b-team').onchange = () => { view = $('b-team').value; MW.ls.set(VKEY, view); render(); };
+  // 기동반은 모든 팀 민원을 처리하므로 처음엔 항상 '전체'
+  let T = {}, view = (p.team === 'day' || isDev) ? 'all' : MW.ls.get(VKEY, p.team), firstLoad = true, newIds = [];
+  const since = ymd(addD(new Date(), -(S.rules.fieldDoneDays || 14)));
+  const q = cref('tasks').orderByChild('workDate').startAt(since);
+  const TKEY = 'mw_fT_' + p.uid;
+  try { const c = JSON.parse(localStorage.getItem(TKEY) || 'null'); if (c) { T = c; setTimeout(render, 0); } } catch (e) {}
+  q.on('value', s => {
+    T = s.val() || {}; render(); if (cur) openSheet(cur, true);
+    try { localStorage.setItem(TKEY, JSON.stringify(T)); } catch (e) {}
+  });
+  q.on('child_added', s => {
+    if (firstLoad) return;
+    const t = s.val();
+    if (t.team === p.team && isOpen(t) && t.workDate <= workToday(t.shift)) alertNew(s.key, t);
+  });
+  q.once('value', () => {
+    firstLoad = false;
+    // 카메라를 여는 동안 폰이 앱을 껐다 켰으면, 찍던 민원 창을 다시 열어 준다
+    let cam = null; try { cam = JSON.parse(sessionStorage.getItem('mw_cam') || 'null'); sessionStorage.removeItem('mw_cam'); } catch (e) {}
+    if (cam && cam.id && T[cam.id] && Date.now() - cam.at < 10 * 60000) {
+      openSheet(cam.id);
+      alert('사진을 찍는 동안 폰이 앱을 다시 시작했습니다.\n같은 민원 창을 다시 열었으니 사진을 다시 찍어 주세요.\n계속 그러면 폰 카메라로 먼저 찍고 [🖼 앨범]에서 고르세요.');
+    }
+  });
+
+  // [11_2] 수거앱 [📋민원] 버튼 깜빡임용 '안 본 민원' 표시를 지운다 (따로 보내서, 실패해도 본 작업에는 영향 없음)
+  function unseenOff(id) { if (id) db.ref('c/' + C.company + '/unseen/' + id).remove().catch(() => {}); }
+
+  // 새 민원 알림: 주황 띠 + 삐삐삐 + 진동 (S-60)
+  function alertNew(id, t) {
+    newIds.push(id);
+    const el = $('newbar');
+    el.style.display = 'block';
+    el.textContent = '🔔 새 민원 ' + newIds.length + '건 — ' + (t.summary && t.summary.addrText) + (t.urgent ? ' 🚨긴급' : '') + ' (누르면 열기)';
+    el.onclick = () => { el.style.display = 'none'; const last = newIds[newIds.length - 1]; newIds = []; openSheet(last); };
+    try {
+      const ac = new (window.AudioContext || window.webkitAudioContext)();
+      [0, .25, .5].forEach(o => { const g = ac.createGain(), os = ac.createOscillator(); os.frequency.value = 1100; os.connect(g); g.connect(ac.destination);
+        g.gain.setValueAtTime(.25, ac.currentTime + o); os.start(ac.currentTime + o); os.stop(ac.currentTime + o + .15); });
+    } catch (e) {}
+    if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 200]);
+  }
+
+  // ── 목록 ──
+  function teamBar(all) {
+    const nowOpen = all.filter(t => isOpen(t) && t.workDate <= workToday(t.shift));
+    const cnt = k => nowOpen.filter(t => k === 'all' || t.team === k).length;
+    const ks = ['all'].concat(Object.entries(S.teams || {}).sort((a, b) => (a[1].order || 0) - (b[1].order || 0)).map(e => e[0]));
+    $('b-team').innerHTML = ks.map(k => '<option value="' + esc(k) + '"' + (view === k ? ' selected' : '') + '>'
+      + (k === 'all' ? '전체' : esc(team(k).name)) + ' · ' + cnt(k) + '</option>').join('');
+  }
+  const inView = t => view === 'all' || t.team === view;
+  function rows() {
+    return Object.entries(T).map(([id, t]) => Object.assign({ id }, t));
+  }
+  function visible(t) {
+    if (isOpen(t)) return true;
+    return (t.doneAt || 0) > Date.now() - (S.rules.fieldDoneDays || 14) * 864e5;
+  }
+  // ── 기간 고르기 ──
+  let per = 'today';
+  function periodGroups(ts) {
+    const g = { today: [], future: {}, done: [] };
+    ts.forEach(t => {
+      if (!isOpen(t)) g.done.push(t);
+      else if (t.workDate <= workToday(t.shift)) g.today.push(t);
+      else (g.future[t.workDate] = g.future[t.workDate] || []).push(t);
+    });
+    return g;
+  }
+  const perLabel = k => k === 'today' ? '오늘까지' : k === 'done' ? '처리내역' : dLabel(k);
+  function renderPerPanel(g) {
+    const row = (k, name, sub, n) => '<button class="per-row' + (per === k ? ' on' : '') + '" data-p="' + esc(k) + '"><span><b>' + esc(name) + '</b>'
+      + (sub ? ' <small>' + esc(sub) + '</small>' : '') + '</span><span class="n">' + n + '</span></button>';
+    const fut = Object.keys(g.future).sort();
+    $('per-body').innerHTML = row('today', '오늘까지', '오늘 + 지난 미완료', g.today.length)
+      + '<div class="per-h">앞으로 지시된 날</div>' + (fut.length ? fut.map(d => row(d, dLabel(d), '', g.future[d].length)).join('') : '<div class="muted" style="padding:4px 2px 8px">없음</div>')
+      + '<div class="per-h">처리내역</div>' + row('done', '처리내역(2주)', '최근 2주 처리한 건', g.done.length);
+    $('per-body').querySelectorAll('.per-row').forEach(b => b.onclick = () => { per = b.dataset.p; lastFit = ''; closePer(); render(); });
+  }
+  function closePer() { $('per').classList.remove('on'); $('per-bg').classList.remove('on'); }
+  $('b-per').onclick = () => { $('per').classList.add('on'); $('per-bg').classList.add('on'); };
+  $('per-x').onclick = closePer; $('per-bg').onclick = closePer;
+
+  function render() {
+    const all = rows().filter(visible);
+    teamBar(all);
+    const teamList = all.filter(inView);
+    const byAddr = (a, b) => String((a.summary || {}).addrText || '').localeCompare(String((b.summary || {}).addrText || ''), 'ko', { numeric: true });
+    // 기간: 오늘까지(오늘 + 지난 미완료) / 앞으로 지시된 날 / 처리내역 — 고른 것만 보인다
+    const groups = periodGroups(teamList);
+    if (per !== 'today' && per !== 'done' && !groups.future[per]) per = 'today';
+    const list = (per === 'today' ? groups.today : per === 'done' ? groups.done : groups.future[per]).slice().sort(byAddr);
+    $('b-per').textContent = perLabel(per) + ' · ' + list.length;
+    $('b-per').classList.toggle('on', per !== 'today');
+    renderPerPanel(groups);
+    const title = per === 'today' ? '오늘까지 (오늘 + 지난 미완료)' : per === 'done' ? '처리내역 (최근 2주)' : perLabel(per) + ' 예정';
+    $('list').innerHTML = list.length ? '<div class="sec">' + title + ' ' + list.length + '건</div>' + list.map(card).join('')
+      : '<div class="empty">' + (view === 'all' ? '' : esc(team(view).name) + ' ') + title + ' 민원이 없습니다 👍</div>';
+    $('list').querySelectorAll('.tk').forEach(b => b.onclick = () => openSheet(b.dataset.id));
+    mapRows = list;
+    if (mapReady) drawMap();
+    if (isNight) nightUpdate();
+  }
+
+  // ── [11_4] 야간팀: 오후 3시 이후 접수 민원 알림 + 위쪽 '오늘 민원 ○건' ──
+  //   알림 = 이 근무일 15:00 ~ 다음날 12:00 사이 접수된 우리 팀 미처리 민원 중 '이 사람(차량 계정)이 아직 안 연 것'
+  //   열어 보면 그 사람 폰에서만 꺼진다(폰에 기억). 새 민원이 오면 다시 깜빡 + 소리(2분마다 반복).
+  const NSEEN_KEY = 'mw_nseen_' + p.uid;
+  function nseen() { try { const v = JSON.parse(MW.ls.get(NSEEN_KEY, '{}')); return v && typeof v === 'object' ? v : {}; } catch (e) { return {}; } }
+  function nMark(id) { const s = nseen(); s[id] = Date.now(); const keep = {}; Object.keys(s).forEach(k => { if (T[k] || k === id) keep[k] = s[k]; }); MW.ls.set(NSEEN_KEY, JSON.stringify(keep)); pushAck([id]); }
+
+  // ── [11_6] 폰 푸시 알림 (앱이 꺼져 있어도) — '🔔 알림 켜기'를 누르면 이 폰을 등록, 15분마다 확인 안 한 민원이 있으면 알림 ──
+  const PUSH = C.push || null;
+  const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const standalone = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+  let pushState = 'unknown', pushSub = null;   // unknown · on · off · ios-install · nosupport
+  const b64uToBytes = s => { s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; return Uint8Array.from(atob(s), c => c.charCodeAt(0)); };
+  const pushPost = (path, body) => fetch(PUSH.worker + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).then(r => r.json()).catch(() => null);
+  function pushAck(ids) { if (pushSub && ids && ids.length) pushPost('/ack', { endpoint: pushSub.endpoint, tids: ids }); }
+  async function pushInit() {
+    if (!isNight || !PUSH) return;
+    if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) { pushState = isIOS && !standalone ? 'ios-install' : 'nosupport'; nightUpdate(); return; }
+    try {
+      const reg = await navigator.serviceWorker.ready;
+      pushSub = await reg.pushManager.getSubscription();
+      pushState = pushSub && Notification.permission === 'granted' ? 'on' : 'off';
+      if (pushState === 'on') { await pushPost('/subscribe', { sub: pushSub.toJSON(), team: p.team, label: p.label, uid: p.uid }); pushAck(Object.keys(nseen())); }
+    } catch (e) { pushState = 'off'; }
+    nightUpdate();
+  }
+  async function enablePush() {
+    if (pushState === 'ios-install') { alert('아이폰은 홈 화면에 추가한 앱에서만 알림을 받을 수 있어요.\n\n① 아래 공유 버튼(□↑) → [홈 화면에 추가]\n② 홈 화면의 \'본에코 민원\' 아이콘으로 다시 열기\n③ 로그인 후 [🔔 알림 켜기]'); return; }
+    if (pushState === 'nosupport') { alert('이 폰(브라우저)은 앱 알림을 지원하지 않습니다. 크롬(안드로이드)이나 홈 화면에 추가한 앱(아이폰)으로 열어 주세요.'); return; }
+    try {
+      const perm = await Notification.requestPermission();
+      if (perm !== 'granted') { alert('알림이 허용되지 않았습니다.\n폰 설정 → 앱 → 크롬(또는 이 앱) → 알림에서 허용한 뒤 다시 눌러 주세요.'); return; }
+      const reg = await navigator.serviceWorker.ready;
+      pushSub = (await reg.pushManager.getSubscription()) || await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64uToBytes(PUSH.vapidPublic) });
+      const r = await pushPost('/subscribe', { sub: pushSub.toJSON(), team: p.team, label: p.label, uid: p.uid, first: true });   // first: 확인 알림 한 번
+      if (!r || !r.ok) { alert('알림 등록을 못 했습니다. 인터넷 연결을 확인하고 다시 눌러 주세요.'); return; }
+      pushAck(Object.keys(nseen()));
+      pushState = 'on'; toast('🔔 알림을 켰습니다 — 확인 안 한 민원이 있으면 15분마다 알려 드립니다');
+    } catch (e) { alert('알림을 켜지 못했습니다: ' + (e.message || e)); }
+    nightUpdate();
+  }
+  function lateWindow() {
+    const d = new Date(workToday('night') + 'T15:00:00');
+    return [d.getTime(), d.getTime() + 21 * 3600e3];   // 15:00 ~ 다음날 12:00
+  }
+  function lateList() { const [a, b] = lateWindow(); return rows().filter(t => t.team === p.team && isOpen(t) && t.recvAt >= a && t.recvAt < b); }
+  let nLastN = -1, nRepeat = null;
+  function beep() {
+    try {
+      const ac = new (window.AudioContext || window.webkitAudioContext)();
+      [0, .25, .5].forEach(o => { const g = ac.createGain(), os = ac.createOscillator(); os.frequency.value = 1100; os.connect(g); g.connect(ac.destination);
+        g.gain.setValueAtTime(.25, ac.currentTime + o); os.start(ac.currentTime + o); os.stop(ac.currentTime + o + .15); });
+    } catch (e) {}
+    try { if (navigator.vibrate && !document.hidden) navigator.vibrate([200, 100, 200, 100, 200]); } catch (e) {}
+  }
+  function nightUpdate() {
+    const bar = $('nightbar'); if (!bar) return;
+    const nToday = rows().filter(t => t.team === p.team && t.workDate === workToday('night')).length;
+    const s = nseen(), unseen = lateList().filter(t => !s[t.id]);
+    bar.innerHTML = '<span class="nb-today">' + (nToday ? '오늘 민원 ' + nToday + '건' : '오늘 민원 없음') + '</span>'
+      + (unseen.length ? '<button class="hbtn nb-new" id="nb-new">🔔 확인 안 한 민원 ' + unseen.length + '건</button>' : '')
+      + (PUSH && pushState !== 'unknown' && pushState !== 'on' ? '<button class="hbtn" id="nb-push">🔔 알림 켜기</button>' : '')
+      + (pushState === 'on' ? '<span class="muted" style="font-size:12px;font-weight:800">🔔 알림 켜짐</span>' : '');
+    if ($('nb-new')) $('nb-new').onclick = () => openSheet(unseen[0].id);
+    if ($('nb-push')) $('nb-push').onclick = enablePush;
+    if (unseen.length > nLastN && nLastN >= 0) beep();   // 새로 늘었을 때만 (처음 열 때는 깜빡임만)
+    if (!firstLoad) nLastN = unseen.length;
+    clearInterval(nRepeat); nRepeat = unseen.length ? setInterval(() => { if (!document.hidden) beep(); }, 120000) : null;
+    setTop();
+  }
+  function typesText(t) {
+    return (t.types || []).map(x => x === '공용용기' && t.summary && t.summary.contReason ? x + '(' + t.summary.contReason + ')' : x).join('·');
+  }
+  function card(t) {
+    const s = t.summary || {}, age = ageOf(t), tm = team(t.team);
+    const cls = t.state === 'done' ? 'dn' : t.state === 'fail' ? 'fl' : age >= 2 ? 'a2' : age === 1 ? 'a1' : '';
+    const tags = [];
+    if (view === 'all') tags.push('<span class="tg"><i style="background:' + esc(tm.color) + '"></i>' + esc(tm.name) + '</span>');
+    if (t.urgent && isOpen(t)) tags.push('<span class="tg urg">🚨 긴급</span>');
+    if (t.state === 'done') tags.push('<span class="tg done">✅ ' + esc(hm(t.doneAt)) + (t.proxy ? ' · 대신 ' + esc(t.doneBy) : '') + '</span>');
+    else if (t.state === 'fail') tags.push('<span class="tg fail">⛔ 미처리(없음)' + (t.failReason ? ' · ' + esc(t.failReason) : '') + '</span>');
+    else {
+      if (t.workDate > workToday(t.shift)) tags.push('<span class="tg">' + esc(dLabel(t.workDate)) + (t.shift === 'night' ? ' 밤' : '') + '</span>');
+      else tags.push('<span class="tg age' + Math.min(age, 2) + '">' + (age === 0 ? '당일' : age === 1 ? '1일 지남' : age + '일 지남') + '</span>');
+      if (pend.some(x => x.type === 'done' && x.taskId === t.id)) tags.push('<span class="tg" style="background:#fff7ed;color:#c2410c">📴 완료 대기</span>');
+      // [11_3] '처리 시작'은 없앴다 — 담당 팀이 열어 보면 '확인됨' (예전 '처리중' 기록도 확인됨으로)
+      if (t.state === 'seen' || t.state === 'working') tags.push('<span class="tg work">👀 확인됨' + (t.seenBy || t.claimBy ? ' · ' + esc(t.seenBy || t.claimBy) : '') + '</span>');
+    }
+    return '<button class="tk ' + cls + '" data-id="' + esc(t.id) + '">'
+      + '<div class="r1"><div class="ad">' + esc(s.addrText || '') + '</div><div class="kd">' + esc(s.kindLabel || '') + '</div></div>'
+      + '<div class="r2"><span class="typ">' + (t.types || []).map(x => '<b style="' + pillStyle(x) + '">'
+        + esc(x === '공용용기' && s.contReason ? x + '(' + s.contReason + ')' : x) + '</b>').join('') + '</span>' + tags.join('') + '</div></button>';
+  }
+
+
+  // ── 상세 ──
+  let cur = null, memoSel = '';
+  $('sheet-bg').onclick = closeSheet;
+  function closeSheet() { cur = null; $('sheet').classList.remove('on'); $('sheet-bg').classList.remove('on'); }
+  const base = () => 'c/' + C.company + '/tasks/' + cur + '/';
+  function openSheet(id, refresh) {
+    const t = T[id];
+    if (!t) { if (!refresh) toast('민원을 찾지 못했습니다'); return; }
+    if (refresh && document.activeElement && document.activeElement.id === 'sh-memo-t') return;   // 메모 쓰는 중엔 다시 그리지 않음
+    if (!refresh) memoSel = t.memo || '';
+    cur = id;
+    const s = t.summary || {}, tm = team(t.team), mineT = t.team === p.team, open = isOpen(t);
+    // 처음 열어봄 표시 (S-42)
+    if (!refresh && mineT && t.state === 'sent') {
+      const up = {}; up[base() + 'state'] = 'seen'; up[base() + 'seenBy'] = p.label; up[base() + 'seenAt'] = TS();
+      db.ref().update(up).catch(() => {});
+      // [11_4] 수거앱 알림 칸(unseen = 미처리 민원)은 열어 봐도 지우지 않는다 — 처리완료·미처리(없음) 때 지움
+    }
+    if (!refresh && isNight) { nMark(id); nightUpdate(); }   // [11_4] 야간팀: 이 사람이 열어 봄
+    const telLink = s.tel && !/미공개/.test(s.tel) ? '<a href="tel:' + esc(s.tel.replace(/[^0-9]/g, '')) + '" style="font-weight:900;color:var(--acc)">' + esc(s.tel) + '</a>'
+      : esc(s.tel || '없음');
+    const kakao = s.lat ? 'https://map.kakao.com/link/to/' + encodeURIComponent(s.addrText) + ',' + s.lat + ',' + s.lng
+      : 'https://map.kakao.com/link/search/' + encodeURIComponent('송파구 ' + (s.addrText || ''));
+    const naver = 'https://map.naver.com/p/search/' + encodeURIComponent('송파구 ' + (s.addrText || ''));
+    const ph = Object.assign({}, t.photos || {});
+    pend.filter(x => x.type === 'photo' && x.taskId === id && !ph[x.pid]).forEach(x => { ph[x.pid] = { k: x.k, m: x.m, size: x.size, at: x.at, pend: true }; thumbCache[x.pid] = x.th; });
+    const before = Object.entries(ph).filter(([, v]) => v.k === 'before'), after = Object.entries(ph).filter(([, v]) => v.k === 'after');
+    const doneWait = pend.some(x => x.type === 'done' && x.taskId === id);
+    const MEMOS = ['배출물 없음', '주소 다름', '접근 불가', '일부만 수거'];
+    $('sheet').innerHTML =
+      '<div style="display:flex;justify-content:space-between;gap:10px"><div class="sh-ad">' + esc(s.addrText || '') + '</div><button class="btn sm" id="sh-x">← 닫기</button></div>'
+      + '<div class="sh-sub">' + esc(s.kindLabel || '') + ' · ' + esc(typesText(t)) + ' · ' + esc(t.no || '') + '</div>'
+      + '<div class="sh-sub"><span class="tg"><i style="background:' + esc(tm.color) + '"></i>' + esc(tm.name) + '</span> '
+      + (t.urgent ? '<span class="tg urg">🚨 긴급</span> ' : '') + '<span class="tg">기한 ' + esc(dLabel(t.dueDate || t.workDate)) + '</span></div>'
+      + '<div class="sh-row"><b>📞</b><div>' + telLink + '</div></div>'
+      + (s.place ? '<div class="sh-row"><b>📍</b><div>' + esc(s.place) + '</div></div>' : '')
+      + '<div class="sh-row"><b>📝</b><div>' + esc(s.content || '') + '</div></div>'
+      + (t.state === 'done' ? '<div class="note ok" style="margin-top:10px">✅ 처리 완료 · ' + esc(t.doneBy || '') + ' · ' + esc(hm(t.doneAt)) + (t.proxy ? ' (대신 처리)' : '') + '</div>' : '')
+      + (t.state === 'fail' ? '<div class="note warn" style="margin-top:10px">⛔ 미처리(없음)' + (t.failReason ? ' · ' + esc(t.failReason) : '') + ' · ' + esc(t.doneBy || '') + ' · ' + esc(hm(t.doneAt)) + '</div>' : '')
+      + photoBlock('before', '처리 전 사진', before, open) + photoBlock('after', '처리 후 사진', after, open)
+      + (open && !doneWait ? '<div class="lb2">📝 수거자 메모</div><div class="chips memo" id="sh-memo">'
+        + MEMOS.map(m => '<button class="chip" data-m="' + m + '">' + m + '</button>').join('') + '</div>'
+        + '<textarea class="in memo-box" id="sh-memo-t" lang="ko" placeholder="직접 입력하거나 위 버튼을 누르세요">' + esc(memoSel) + '</textarea>'
+        : (t.memo ? '<div class="sh-row"><b>🗒</b><div>수거자 메모: ' + esc(t.memo) + '</div></div>' : ''))
+      + '<div class="navs"><a class="nav-k" href="' + kakao + '" target="_blank" rel="noopener">카카오맵 길찾기</a><a class="nav-n" href="' + naver + '" target="_blank" rel="noopener">네이버지도</a></div>'
+      + (doneWait ? '<div class="note warn" style="margin-top:10px">📴 완료 대기 중 — 신호가 돌아오면 자동으로 올라갑니다</div>' : '')
+      // [11_3] 결과는 두 가지: [✅ 처리완료](사진 전·후 필요) / [⛔ 미처리(없음)](메모 필요)
+      + (open && !doneWait ? '<div class="acts"><div style="display:flex;gap:8px"><button class="btn primary" style="flex:1" id="sh-done">✅ 처리완료</button>'
+        + '<button class="btn fail" style="flex:1" id="sh-fail">⛔ 미처리(없음)</button></div>'
+        + '<div class="muted" style="margin:6px 0 10px">처리완료: 처리 전·후 사진 각 1장 이상 · 미처리(없음): 메모에 이유를 적어 주세요</div></div>' : '')
+      + (!open ? '<button class="btn block" id="sh-reopen" style="margin-top:4px">↩ 다시 미처리로 (잘못 눌렀을 때)</button>' : '');
+    $('sheet').classList.add('on'); $('sheet-bg').classList.add('on');
+    $('sh-x').onclick = closeSheet;
+    if ($('sh-done')) {
+      $('sh-done').disabled = !(before.length && after.length);
+      $('sh-done').onclick = () => finish(t, 'done', before.length && after.length);
+      $('sh-fail').onclick = () => {
+        const why = ($('sh-memo-t').value || '').trim();
+        if (!why) { toast('메모에 미처리 이유를 먼저 적어 주세요 (예: 배출물 없음)'); $('sh-memo-t').focus(); return; }
+        memoSel = why; const up = {}; up[base() + 'memo'] = why; db.ref().update(up).catch(() => {});
+        if (!confirm('이 민원을 [미처리(없음)]으로 끝낼까요?\n이유: ' + why)) return;
+        finish(t, 'fail', true, why);
+      };
+      // 메모: 버튼을 누르면 칸에 글이 이어 붙고, 칸에 쓴 내용은 잠시 뒤 자동 저장
+      const box = $('sh-memo-t');
+      let memoT = null;
+      const saveMemo = () => { memoSel = box.value.trim(); const up = {}; up[base() + 'memo'] = memoSel; db.ref().update(up).catch(() => {}); };
+      box.oninput = () => { clearTimeout(memoT); memoT = setTimeout(saveMemo, 800); };
+      box.onblur = () => { clearTimeout(memoT); saveMemo(); };
+      $('sh-memo').querySelectorAll('.chip').forEach(b => b.onclick = () => {
+        const v = box.value.trim();
+        if (v.split(' / ').indexOf(b.dataset.m) < 0) box.value = v ? v + ' / ' + b.dataset.m : b.dataset.m;
+        saveMemo();
+      });
+    }
+    if ($('sh-reopen')) $('sh-reopen').onclick = () => {
+      if (!confirm('이 민원을 다시 미처리로 돌릴까요?')) return;
+      const up = {}; up[base() + 'state'] = 'seen'; up[base() + 'doneAt'] = null; up[base() + 'doneBy'] = null; up[base() + 'failReason'] = null;
+      db.ref().update(up);
+    };
+    $('sheet').querySelectorAll('input[type=file]').forEach(inp => {
+      inp.onclick = () => { try { sessionStorage.setItem('mw_cam', JSON.stringify({ id, k: inp.dataset.k, at: Date.now() })); } catch (e) {} };
+      inp.onchange = () => { try { sessionStorage.removeItem('mw_cam'); } catch (e) {} addPhotos(t, inp.dataset.k, inp.files); };
+    });
+    $('sheet').querySelectorAll('.ph[data-pid]').forEach(el => loadThumb(el));
+    $('sheet').querySelectorAll('.ph .x').forEach(b => b.onclick = e => { e.stopPropagation(); delPhoto(b.dataset.pid, b.dataset.m); });
+    $('sheet').querySelectorAll('.ph[data-pq]').forEach(el => el.insertAdjacentHTML('beforeend', '<span class="pq">대기</span>'));
+  }
+  function photoBlock(k, title, list, open) {
+    return '<div class="ph-t"><span>' + title + ' ' + list.length + '장</span>'
+      + (open ? '<span style="display:flex;gap:6px"><label class="btn sm soft cam">📷 찍기<input type="file" accept="image/*" capture="environment" data-k="' + k + '"></label>'
+        + '<label class="btn sm soft cam">🖼 앨범<input type="file" accept="image/*" multiple data-k="' + k + '"></label></span>' : '') + '</div>'
+      + '<div class="ph-list">' + (list.map(([pid, v]) => '<div class="ph" data-pid="' + esc(pid) + '" data-m="' + esc(v.m) + '"' + (v.pend ? ' data-pq="1"' : '') + '><img alt="">'
+        + (open ? '<button class="x" data-pid="' + esc(pid) + '" data-m="' + esc(v.m) + '">✕</button>' : '') + '</div>').join('') || '<span class="muted">아직 없음</span>') + '</div>';
+  }
+  const thumbCache = {};
+  async function loadThumb(el) {
+    const pid = el.dataset.pid, m = el.dataset.m, img = el.querySelector('img');
+    if (!thumbCache[pid] && el.dataset.pq) return;
+    if (!thumbCache[pid]) {
+      const v = (await cref('photoThumb/' + m + '/' + pid).once('value')).val();
+      thumbCache[pid] = v && v.jpg;
+    }
+    if (thumbCache[pid]) img.src = thumbCache[pid];
+    el.onclick = async () => {
+      $('big-img').src = thumbCache[pid] || ''; $('big').classList.add('on');
+      const v = (await cref('photoData/' + m + '/' + pid).once('value')).val();
+      if (v && v.jpg) $('big-img').src = v.jpg;
+    };
+  }
+  $('big-x').onclick = () => $('big').classList.remove('on');
+
+  // [11_3] '처리 시작' 버튼·기능은 없앴다. 결과는 처리완료(done) / 미처리(없음)(fail) 두 가지
+  async function finish(t, kind, hasPhotos, why) {
+    if (!hasPhotos) { toast('처리 전·후 사진을 먼저 올려 주세요'); return; }
+    if (t.team !== p.team && !t.proxy && !confirm(team(t.team).name + ' 민원을 대신 처리한 것으로 기록합니다')) return;
+    // 폰에 먼저 저장 → 보내기 (신호가 없으면 대기했다가 자동으로)
+    await OB.put({ id: 'd_' + cur, type: 'done', kind: kind === 'fail' ? 'fail' : 'done', why: why || '', seq: Date.now(), uid: p.uid, taskId: cur, doneAt: Date.now(), proxy: t.team !== p.team });
+    await refreshPend();
+    const lbl = kind === 'fail' ? '⛔ 미처리(없음)으로' : '✅ 처리완료로';
+    toast(online ? lbl + ' 기록했습니다' : '📴 결과를 폰에 저장했습니다 — 신호가 돌아오면 자동으로 올라갑니다');
+    closeSheet();
+    flush();
+  }
+
+  // ── 사진: 긴 변 1280px·JPEG 80% + 미리보기 240px (R-90, R-93) ──
+  async function shrink(file, max, q) {
+    let bmp;
+    try { bmp = await createImageBitmap(file, { imageOrientation: 'from-image' }); }
+    catch (e) {
+      bmp = await new Promise((ok, no) => { const im = new Image(); im.onload = () => ok(im); im.onerror = no; im.src = URL.createObjectURL(file); });
+    }
+    const w = bmp.width, h = bmp.height, r = Math.min(1, max / Math.max(w, h));
+    const cv = document.createElement('canvas'); cv.width = Math.round(w * r); cv.height = Math.round(h * r);
+    cv.getContext('2d').drawImage(bmp, 0, 0, cv.width, cv.height);
+    return cv.toDataURL('image/jpeg', q);
+  }
+  async function addPhotos(t, k, files) {
+    const st = S.storage || MW_SEED.storage;
+    if (usedBytes > st.stopMB * 1048576) { alert('사진 저장 공간이 거의 찼습니다. 관리자가 데이터 정리를 하면 다시 올릴 수 있습니다. 사진은 폰에 보관해 주세요.'); return; }
+    const id = cur, m = ymd(new Date()).slice(0, 7);
+    for (const f of Array.from(files || [])) {
+      try {
+        toast('사진 저장 중…');
+        const jpg = await shrink(f, st.photoMaxSide, st.photoQuality);
+        const th = await shrink(f, st.thumbMaxSide, .7);
+        const pid = cref('photoData/' + m).push().key, size = Math.round(jpg.length * .75);
+        // 폰에 먼저 저장 (앱을 껐다 켜도 남음) → 보내기
+        await OB.put({ id: 'p_' + pid, type: 'photo', seq: Date.now(), uid: p.uid, taskId: id, pid, m, k, jpg, th, size, at: Date.now() });
+        thumbCache[pid] = th;
+      } catch (e) { alert('사진을 저장하지 못했습니다: ' + (e.message || e)); }
+    }
+    await refreshPend();
+    if (cur === id) openSheet(id, true);
+    if (!online) toast('📴 신호가 없어 폰에 저장했습니다 — 신호가 돌아오면 자동으로 올라갑니다');
+    flush();
+    if (usedBytes > st.warnMB * 1048576) toast('⚠️ 사진 저장 공간이 많이 찼습니다 — 관리자에게 데이터 정리를 알려 주세요');
+  }
+
+  // ── 폰 보관함 (IndexedDB): 보내지 못한 사진·완료를 보관했다가 신호가 돌아오면 자동 전송 (S-52) ──
+  const OB = (() => {
+    let dbp = null;
+    const open = () => dbp || (dbp = new Promise((ok, no) => {
+      const r = indexedDB.open('mw_outbox', 1);
+      r.onupgradeneeded = () => r.result.createObjectStore('q', { keyPath: 'id' });
+      r.onsuccess = () => ok(r.result); r.onerror = () => no(r.error);
+    }));
+    const run = async (mode, fn) => { const d = await open(); return new Promise((ok, no) => { const x = d.transaction('q', mode), req = fn(x.objectStore('q')); x.oncomplete = () => ok(req && req.result); x.onerror = () => no(x.error); }); };
+    return { put: v => VIEWONLY ? (toast('👀 보기 모드라 처리할 수 없어요'), Promise.reject(new Error('보기 모드'))) : run('readwrite', s => s.put(v)),   // [11_10]
+             del: k => run('readwrite', s => s.delete(k)), all: () => run('readonly', s => s.getAll()) };
+  })();
+  let pend = [], flushing = false, usedBytes = 0;
+  cref('usage/photoBytes').on('value', s => { usedBytes = s.val() || 0; });
+  async function refreshPend() {
+    try { pend = ((await OB.all()) || []).filter(x => x.uid === p.uid).sort((a, b) => a.seq - b.seq); } catch (e) { pend = []; }
+    const n = pend.length;
+    $('b-q').style.display = n ? '' : 'none';
+    $('b-q').textContent = '📴 대기 ' + n;
+    render();
+  }
+  $('b-q').onclick = () => {
+    const ph = pend.filter(x => x.type === 'photo').length, dn = pend.filter(x => x.type === 'done').length;
+    alert('폰에 저장된 채 아직 올라가지 않은 것: 사진 ' + ph + '장, 완료 ' + dn + '건\n\n' + (online ? '지금 보내는 중입니다.' : '신호가 돌아오면 자동으로 올라갑니다. 앱을 꺼도 지워지지 않습니다.'));
+    flush();
+  };
+  const withTimeout = (pr, ms) => Promise.race([pr, new Promise((_, no) => setTimeout(() => no(new Error('시간 초과')), ms))]);
+  async function flush() {
+    if (flushing || !online) return;
+    flushing = true;
+    try {
+      await refreshPend();
+      for (const x of pend) {
+        if (!online) break;
+        const b = 'c/' + C.company + '/', tb = b + 'tasks/' + x.taskId + '/';
+        try {
+          if (x.type === 'photo') {
+            const has = (await withTimeout(cref('tasks/' + x.taskId + '/photos/' + x.pid).once('value'), 15000)).exists();
+            if (!has) {
+              const up = {};
+              up[b + 'photoData/' + x.m + '/' + x.pid] = { jpg: x.jpg, taskId: x.taskId, kind: x.k, size: x.size, at: x.at, by: p.uid };
+              up[b + 'photoThumb/' + x.m + '/' + x.pid] = { jpg: x.th, by: p.uid };
+              up[tb + 'photos/' + x.pid] = { k: x.k, m: x.m, size: x.size, at: x.at };
+              // [11_3] 사진을 올려도 '처리중'으로 바꾸지 않는다 ('처리 시작' 없앰)
+              await withTimeout(db.ref().update(up), 60000);
+              cref('usage/photoBytes').transaction(v => (v || 0) + x.size);
+              cref('usage/photoCount').transaction(v => (v || 0) + 1);
+            }
+          } else if (x.type === 'done') {
+            // 같은 민원의 사진이 아직 대기 중이면 사진부터 (순서대로 보내므로 보통 이미 올라감)
+            if (pend.some(y => y.type === 'photo' && y.taskId === x.taskId && y.seq < x.seq && y.left !== false && !y.sent)) continue;
+            const tk = T[x.taskId] || {}, up = {};
+            up[tb + 'state'] = x.kind === 'fail' ? 'fail' : 'done'; up[tb + 'doneBy'] = p.label; up[tb + 'doneTeam'] = p.team || ''; up[tb + 'doneAt'] = x.doneAt; up[tb + 'proxy'] = !!x.proxy;
+            up[tb + 'failReason'] = x.kind === 'fail' ? (x.why || '배출물 없음') : null;
+            if (!tk.claimBy) { up[tb + 'claimBy'] = p.label; up[tb + 'claimAt'] = x.doneAt; up[tb + 'claimTeam'] = p.team; }
+            await withTimeout(db.ref().update(up), 30000);
+            unseenOff(x.taskId);   // [11_2]
+          }
+          x.sent = true;
+          await OB.del(x.id);
+        } catch (e) { console.warn('보내기 실패, 다음에 다시', x.id, e); }
+      }
+    } finally {
+      flushing = false;
+      const before = pend.length; await refreshPend();
+      if (before && !pend.length) toast('📶 대기하던 사진·완료를 모두 올렸습니다');
+    }
+  }
+  setInterval(flush, 30000);
+  refreshPend();
+
+  async function delPhoto(pid, m) {
+    if (!confirm('이 사진을 지울까요?')) return;
+    if (pend.some(x => x.pid === pid)) { await OB.del('p_' + pid); await refreshPend(); if (cur) openSheet(cur, true); return; }
+    const t = T[cur], size = ((t.photos || {})[pid] || {}).size || 0;
+    const up = {}, b = 'c/' + C.company + '/';
+    up[b + 'tasks/' + cur + '/photos/' + pid] = null;
+    up[b + 'photoData/' + m + '/' + pid] = null;
+    up[b + 'photoThumb/' + m + '/' + pid] = null;
+    try {
+      await db.ref().update(up);
+      cref('usage/photoBytes').transaction(v => Math.max(0, (v || 0) - size));
+      cref('usage/photoCount').transaction(v => Math.max(0, (v || 0) - 1));
+    } catch (e) { alert('지우지 못했습니다 (다른 차량이 찍은 사진은 지울 수 없습니다)'); }
+  }
+
+  // ── 지도 (수거앱 방식) ──
+  //   멀리 보면: 가까운 민원을 원형그래프(바깥 링 = 색 비율, 가운데 = 건수)로 묶음
+  //   가까이 보면: 번지 글자 핀 + 오른쪽 위 민원성상(생활·재활용·대형…)
+  //   색: 핀(번지) = 경과기간(당일·1일·2일+, 완료 회색) / 꼬리표(민원성상) = 성상별 색
+  let map = null, mapReady = false, ovs = [], mapRows = [], lastFit = '';
+  const AGE_COL = { g: '#16a34a', y: '#eab308', r: '#dc2626', done: '#9ca3af' };
+  const ageKey = t => !isOpen(t) ? 'done' : ageOf(t) >= 2 ? 'r' : ageOf(t) === 1 ? 'y' : 'g';
+  // 노랑(음식물)은 흰 글씨가 안 보여서 진한 글씨
+  const pillStyle = x => 'background:' + (TYPE_COL[x] || '#64748b') + (x === '음식물' ? ';color:#3b2a00' : '');
+  const TYPE_COL = { '생활': '#16a34a', '재활용': '#2563eb', '음식물': '#facc15', '공용용기': '#a16207',
+                     '특수마대': '#db2777', '대형': '#7c3aed', '기타': '#64748b' };
+  const mainType = t => (t.types || []).slice().sort((a, b) => (S.types || []).indexOf(a) - (S.types || []).indexOf(b))[0] || '기타';
+  const colKey = t => ageKey(t);
+  const colOf = k => AGE_COL[k] || TYPE_COL[k] || '#64748b';
+  const colOrder = () => ['r', 'y', 'g', 'done'];
+  // 민원성상 꼬리표: 성상마다 색 알약
+  const typePills = types => types.map(x => '<b style="' + pillStyle(x) + '">' + esc(x) + '</b>').join('');
+  initMap();
+  setMode('map');
+  function initMap() {
+    if (map) { setTimeout(() => { map.relayout(); drawMap(); }, 50); return; }
+    const sc = document.createElement('script');
+    sc.src = 'https://dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=' + C.kakao.jsKey;
+    sc.onload = () => kakao.maps.load(() => {
+      map = new kakao.maps.Map($('fmap'), { center: new kakao.maps.LatLng(37.5068, 127.0885), level: 5 });
+      kakao.maps.event.addListener(map, 'idle', drawMap);
+      mapReady = true; drawMap();
+    });
+    sc.onerror = () => { $('fmap').innerHTML = '<div class="empty">지도를 불러오지 못했습니다</div>'; };
+    document.head.appendChild(sc);
+  }
+  function clearOvs() { ovs.forEach(o => o.setMap(null)); ovs = []; }
+  function put(el, lat, lng, z, ya) {
+    const o = new kakao.maps.CustomOverlay({ position: new kakao.maps.LatLng(lat, lng), content: el, yAnchor: ya, zIndex: z });
+    o.setMap(map); ovs.push(o);
+  }
+  function drawMap() {
+    if (!mapReady) return;
+    clearOvs();
+    const rs = mapRows.filter(t => t.summary && t.summary.lat);
+    // 처음 열 때(또는 볼 팀을 바꿨을 때) 민원이 모두 보이게 맞춘다
+    const fitKey = view + ':' + per + ':' + rs.length;
+    if (rs.length && fitKey !== lastFit) {
+      lastFit = fitKey;
+      const b = new kakao.maps.LatLngBounds(); rs.forEach(t => b.extend(new kakao.maps.LatLng(t.summary.lat, t.summary.lng)));
+      if (rs.length === 1) { map.setLevel(3); map.setCenter(b.getCenter()); } else map.setBounds(b, 60, 40, 60, 40);
+      return;   // 이동이 끝나면 idle 에서 다시 그린다
+    }
+    if (map.getLevel() >= 4) drawClusters(rs); else drawPins(rs);
+  }
+  // 같은 자리 민원은 핀 하나로
+  const spotOf = t => t.summary.lat.toFixed(5) + ',' + t.summary.lng.toFixed(5);
+  function groupBySpot(rs, byColor) {
+    const g = {};
+    rs.forEach(t => { const k = spotOf(t) + (byColor ? '|' + colKey(t) : ''); (g[k] = g[k] || []).push(t); });
+    return Object.values(g);
+  }
+  const worst = ts => colOrder().find(k => ts.some(t => colKey(t) === k));
+  const shortAddr = s => String(s || '').replace(/\s*\d+호$/, '');
+  function drawPins(rs) {
+    const stack = {};
+    groupBySpot(rs, false).forEach(ts => {
+      const s = ts[0].summary, k = worst(ts), sp = spotOf(ts[0]), n = stack[sp] = (stack[sp] || 0) + 1;
+      const types = Array.from(new Set([].concat.apply([], ts.map(t => t.types || []))))
+        .sort((a, b) => (S.types || []).indexOf(a) - (S.types || []).indexOf(b));
+      const el = document.createElement('div'); el.className = 'pin';
+      el.innerHTML = '<div class="bd" style="background:' + colOf(k) + '">' + esc(shortAddr(s.addrText)) + (ts.length > 1 ? ' ×' + ts.length : '') + '</div>'
+        + '<span class="ty">' + typePills(types) + '</span><div class="tip"></div>';
+      const pick = ts.slice().sort((a, b) => colOrder().indexOf(colKey(a)) - colOrder().indexOf(colKey(b)))[0];
+      el.onclick = () => openSheet(pick.id);
+      put(el, s.lat, s.lng, k === 'done' ? 1 : 3, 1 + (n - 1) * 1.35);
+    });
+  }
+  function degPerPx() {
+    const b = map.getBounds(), sw = b.getSouthWest(), ne = b.getNorthEast(), el = $('fmap');
+    return { lat: (ne.getLat() - sw.getLat()) / (el.clientHeight || 600), lng: (ne.getLng() - sw.getLng()) / (el.clientWidth || 390) };
+  }
+  function drawClusters(rs) {
+    const d = degPerPx(), cLat = d.lat * 95, cLng = d.lng * 95, bins = {};
+    rs.forEach(t => { const k = Math.floor(t.summary.lat / cLat) + '_' + Math.floor(t.summary.lng / cLng); (bins[k] = bins[k] || []).push(t); });
+    Object.values(bins).forEach(ts => {
+      if (groupBySpot(ts).length === 1) return drawPins(ts);   // 한 자리뿐이면 묶지 않고 핀
+      const lat = ts.reduce((a, t) => a + t.summary.lat, 0) / ts.length, lng = ts.reduce((a, t) => a + t.summary.lng, 0) / ts.length;
+      const counts = {}; ts.forEach(t => { const k = colKey(t); counts[k] = (counts[k] || 0) + 1; });
+      const el = document.createElement('div'); el.className = 'clu';
+      el.appendChild(donut(counts, ts.length));
+      el.onclick = () => map.setLevel(Math.max(1, map.getLevel() - 2), { anchor: new kakao.maps.LatLng(lat, lng) });
+      put(el, lat, lng, 2, .5);
+    });
+  }
+  // 원형그래프: 바깥 링 = 색 비율, 가운데 = 건수
+  function donut(counts, total) {
+    const size = total >= 50 ? 64 : total >= 10 ? 56 : 48, dpr = window.devicePixelRatio || 1;
+    const cv = document.createElement('canvas'); cv.width = size * dpr; cv.height = size * dpr; cv.style.width = size + 'px'; cv.style.height = size + 'px';
+    const x = cv.getContext('2d'); x.scale(dpr, dpr);
+    const cx = size / 2, cy = size / 2, R = size / 2 - 2, ring = Math.max(6, size * .17);
+    x.beginPath(); x.arc(cx, cy, R, 0, Math.PI * 2); x.fillStyle = 'rgba(15,23,42,.30)'; x.fill();
+    let a = -Math.PI / 2;
+    colOrder().forEach(k => {
+      const n = counts[k] || 0; if (!n) return;
+      const sw = n / total * Math.PI * 2;
+      x.beginPath(); x.arc(cx, cy, R - ring / 2, a, a + sw); x.strokeStyle = colOf(k); x.lineWidth = ring; x.stroke(); a += sw;
+    });
+    x.beginPath(); x.arc(cx, cy, R - ring, 0, Math.PI * 2); x.fillStyle = '#fff'; x.fill();
+    x.fillStyle = '#0f172a'; x.font = '800 ' + (total >= 100 ? 15 : total >= 10 ? 17 : 19) + 'px -apple-system,sans-serif';
+    x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(String(total), cx, cy + .5);
+    return cv;
+  }
+})();
+</script>
+<button type="button" id="lgx-btn" onclick="openLedgers()">🗂 관리대장</button>
+<!-- ══ [11_10] 🗂 관리대장 — 종합예방관리대장(부장님 앱) 대장 4개를 지도로 보기 (읽기만) ══ -->
+<style>
+#lgx-btn{position:fixed;left:16px;bottom:calc(env(safe-area-inset-bottom) + 28px);z-index:45;border:3px solid #fff;border-radius:999px;background:#7c4a1e;color:#fff;font-weight:900;font-size:15px;padding:12px 16px;box-shadow:0 4px 14px rgba(0,0,0,.35);cursor:pointer}
+#lgx-btn:active{transform:scale(.96)}
+.lgx-f{display:grid;gap:4px;margin-top:8px;font-size:12px;font-weight:800;color:#6b7280}
+.lgx-f input,.lgx-f textarea{font:inherit;font-size:15px;font-weight:500;color:#111;padding:9px 11px;border:1px solid #d9e1e8;border-radius:10px}
+.lgx-two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.lgx-ok{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.lgx-ok button{border:1.5px solid #d9e1e8;background:#fff;border-radius:10px;padding:11px;font-weight:800;font-size:14px}
+.lgx-ok button.on.g{border-color:#15803d;color:#15803d;background:#e8f5ec}
+.lgx-ok button.on.r{border-color:#dc2626;color:#dc2626;background:#fde2e2}
+.lgx-ph{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.lgx-ph img{width:72px;height:72px;object-fit:cover;border-radius:10px;border:1px solid #e5e7eb}
+.lgx-ph label{width:72px;height:72px;border:2px dashed #0f7a86;border-radius:10px;display:grid;place-items:center;color:#0f7a86;font-weight:900;font-size:12px;text-align:center;cursor:pointer}
+.lgx-ev{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px dashed #d9e1e8}
+.lgx-ev b{width:100%;font-size:12px;color:#6b7280}
+.lgx-ev button{border:1px solid #d9e1e8;background:#f8fafc;border-radius:999px;padding:7px 11px;font-weight:800;font-size:13px}
+.lgx-save{width:100%;border:none;background:#0f7a86;color:#fff;border-radius:12px;padding:13px;font-weight:900;font-size:16px;margin-top:10px}
+.lgx-hist{margin-top:10px;background:#f8fafc;border-radius:12px;padding:10px;font-size:13px;display:grid;gap:5px}
+.lgx-hist div{display:flex;gap:8px} .lgx-hist span{color:#6b7280;min-width:70px}
+.lgx-tabs2{display:grid;grid-template-columns:1fr 1fr;border:1px solid #d9e1e8;border-radius:12px;overflow:hidden;margin-top:6px}
+.lgx-tabs2 button{border:none;background:#fff;padding:9px;font-weight:800}
+.lgx-tabs2 button.on{background:#dff2f5;color:#0f7a86}
+#lgx-ov{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:3000;display:none;align-items:flex-end;justify-content:center}
+#lgx-ov.on{display:flex}
+#lgx-sheet{background:#fff;width:min(520px,100%);border-radius:18px 18px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));display:grid;gap:10px}
+#lgx-sheet h3{margin:0;font-size:17px}
+.lgx-four{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.lgx-b{border:none;border-radius:14px;padding:14px 10px;color:#fff;font-weight:900;font-size:15px;text-align:left;display:grid;gap:2px;min-height:72px;cursor:pointer}
+.lgx-b small{font-weight:600;opacity:.92;font-size:12px}
+.lgx-sub{display:none;grid-template-columns:1fr 1fr;gap:8px;border:2px solid #15803d;border-radius:14px;padding:8px}
+.lgx-sub.on{display:grid}
+.lgx-close{border:1px solid #d9e1e8;background:#fff;border-radius:10px;padding:10px;font-weight:800;font-size:14px}
+#lgx-pane{position:fixed;inset:0;background:#fff;z-index:2900;display:none;flex-direction:column}
+#lgx-pane.on{display:flex}
+#lgx-top{display:flex;gap:8px;align-items:center;padding:calc(8px + env(safe-area-inset-top,0px)) 10px 8px;border-bottom:1px solid #e5e7eb}
+#lgx-top b{font-size:16px}
+#lgx-top button{border:1px solid #d9e1e8;background:#fff;border-radius:10px;padding:7px 10px;font-weight:800}
+#lgx-tabs{display:flex;gap:6px;overflow-x:auto;padding:8px 10px}
+#lgx-tabs button{white-space:nowrap;border:1px solid #d9e1e8;border-radius:999px;padding:6px 11px;font-size:13px;font-weight:800;background:#fff;color:#4b5563}
+#lgx-tabs button.on{color:#fff;border-color:transparent}
+#lgx-map{flex:1;min-height:200px}
+#lgx-list{max-height:34vh;overflow:auto;border-top:1px solid #e5e7eb}
+.lgx-it{display:flex;justify-content:space-between;gap:8px;padding:10px 12px;border-bottom:1px solid #f1f5f9;font-size:14px;cursor:pointer}
+.lgx-it span{color:#6b7280;white-space:nowrap;font-size:13px}
+.lgx-it.off{opacity:.55}
+.lgx-pin{transform:translate(-50%,-100%);color:#fff;font-size:11px;font-weight:900;border-radius:999px;padding:3px 8px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.25);cursor:pointer;max-width:140px;overflow:hidden;text-overflow:ellipsis}
+.lgx-me{transform:translate(-50%,-50%);width:16px;height:16px;border-radius:50%;background:#2563eb;border:3px solid #fff;box-shadow:0 0 0 2px #2563eb}
+#lgx-card{position:fixed;left:0;right:0;bottom:0;z-index:3100;background:#fff;border-radius:18px 18px 0 0;box-shadow:0 -6px 24px rgba(0,0,0,.18);padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px));display:none;max-height:70vh;overflow:auto}
+#lgx-card.on{display:block}
+#lgx-card h4{margin:0 0 6px;font-size:16px}
+.lgx-row{display:grid;grid-template-columns:84px 1fr;gap:8px;font-size:14px;padding:5px 0;border-bottom:1px solid #f3f4f6}
+.lgx-row b{color:#6b7280;font-weight:700}
+</style>
+<div id="lgx-ov" onclick="if(event.target===this)lgxClose()"><div id="lgx-sheet">
+  <h3>🗂 어떤 대장을 볼까요?</h3>
+  <div class="lgx-four">
+    <button type="button" class="lgx-b" style="background:#dc2626" onclick="lgxOpen('hazard')">⚠️ 재해예방<small id="lgx-c-hazard">…</small></button>
+    <button type="button" class="lgx-b" style="background:#1a56db" onclick="lgxOpen('rfid')">📡 RFID<small id="lgx-c-rfid">…</small></button>
+    <button type="button" class="lgx-b" style="background:#15803d" onclick="document.getElementById('lgx-sub').classList.toggle('on')">♻️ 감량의무사업장<small id="lgx-c-duty">… · 눌러서 고르기 ▾</small></button>
+    <button type="button" class="lgx-b" style="background:#7c4a1e" onclick="lgxOpen('cafe')">☕ 커피매장<small id="lgx-c-cafe">…</small></button>
+  </div>
+  <div class="lgx-sub" id="lgx-sub">
+    <button type="button" class="lgx-b" style="background:#15803d;min-height:56px" onclick="lgxOpen('recycle')">♻️ 재활용<small id="lgx-c-recycle">…</small></button>
+    <button type="button" class="lgx-b" style="background:#b45309;min-height:56px" onclick="lgxOpen('food')">🍲 음식물<small id="lgx-c-food">…</small></button>
+  </div>
+  <button type="button" class="lgx-close" onclick="lgxClose()">닫기</button>
+</div></div>
+<div id="lgx-pane">
+  <div id="lgx-top"><button type="button" onclick="lgxBack()">← 작업 목록</button><b id="lgx-ttl"></b></div>
+  <div id="lgx-tabs"></div>
+  <div id="lgx-map"></div>
+  <div id="lgx-list"></div>
+</div>
+<div id="lgx-card"></div>
+<script>
+(function(){
+  const _t = m => (typeof toast === 'function' ? toast : (window.MW && MW.toast) || alert)(m);
+  const _view = () => !!window.LGX_VIEW || (typeof VIEWONLY !== 'undefined' && VIEWONLY);
+  const _kakao = () => typeof loadKakaoMap === 'function' ? loadKakaoMap() : new Promise((ok, no) => { const sc = document.createElement('script'); sc.src = 'https://dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=' + ((window.MW && MW.C && MW.C.kakao && MW.C.kakao.jsKey) || ''); sc.onload = () => kakao.maps.load(ok); sc.onerror = no; document.head.appendChild(sc); });
+  // 부장님 앱(종합예방관리대장)과 같은 Firebase — 읽기만. 부장님 앱처럼 보이지 않는 자동(익명) 로그인으로 읽는다.
+  const BOSS = { apiKey:'AIzaSyCrJaARREMDXFfhicjUwWFyqkyTbVMRsYk', authDomain:'minwon-c29c2.firebaseapp.com',
+    databaseURL:'https://minwon-c29c2-default-rtdb.asia-southeast1.firebasedatabase.app', projectId:'minwon-c29c2' };
+  const K = { hazard:['⚠️ 재해예방','#dc2626'], rfid:['📡 RFID','#1a56db'], recycle:['♻️ 감량·재활용','#15803d'], food:['🍲 감량·음식물','#b45309'], cafe:['☕ 커피매장','#7c4a1e'] };
+  let app = null, D = null, loading = null, cur = 'hazard', lmap = null, pins = [], me = null, meOv = null;
+  const E = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const posOf = x => x && x.pos && x.pos.lat ? x.pos : (x && x.addrPos && x.addrPos.lat ? x.addrPos : null);
+  const isUse = x => x._t === 'rfid' ? (x.status || '사용') === '사용' : (x.status || '계약') !== '해지';
+  function db(){
+    if (!app){ app = firebase.apps.find(a => a.name === 'boss') || firebase.initializeApp(BOSS, 'boss'); }
+    return app;
+  }
+  function load(){
+    if (D) return Promise.resolve(D);
+    if (loading) return loading;
+    loading = (async () => {
+      const a = db();
+      try { if (!a.auth().currentUser) await a.auth().signInAnonymously(); } catch(e){}
+      const rd = p => a.database().ref(p).once('value').then(s => s.val() || {}).catch(() => ({}));
+      const [recs, rfid, biz] = await Promise.all([rd('report/recs'), rd('report/rfid'), rd('report/biz')]);
+      const arr = o => Object.entries(o || {}).map(([id, v]) => Object.assign({ id }, v || {}));
+      const bz = arr(biz);
+      D = { hazard: arr(recs).filter(r => r.recType === 'hazard'), rfid: arr(rfid).map(x => Object.assign(x, { _t:'rfid' })),
+            recycle: bz.filter(b => b.kind === 'recycle'), food: bz.filter(b => b.kind === 'food'), cafe: bz.filter(b => b.kind === 'cafe') };
+      return D;
+    })();
+    loading.catch(() => { loading = null; });
+    return loading;
+  }
+  window.openLedgers = async function(){
+    document.getElementById('lgx-ov').classList.add('on');
+    document.getElementById('lgx-sub').classList.remove('on');
+    const d = await load();
+    const n = k => d[k].length;
+    const set = (id, t) => { const el = document.getElementById(id); if (el) el.textContent = t; };
+    set('lgx-c-hazard', n('hazard') + '건'); set('lgx-c-rfid', n('rfid') + '대'); set('lgx-c-cafe', n('cafe') + '곳');
+    set('lgx-c-duty', (n('recycle') + n('food')) + '곳 · 눌러서 고르기 ▾'); set('lgx-c-recycle', n('recycle') + '곳'); set('lgx-c-food', n('food') + '곳');
+    if (!n('hazard') && !n('rfid') && !n('cafe') && !n('recycle') && !n('food')) set('lgx-c-hazard', '읽지 못함');
+  };
+  window.lgxClose = () => document.getElementById('lgx-ov').classList.remove('on');
+  window.lgxBack = () => { document.getElementById('lgx-pane').classList.remove('on'); document.getElementById('lgx-card').classList.remove('on'); };
+  window.lgxOpen = async function(k){
+    cur = k; lgxClose();
+    document.getElementById('lgx-pane').classList.add('on');
+    document.getElementById('lgx-ttl').textContent = K[k][0];
+    document.getElementById('lgx-tabs').innerHTML = Object.keys(K).map(x => '<button type="button" data-k="' + x + '"' + (x === k ? ' class="on" style="background:' + K[x][1] + '"' : '') + '>' + K[x][0] + '</button>').join('');
+    document.querySelectorAll('#lgx-tabs button').forEach(b => b.onclick = () => lgxOpen(b.dataset.k));
+    await load();
+    if (!lmap){
+      if (!(window.kakao && kakao.maps && kakao.maps.Map)){ try { await _kakao(); } catch(e){} }
+      if (window.kakao && kakao.maps && kakao.maps.Map) lmap = new kakao.maps.Map(document.getElementById('lgx-map'), { center: new kakao.maps.LatLng(37.5068, 127.0885), level: 5 });
+    } else setTimeout(() => lmap.relayout(), 30);
+    locate(); draw();
+  };
+  function locate(){
+    if (me || !navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(p => { me = { lat: p.coords.latitude, lng: p.coords.longitude }; draw(); }, () => {}, { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 });
+  }
+  const dist = (a, b) => { if (!a || !b) return Infinity; const R = 6371e3, t = Math.PI / 180, dl = (b.lat - a.lat) * t, dn = (b.lng - a.lng) * t;
+    const h = Math.sin(dl / 2) ** 2 + Math.cos(a.lat * t) * Math.cos(b.lat * t) * Math.sin(dn / 2) ** 2; return 2 * R * Math.asin(Math.sqrt(h)); };
+  const fmtD = m => m === Infinity ? '' : m < 1000 ? Math.round(m / 10) * 10 + 'm' : (m / 1000).toFixed(1) + 'km';
+  const label = (k, x) => k === 'hazard' ? (x.riskType || x.hKind || '위험') + (x.addr ? ' · ' + x.addr : '') : (x.name || x.addr || '');
+  function draw(){
+    const list = (D && D[cur]) || [], col = K[cur][1];
+    const rows = list.map(x => ({ x, p: posOf(x), d: dist(me, posOf(x)) })).sort((a, b) => a.d - b.d || String(a.x.name || a.x.addr || '').localeCompare(String(b.x.name || b.x.addr || '')));
+    document.getElementById('lgx-list').innerHTML = rows.map((r, i) => '<div class="lgx-it' + (cur !== 'hazard' && !isUse(r.x) ? ' off' : '') + '" data-i="' + i + '"><b>' + E(label(cur, r.x)) + (cur !== 'hazard' && !isUse(r.x) ? ' (' + (r.x._t === 'rfid' ? '미사용' : '해지') + ')' : '') + '</b><span>' + (r.p ? fmtD(r.d) : '위치 없음') + '</span></div>').join('')
+      || '<div class="lgx-it"><b>이 대장에 자료가 없습니다</b></div>';
+    document.querySelectorAll('#lgx-list .lgx-it[data-i]').forEach(el => el.onclick = () => { const r = rows[+el.dataset.i]; card(r.x); if (lmap && r.p) lmap.panTo(new kakao.maps.LatLng(r.p.lat, r.p.lng)); });
+    if (!lmap) return;
+    pins.forEach(o => o.setMap(null)); pins = [];
+    const bd = new kakao.maps.LatLngBounds(); let n = 0;
+    rows.forEach(r => { if (!r.p) return;
+      const el = document.createElement('div'); el.className = 'lgx-pin'; el.style.background = (cur !== 'hazard' && !isUse(r.x)) ? '#9ca3af' : col;
+      el.textContent = cur === 'hazard' ? (r.x.riskType || '위험') : (r.x.name || '').slice(0, 10); el.onclick = () => card(r.x);
+      const ll = new kakao.maps.LatLng(r.p.lat, r.p.lng); pins.push(new kakao.maps.CustomOverlay({ map: lmap, position: ll, content: el, yAnchor: 1 })); bd.extend(ll); n++; });
+    if (me){ const el = document.createElement('div'); el.className = 'lgx-me'; if (meOv) meOv.setMap(null); meOv = new kakao.maps.CustomOverlay({ map: lmap, position: new kakao.maps.LatLng(me.lat, me.lng), content: el, yAnchor: .5 }); }
+    if (n) lmap.setBounds(bd);
+  }
+  // ── 점검 창: 사진 · 칸 고치기 · 이상 없음/있음 · 메모 · [변경 기록] → 종합예방관리대장에 저장, 이력(hist)으로 쌓임 ──
+  const refOf = (k, x) => db().database().ref(k === 'hazard' ? 'report/recs/' + x.id : (x._t === 'rfid' ? 'report/rfid/' : 'report/biz/') + x.id);
+  const phRefOf = (k, x) => db().database().ref(k === 'hazard' ? 'report/photos/' + x.id + '/extra' : (x._t === 'rfid' ? 'report/rfidPhotos/' : 'report/bizPhotos/') + x.id);
+  const nowS = () => { const d = new Date(), p = n => String(n).padStart(2, '0'); return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes()); };
+  const who = () => { try { return window.LGX_WHO || (localStorage.getItem('worker') || '').trim() || '현장'; } catch(e){ return '현장'; } };
+  function shrink(file){ return new Promise((ok, no) => { const im = new Image(); im.onload = () => { const r = Math.min(1, 640 / Math.max(im.width, im.height)), c = document.createElement('canvas');
+      c.width = Math.round(im.width * r); c.height = Math.round(im.height * r); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); ok(c.toDataURL('image/jpeg', .55)); URL.revokeObjectURL(im.src); };
+    im.onerror = no; im.src = URL.createObjectURL(file); }); }
+  // 대장별 고칠 칸
+  const FIELDS = { rfid: [['model', '모델명'], ['devNo', '기계번호'], ['place', '설치 위치']], cafe: [['days', '수거 요일'], ['item', '배출 품목']],
+    recycle: [['days', '수거 요일'], ['cont', '용기']], food: [['days', '수거 요일'], ['cont', '용기']], hazard: [['riskContent', '위험 내용']] };
+  const EVS = { rfid: ['🔁 기계 교체', '⛔ 미사용(해지)', '✍️ 다시 사용(재계약)', '📝 기타 변경'], hazard: ['🛠 조치 완료', '📝 기타 변경'], def: ['⛔ 해지', '✍️ 재계약', '📝 기타 변경'] };
+  let ok = null, newPh = [], cx = null;
+  function card(x){
+    const k = cur; cx = x; ok = null; newPh = [];
+    const c = document.getElementById('lgx-card'), st = k === 'hazard' ? (x.hKind || '사고재해예방') : (isUse(x) ? (x._t === 'rfid' ? '사용' : '계약 중') : (x._t === 'rfid' ? '미사용' : '해지'));
+    const fl = (FIELDS[k] || []).map(([f, l]) => '<label class="lgx-f">' + l + '<input data-f="' + f + '" value="' + E(x[f] || '') + '"></label>').join('');
+    const hist = Object.values(x.hist || {}).sort((a, b) => String(b.at).localeCompare(String(a.at))).slice(0, 8);
+    c.innerHTML = '<h4>' + E(K[k][0]) + ' · ' + E(k === 'hazard' ? (x.addr || '') : (x.name || '')) + ' <span style="font-size:12px;color:#0f7a86">' + E(st) + '</span></h4>'
+      + '<div style="font-size:13px;color:#6b7280">' + E(x.addr || '') + (x.lastInsp ? ' · 최근 점검 ' + E(x.lastInsp.at) + ' ' + E(x.lastInsp.by || '') : '') + '</div>'
+      + '<div class="lgx-ph" id="lgx-ph"><label>📷<br>사진 찍기<input type="file" accept="image/*" capture="environment" multiple style="display:none" id="lgx-phin"></label></div>'
+      + (fl ? '<div class="lgx-two">' + fl + '</div>' : '')
+      + '<div class="lgx-ok"><button type="button" data-ok="1" class="g">✅ 이상 없음</button><button type="button" data-ok="0" class="r">⚠️ 이상 있음</button></div>'
+      + '<div class="lgx-ev"><b>변경 기록</b>' + (EVS[k] || EVS.def).map(t => '<button type="button" data-ev="' + E(t) + '">' + E(t) + '</button>').join('') + '</div>'
+      + '<label class="lgx-f">메모<textarea id="lgx-memo" rows="2" placeholder="예: 투입구 덮개 파손, 다음 주 교체 예정"></textarea></label>'
+      + '<button type="button" class="lgx-save" id="lgx-save">저장</button>'
+      + (hist.length ? '<div class="lgx-hist"><b>이 장소 이력</b>' + hist.map(hh => '<div><span>' + E(String(hh.at || '').slice(5, 16)) + '</span>' + E(hh.type || '') + (hh.from || hh.to ? ' ' + E(hh.from || '') + ' → ' + E(hh.to || '') : '') + (hh.memo ? ' · ' + E(hh.memo) : '') + ' · ' + E(hh.by || '') + '</div>').join('') + '</div>' : '')
+      + '<button type="button" class="lgx-close" style="width:100%;margin-top:8px" onclick="document.getElementById(\'lgx-card\').classList.remove(\'on\')">닫기</button>';
+    c.classList.add('on');
+    c.querySelectorAll('[data-ok]').forEach(b => b.onclick = () => { ok = b.dataset.ok === '1'; c.querySelectorAll('[data-ok]').forEach(z => z.classList.toggle('on', z === b)); });
+    c.querySelector('#lgx-phin').onchange = async ev => { for (const f of Array.from(ev.target.files || [])) { try { const b = await shrink(f); newPh.push(b);
+      const im = document.createElement('img'); im.src = b; c.querySelector('#lgx-ph').appendChild(im); } catch(e){} } ev.target.value = ''; };
+    c.querySelectorAll('[data-ev]').forEach(b => b.onclick = () => evForm(k, x, b.dataset.ev));
+    c.querySelector('#lgx-save').onclick = () => save(k, x);
+    // 지난 사진 몇 장 (읽기만)
+    phRefOf(k, x).limitToLast(3).once('value').then(s => { const v = s.val() || {}; const box = c.querySelector('#lgx-ph'); if (!box || cx !== x) return;
+      Object.values(v).forEach(b => { if (typeof b === 'string' && b.indexOf('data:image') === 0){ const im = document.createElement('img'); im.src = b; im.style.opacity = '.6'; im.title = '지난 사진'; box.appendChild(im); } }); }).catch(() => {});
+  }
+  async function save(k, x){
+    if (_view()){ _t('👀 보기 모드라 저장할 수 없어요'); return; }
+    const c = document.getElementById('lgx-card'), memo = c.querySelector('#lgx-memo').value.trim(), up = {}, at = nowS(), by = who();
+    let changed = false;
+    c.querySelectorAll('[data-f]').forEach(i => { const v = i.value.trim(); if (v !== String(x[i.dataset.f] || '')) { up[i.dataset.f] = v; changed = true; } });
+    if (ok === null && !memo && !newPh.length && !changed){ _t('사진·이상 여부·메모 중 하나는 넣어 주세요'); return; }
+    const hk = 'h' + Date.now().toString(36);
+    up['hist/' + hk] = { at, by, type: ok === null ? (changed ? '내용 수정' : '현장 확인') : (ok ? '✅ 점검 이상 없음' : '⚠️ 점검 이상 있음'), memo, photos: newPh.length,
+      edits: changed ? Object.keys(up).filter(f => f.indexOf('hist/') < 0).join(',') : '' };
+    up.lastInsp = { at, by, ok: ok === null ? null : ok };
+    up.updatedAt = at;
+    if (k === 'hazard' && (ok !== null || memo)) up.inspResult = (ok === null ? '' : (ok ? '이상 없음' : '이상 있음')) + (memo ? (ok === null ? '' : ' · ') + memo : '') + ' (' + by + ' ' + at + ')';
+    const btn = c.querySelector('#lgx-save'); btn.disabled = true; btn.textContent = '저장 중…';
+    try {
+      for (let i = 0; i < newPh.length; i++) await phRefOf(k, x).child((k === 'hazard' ? 'e' : 'p') + Date.now() + '_' + i).set(newPh[i]);
+      if (newPh.length && k !== 'hazard'){ const s = await phRefOf(k, x).once('value'); up.phCount = Object.keys(s.val() || {}).length; }
+      await refOf(k, x).update(up);
+      Object.keys(up).forEach(f => { if (f.indexOf('hist/') === 0){ x.hist = x.hist || {}; x.hist[f.slice(5)] = up[f]; } else x[f] = up[f]; });
+      _t('✅ 저장했습니다 — 종합예방관리대장에 들어갔어요'); card(x);
+    } catch(e){ btn.disabled = false; btn.textContent = '저장'; _t('⚠️ 저장하지 못했습니다 — ' + (e && e.code || '연결 확인')); }
+  }
+  // [변경 기록] 작은 창: 날짜 · 전→후 · 사유 · 메모 → 이력에 남기고, 해지·재계약·교체는 상태·모델에도 반영
+  function evForm(k, x, t){
+    const c = document.getElementById('lgx-card'), isSwap = /교체/.test(t), d = new Date(), p = n => String(n).padStart(2, '0');
+    const ymd = d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+    c.innerHTML = '<h4>' + E(t) + ' · ' + E(k === 'hazard' ? (x.addr || '') : (x.name || '')) + '</h4>'
+      + '<label class="lgx-f">날짜<input type="date" id="ev-d" value="' + ymd + '"></label>'
+      + (isSwap ? '<div class="lgx-two"><label class="lgx-f">전 모델<input id="ev-from" value="' + E(x.model || '') + '"></label><label class="lgx-f">새 모델<input id="ev-to"></label></div>' : '')
+      + '<label class="lgx-f">사유<input id="ev-why" placeholder="예: 투입구 고장"></label>'
+      + '<label class="lgx-f">메모<textarea id="ev-memo" rows="2"></textarea></label>'
+      + '<button type="button" class="lgx-save" id="ev-save">기록 남기기</button><button type="button" class="lgx-close" style="width:100%;margin-top:8px" id="ev-x">취소</button>';
+    c.querySelector('#ev-x').onclick = () => card(x);
+    c.querySelector('#ev-save').onclick = async () => {
+      if (_view()){ _t('👀 보기 모드라 저장할 수 없어요'); return; }
+      const g = id => (c.querySelector(id) || {}).value || '', up = {}, at = nowS(), by = who();
+      const hk = 'h' + Date.now().toString(36);
+      up['hist/' + hk] = { at, by, type: t, date: g('#ev-d'), from: isSwap ? g('#ev-from').trim() : '', to: isSwap ? g('#ev-to').trim() : '', why: g('#ev-why').trim(), memo: g('#ev-memo').trim() };
+      if (isSwap && g('#ev-to').trim()) up.model = g('#ev-to').trim();
+      if (/해지|미사용/.test(t)) up.status = x._t === 'rfid' ? '미사용' : '해지';
+      if (/재계약|다시 사용/.test(t)) up.status = x._t === 'rfid' ? '사용' : '계약';
+      up.updatedAt = at;
+      try { await refOf(k, x).update(up);
+        Object.keys(up).forEach(f => { if (f.indexOf('hist/') === 0){ x.hist = x.hist || {}; x.hist[f.slice(5)] = up[f]; } else x[f] = up[f]; });
+        _t('✅ ' + t + ' 기록을 남겼습니다'); card(x); draw();
+      } catch(e){ _t('⚠️ 기록하지 못했습니다 — ' + (e && e.code || '연결 확인')); }
+    };
+  }
+})();
+</script>
+
+</body>
+</html>

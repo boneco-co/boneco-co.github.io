@@ -1,0 +1,94 @@
+From 9afeb3d4c6678dacf3c23e32fe1d4e5c317aa727 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=EB=B3=B8=EC=97=90=EC=BD=94=20=ED=86=B5=ED=95=A9=EB=B0=A9?=
+ <noreply@anthropic.com>
+Date: Tue, 10 Nov 2026 09:04:51 +0000
+Subject: [PATCH] =?UTF-8?q?=EC=A2=85=ED=95=A9=EC=98=88=EB=B0=A9=EA=B4=80?=
+ =?UTF-8?q?=EB=A6=AC=EB=8C=80=EC=9E=A5:=20=EC=9C=84=20=EB=B2=84=ED=8A=BC?=
+ =?UTF-8?q?=20[=EB=AF=BC=EC=9B=90=EC=B2=98=EB=A6=AC=20=ED=99=94=EB=A9=B4][?=
+ =?UTF-8?q?=EB=AF=BC=EC=9B=90=20=ED=98=84=EC=9E=A5=20=ED=99=94=EB=A9=B4][?=
+ =?UTF-8?q?=EB=8C=80=ED=98=95=20=ED=98=84=EC=9E=A5=20=ED=99=94=EB=A9=B4],?=
+ =?UTF-8?q?=20RFID=20=EB=AA=A8=EB=8D=B8=EB=AA=85=20=EC=B9=B8,=20=EB=8C=80?=
+ =?UTF-8?q?=EC=9E=A5=20=EC=88=98=EC=A0=95=EC=B0=BD=EC=97=90=20=ED=98=84?=
+ =?UTF-8?q?=EC=9E=A5=20=EC=A0=90=EA=B2=80=C2=B7=EB=B3=80=EA=B2=BD=20?=
+ =?UTF-8?q?=EC=9D=B4=EB=A0=A5?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_013YMEudMHewuLqXVoZoD7eG
+---
+ report/index.html                                | 16 ++++++++++++++--
+ ...0\230\354\240\225\352\270\260\353\241\235.md" |  1 +
+ 2 files changed, 15 insertions(+), 2 deletions(-)
+
+diff --git a/report/index.html b/report/index.html
+index 7a2dde7..5a418f7 100644
+--- a/report/index.html
++++ b/report/index.html
+@@ -43,7 +43,7 @@ input,select,textarea{font-family:inherit;outline:none}
+ #login-logo{width:72px;height:72px;border-radius:50%;background:var(--logo) center/cover no-repeat;background-color:#fff;box-shadow:0 2px 10px rgba(0,0,0,.18);margin-bottom:4px}
+ #hdr-right{display:flex;align-items:center;gap:6px}
+ #staff-name{font-size:12px;opacity:.85}
+-#mw-sw{font-size:12px;font-weight:800;background:#fff;color:var(--blue);padding:4px 10px;border-radius:20px;text-decoration:none;white-space:nowrap} /* [10_29] 민원처리 전환 */
++#mw-sw,.mw-swx{font-size:12px;font-weight:800;background:#fff;color:var(--blue);padding:4px 10px;border-radius:20px;text-decoration:none;white-space:nowrap} /* [10_29] 민원처리 전환 · [11_10] 현장 화면 버튼도 같은 모양 */
+ #logout-btn{font-size:11px;background:rgba(255,255,255,.2);color:#fff;padding:3px 8px;border-radius:20px}
+ #net-bar{font-size:11px;padding:3px 0;text-align:center;border-top:1px solid rgba(255,255,255,.15)}
+ .net-ok{color:#86efac}.net-err{color:#fca5a5}.net-wait{color:#fde68a}
+@@ -491,7 +491,9 @@ input,select,textarea{font-family:inherit;outline:none}
+     <div id="hdr-top">
+       <h1>종합예방관리대장</h1>
+       <div id="hdr-right">
+-        <a id="mw-sw" href="https://boneco-minwon.web.app/?from=risk" target="bn_minwon" rel="noopener">📋 민원처리</a>
++        <a id="mw-sw" href="https://boneco-minwon.web.app/?from=risk" target="bn_minwon" rel="noopener">📋 민원처리 화면</a>
++        <a class="mw-swx" href="https://boneco-minwon.web.app/field.html?view=1" target="bn_minwon_field" rel="noopener" title="민원 현장 근무자 화면 보기 (보기 전용)">🚛 민원 현장 화면</a>
++        <a class="mw-swx" href="https://boneco-co.github.io/sugeorapp/?view=1" target="bn_sugeo_view" rel="noopener" title="대형 수거 현장 화면 보기 (보기 전용)">🚚 대형 현장 화면</a>
+         <button class="hdr-sbtn" id="hb-photo" onclick="swSide('photo')">📦 보관함</button>
+         <button class="hdr-sbtn" id="hb-staff" onclick="swSide('staff')">👷 직원</button>
+         <span id="staff-name"></span>
+@@ -3039,6 +3041,7 @@ function lgOpen(id){
+       +'<div><span class="form-label">사용 여부</span><select class="form-select" id="lg-f-status"><option value="사용"'+(use?' selected':'')+'>🟢 사용중</option><option value="미사용"'+(use?'':' selected')+'>⚪ 미사용</option></select></div></div>'
+       +'<div class="form-row"><span class="form-label">공동주택명 (기계 이름) *</span><input class="form-input" id="lg-f-name" value="'+v('name')+'" placeholder="(일반-BM)잠실본동 215-1(에코)"></div>'
+       +'<div class="form-row"><span class="form-label">주소</span><input class="form-input" id="lg-f-addr" value="'+v('addr')+'" placeholder="서울특별시 송파구 백제고분로11길 28-5"></div>'
++      +'<div class="form-row"><span class="form-label">모델명 (기계)</span><input class="form-input" id="lg-f-model" value="'+v('model')+'" placeholder="예: RF-200K"></div>'   // [11_10]
+       +'<div class="form-row"><span class="form-label">'+mn+'월 자료 ('+ym+')</span><div class="form-2col" style="grid-template-columns:1fr 1fr 1fr">'
+         +'<div><span class="form-label">배출자수</span><input class="form-input" id="lg-f-n" type="number" value="'+(m&&m.n!=null?E(m.n):'')+'"></div>'
+         +'<div><span class="form-label">배출량(kg)</span><input class="form-input" id="lg-f-kg" type="number" step="0.01" value="'+(m&&m.kg!=null?E(m.kg):'')+'"></div>'
+@@ -3096,6 +3099,14 @@ function lgOpen(id){
+     b+='</div></div>';
+   }
+   b+='<div class="form-row"><span class="form-label">메모</span><textarea class="form-textarea" id="lg-f-note" style="min-height:60px">'+v('note')+'</textarea></div>';
++  // [11_10] 현장(수거앱·민원앱 [🗂 관리대장])에서 남긴 점검·변경 이력 — 날짜순
++  if(it&&(it.hist||it.lastInsp)){
++    const hs=Object.values(it.hist||{}).sort((a,b)=>String(b.at||'').localeCompare(String(a.at||'')));
++    b+='<div class="form-row"><span class="form-label">📜 현장 점검·변경 이력'+(it.lastInsp?' (최근 '+E(it.lastInsp.at||'')+' '+E(it.lastInsp.by||'')+')':'')+'</span>'
++      +'<div style="background:#f8fafc;border-radius:10px;padding:8px 10px;font-size:13px;line-height:1.7;max-height:220px;overflow:auto">'
++      +(hs.map(x=>'<div><b>'+E(String(x.at||'').slice(0,16))+'</b> '+E(x.type||'')+(x.from||x.to?' '+E(x.from||'')+' → '+E(x.to||''):'')+(x.why?' · 사유: '+E(x.why):'')+(x.memo?' · '+E(x.memo):'')+(x.photos?' · 📷'+x.photos:'')+' <span style="color:#6b7280">'+E(x.by||'')+'</span></div>').join('')||'기록 없음')
++      +'</div></div>';
++  }
+   if(it){
+     const has=it.pos&&it.pos.lat;
+     b+='<div class="form-row"><span class="form-label">지도 위치</span>'
+@@ -3130,6 +3141,7 @@ function lgSave(){
+   if(old && old.addr!==d.addr){ d.pos=null; d.addrDong=null; d.posSrc=null; }   // 주소를 바꾸면 위치 다시 찾기
+   const mUpd={};
+   if(t==='rfid'){
++    d.model=g('lg-f-model');   // [11_10]
+     const n=g('lg-f-n'),kg=g('lg-f-kg'),amt=g('lg-f-amt');
+     if(n!==''||kg!==''||amt!=='') mUpd[ym]={n:lgNum(n),kg:lgNum(kg),amt:lgNum(amt)};
+   }else{
+diff --git "a/report/\354\210\230\354\240\225\352\270\260\353\241\235.md" "b/report/\354\210\230\354\240\225\352\270\260\353\241\235.md"
+index e3c3bc0..e5c60c9 100644
+--- "a/report/\354\210\230\354\240\225\352\270\260\353\241\235.md"
++++ "b/report/\354\210\230\354\240\225\352\270\260\353\241\235.md"
+@@ -2,6 +2,7 @@
+ 
+ 형식: `날짜 | 무엇을 고쳤나 | 누가 요청`
+ 
++- 2026-11-10 | 위 버튼: [📋 민원처리 화면] 이름 바꿈 + [🚛 민원 현장 화면] [🚚 대형 현장 화면] (현장 근무자 화면을 보기 전용으로) / RFID 대장 모델명 칸 / 대장 수정창에 현장 점검·변경 이력(수거앱·민원앱 [🗂 관리대장]에서 남긴 것) 표시 | 본에코 통합방
+ - 2026-11-10 | 관리대장: '사고구조예방' 글자를 '사고재해예방'으로 통일, 동 판정을 디지털원장 규칙으로(삼전·잠실 글자 우선→단지 이름→본/삼→번지 1~174 삼전·183~341 잠실·175~182 미지정), 사고관리 대장 🗓 기간 고르기(최근 7·30·90일·이번 달·직접), 모든 대장 [📊 엑셀 내보내기] | 본에코 통합방
+ - 2026-11-09 | 폰 설치: 회사 로고 아이콘(흰 바탕) 새로 넣음, 아이콘 위치 오류(404) 고침, 바탕화면 이름 "예방관리대장", 오프라인 저장 목록 정리(report-v3) | bongsuk0708
+ - 2026-11-06 | 종합예방관리대장으로 개편(시안 2): 한 화면 위쪽 대장 버튼 4개(사고관리대장[사고발생지점/사고구조예방]·RFID·커피매장(새로, report/biz kind:cafe)·감량의무사업장[음식물/재활용]), 숫자 칸 4개, 보기 지도+목록/지도만/목록만, [＋ 등록]·[📤 엑셀 올리기] 하나씩(대장 고르기 → RFID 자동 인식 그대로 / 다른 엑셀은 칸 맞추기 → 새로·중복·주소 확인 필요 미리보기 → 올리기), 보관함·직원은 위쪽 작은 버튼, 접수·목록·지도 탭은 화면에서 뺌(코드는 남김), [📋 민원처리] 안내창 없애고 민원앱(?from=risk)으로 바로 넘어감 | 통합방
+-- 
+2.43.0
+
