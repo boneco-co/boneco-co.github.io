@@ -6,6 +6,8 @@ $g = Get-ChildItem -Path 'D:\','C:\Users' -Directory -Filter '.git' -Recurse -Fo
 if (-not $g) { Write-Host '부장님 저장소 폴더를 못 찾았습니다.' -ForegroundColor Red; return }
 $dir = Split-Path $g.FullName -Parent
 Set-Location $dir; Write-Host "폴더: $dir"
+if (-not (git config user.email)) { git config user.name '본에코'; git config user.email 'boneco-co@users.noreply.github.com' }   # 이 저장소에만
+git am --abort 2>$null
 git pull --ff-only
 $p = Join-Path $env:TEMP 'boss-1110.patch'
 Invoke-WebRequest -UseBasicParsing 'https://raw.githubusercontent.com/boneco-co/boneco-co.github.io/staging-minwon/_staging/boss-1110.patch' -OutFile $p
