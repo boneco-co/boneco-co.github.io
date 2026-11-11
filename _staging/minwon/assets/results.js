@@ -115,36 +115,37 @@
     const addrKey = s => String(s || '').replace(/서울(특별시)?|송파구|\s+/g, '');
     let YM = {}, YT = {}, ytAt = 0;
     const yearFrom = () => Date.now() - 365 * 864e5;
-    // ── [11_10] 부장님 앱(예전 민원·견적 접수, minwon-c29c2 minwon/recs) 기록도 같이 보기 — 읽기만, 고치지 않음 ──
-    const BOSS_URL = 'https://minwon-c29c2-default-rtdb.asia-southeast1.firebasedatabase.app/minwon/recs.json';
-    const BOSS_TN = { m: '민원', t: '특수마대', c: '공용용기', y: '용기', g: '견적' };
+    // ── [11_11] 예전 사고관리앱(종합예방관리대장) 민원 기록도 같이 보기 — report/recs 의 민원(recType minwon), 읽기만 ──
+    //   (11_10 에 넣었던 부장님 앱 견적·권부장 기록 minwon/recs 는 빼달라고 하셔서 뺌)
+    const BOSS_FB = { apiKey: 'AIzaSyCrJaARREMDXFfhicjUwWFyqkyTbVMRsYk', authDomain: 'minwon-c29c2.firebaseapp.com',
+      databaseURL: 'https://minwon-c29c2-default-rtdb.asia-southeast1.firebasedatabase.app', projectId: 'minwon-c29c2' };
     let BOSS = null;
-    const bossTime = (dt, at) => {   // '2026-09-01' + '오전 09:51'
+    const bossTime = (dt, at) => {   // '2026-09-01' + '14:10' 또는 '오전 09:51'
       const d = new Date(String(dt) + 'T00:00'); if (isNaN(d)) return 0;
       const mm = String(at || '').match(/(오전|오후)?\s*(\d{1,2}):(\d{2})/);
-      if (mm) { let hh = +mm[2] % 12; if (mm[1] === '오후') hh += 12; if (!mm[1] && +mm[2] === 12) hh = 12; d.setHours(hh, +mm[3]); }
+      if (mm) { let hh = +mm[2]; if (mm[1]) { hh = hh % 12; if (mm[1] === '오후') hh += 12; } d.setHours(hh, +mm[3]); }
       return d.getTime();
     };
-    const bossDone = (s, dt) => {   // '9. 1. 오후 04:02' (연도는 접수일 연도)
-      const mm = String(s || '').match(/(\d{1,2})\.\s*(\d{1,2})\.\s*(오전|오후)?\s*(\d{1,2}):(\d{2})/); if (!mm) return 0;
-      let hh = +mm[4] % 12; if (mm[3] === '오후') hh += 12;
-      return new Date(+String(dt).slice(0, 4), +mm[1] - 1, +mm[2], hh, +mm[5]).getTime();
-    };
     function bossRow(x) {
-      const lat = parseFloat(x.lat), lng = parseFloat(x.lng);
-      const m = { no: '부장님앱', recvAt: bossTime(x.dt, x.at), types: [BOSS_TN[x.tp] || '기타'],
-        addr: { text: x.jibun || x.road || x.raw || '', lat: isFinite(lat) ? lat : null, lng: isFinite(lng) ? lng : null },
-        tel: x.tel || '', content: x.content || '', place: x.co || '', staff: x.staff || '', kind: '개인', boss: x };
-      const t = { state: x.status === '미완료' ? 'open' : 'done', doneAt: bossDone(x.doneAt, x.dt), team: '부장님앱',
-        memo: [x.result, x.note].filter(Boolean).join(' / '), bossSt: x.status || '' };
+      const p = x.addrPos || {}, lat = parseFloat(p.lat), lng = parseFloat(p.lng);
+      const m = { no: '사고관리앱', recvAt: bossTime(x.date, x.time), types: [x.subtype || '기타'],
+        addr: { text: x.addr || '', lat: isFinite(lat) ? lat : null, lng: isFinite(lng) ? lng : null },
+        tel: x.tel || '', content: x.content || x.category || '', place: x.channel || '', staff: x.staff || '', kind: '개인', boss: x };
+      const t = { state: x.status === '처리완료' ? 'done' : 'open', doneAt: 0, team: '사고관리앱',
+        memo: [x.visitResult || x.inspResult, x.actionNote].filter(Boolean).join(' / '), bossSt: x.status || '접수' };
       return { mid: 'boss_' + x.id, tid: null, m, t, boss: true };
     }
     function bossLoad() {
       if (BOSS) return Promise.resolve(BOSS);
-      return fetch(BOSS_URL).then(r => r.ok ? r.json() : null).then(d => {
-        const arr = !d ? [] : Array.isArray(d) ? d : Object.values(d);
-        BOSS = arr.filter(x => x && !x.del && x.dt).map(bossRow); return BOSS;
-      }).catch(() => (BOSS = []));
+      return (async () => {
+        try {
+          const app = (firebase.apps || []).find(a => a.name === 'boss') || firebase.initializeApp(BOSS_FB, 'boss');
+          try { if (!app.auth().currentUser) await app.auth().signInAnonymously(); } catch (e) {}
+          const v = (await app.database().ref('report/recs').once('value')).val() || {};
+          BOSS = Object.entries(v).map(([id, x]) => Object.assign({ id }, x || {})).filter(x => x.recType !== 'hazard' && !x.del && x.date).map(bossRow);
+        } catch (e) { BOSS = []; }
+        return BOSS;
+      })();
     }
     bossLoad().then(() => { if (typeof build === 'function') build(); });
     cref('minwon').orderByChild('recvAt').startAt(yearFrom()).on('value', s => { YM = s.val() || {}; if (view === 'map' || grpOn()) draw(); });
@@ -214,7 +215,7 @@
       box.innerHTML = '<div class="muted" style="margin-bottom:6px">최근 1년 · 같은 주소 묶음' + (hotOnly ? ' (2건 이상만)' : '') + '</div>' + gs.map(x => {
         x.items.sort((a, b) => (b.m.recvAt || 0) - (a.m.recvAt || 0));
         return '<div class="g"><div class="gh"><b>📍 ' + esc(x.a) + '</b>' + (x.items.length >= 2 ? '<span class="rs-hot">🔥 상습 ' + x.items.length + '건</span>' : '') + '<span class="c">' + x.items.length + '건</span></div>'
-          + x.items.map(({ mid, m, r }) => { const rs = r ? { txt: (r.t.state === 'open' ? '미처리 · ' : '') + r.t.bossSt, cls: r.t.state, teams: '부장님앱' } : resultOf(m, TT);
+          + x.items.map(({ mid, m, r }) => { const rs = r ? { txt: (r.t.state === 'open' ? '미처리 · ' : '') + r.t.bossSt, cls: r.t.state, teams: '사고관리앱' } : resultOf(m, TT);
             return '<div class="rs-it"><span class="d">' + esc(md(m.recvAt)) + '</span><span>' + (m.types || []).map(t => esc(t)).join('·') + ' · ' + esc(m.content || '') + '<small>' + esc(rs.teams) + '</small></span>'
               + '<span class="rs-st ' + rs.cls + '">' + rs.txt + '</span><button class="btn sm act" data-mid="' + esc(mid) + '">✏️ 확인·수정</button></div>'; }).join('') + '</div>';
       }).join('');
@@ -341,10 +342,10 @@
     function openBoss(r) {   // [11_10] 부장님 앱 기록 보기 (읽기만)
       const x = r.m.boss || {}, ph = [].concat(x.before || []).map(s => ['전', s]).concat([].concat(x.after || []).map(s => ['후', s]));
       const row = (k, v) => v ? '<div class="er"><b>' + k + '</b><div>' + esc(v) + '</div></div>' : '';
-      ed.innerHTML = '<div class="bx"><h3>📒 부장님 앱 기록</h3><div class="muted" style="margin-bottom:8px">예전 앱에서 접수한 건입니다. 여기서는 보기만 하고 고치지 않습니다.</div>'
-        + row('접수', mdhm(r.m.recvAt)) + row('종류', (r.m.types || []).join('·')) + row('주소', r.m.addr.text) + row('입력 원문', x.raw)
-        + row('도로명', x.road) + row('연락처', x.tel) + row('위치·비고', x.co) + row('내용', x.content) + row('상태', x.status)
-        + row('처리', x.doneAt) + row('결과·메모', [x.result, x.note].filter(Boolean).join(' / ')) + row('담당', x.staff)
+      ed.innerHTML = '<div class="bx"><h3>📒 사고관리앱 민원 기록</h3><div class="muted" style="margin-bottom:8px">예전 사고관리앱(종합예방관리대장)에서 접수한 민원입니다. 여기서는 보기만 하고 고치지 않습니다.</div>'
+        + row('접수', mdhm(r.m.recvAt)) + row('종류', (r.m.types || []).join('·')) + row('주소', r.m.addr.text) + row('민원인', x.person)
+        + row('연락처', x.tel) + row('접수경로', x.channel) + row('내용', x.content || x.category) + row('상태', x.status)
+        + row('방문결과', x.visitResult || x.inspResult) + row('조치', x.actionNote) + row('담당', x.staff)
         + (ph.length ? '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">' + ph.map(([k, s]) => /^data:image\//.test(String(s)) ? '<figure style="margin:0;text-align:center"><img src="' + esc(s) + '" style="width:140px;height:140px;object-fit:cover;border-radius:10px"><figcaption class="muted">' + k + '</figcaption></figure>' : '').join('') + '</div>' : '')
         + '<div class="row" style="justify-content:flex-end;margin-top:14px"><button class="btn" data-x="1">닫기</button></div></div>';
       ed.querySelector('[data-x]').onclick = () => ed.classList.remove('on');
