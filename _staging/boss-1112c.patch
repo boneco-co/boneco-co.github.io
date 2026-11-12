@@ -1,0 +1,186 @@
+From ad749c2c1e9f5ec60afc65f1a2431a7c07f9cdf8 Mon Sep 17 00:00:00 2001
+From: bongsuk0708 <bongsuk0708@users.noreply.github.com>
+Date: Thu, 12 Nov 2026 02:39:49 +0000
+Subject: [PATCH] =?UTF-8?q?=EC=82=AC=EA=B3=A0=C2=B7=EB=AF=BC=EC=9B=90?=
+ =?UTF-8?q?=EB=8C=80=EC=9E=A5:=20=EB=93=B1=EA=B8=89/=EC=B2=98=EB=A6=AC=20?=
+ =?UTF-8?q?=EC=88=AB=EC=9E=90=EC=B9=B8,=20=EA=B5=AC=EC=97=AD=20=EB=B0=96?=
+ =?UTF-8?q?=20=EC=9C=84=EC=B9=98=20=EC=9D=B8=EC=A0=95,=20=EC=83=81?=
+ =?UTF-8?q?=EC=84=B8=EC=B0=BD=EC=97=90=EC=84=9C=20=EB=B0=94=EB=A1=9C=20?=
+ =?UTF-8?q?=EC=88=98=EC=A0=95?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ report/index.html                             | 41 +++++++++++--------
+ ...30\354\240\225\352\270\260\353\241\235.md" |  1 +
+ 2 files changed, 24 insertions(+), 18 deletions(-)
+
+diff --git a/report/index.html b/report/index.html
+index 673d871..4a30f0d 100644
+--- a/report/index.html
++++ b/report/index.html
+@@ -1720,7 +1720,8 @@ function posEditRow(r){
+ }
+ 
+ // ── 상세 모달 ──
+-function openDet(id){
++function openDet(id){ return openEdit(id); }   // [11_12] 상세창에서 바로 모든 칸 수정
++function openDetView(id){
+   const r=recs.find(x=>x.id===id); if(!r)return;
+   curDetailId=id;
+   const isH=r.recType==='hazard';
+@@ -2278,25 +2279,26 @@ function openEdit(id){
+   curDetailId=id;
+   const isH=r.recType==='hazard';
+   const E=mkEsc;
+-  $('modal-title').textContent=(isH?'✏️ 사고재해예방 수정 ':'✏️ 민원 수정 ')+(isH?(r.hazardNo||''):(r.no||''));
++  $('modal-title').textContent=(isH?(isOccur(r)?'🚨 사고발생지점 ':'⚠️ 사고재해예방 '):'📋 민원 ')+(isH?(r.hazardNo||''):(r.no||''))+' · 상세·수정';
+   let b='';
++  const HD=DONG_NAMES.concat(['문정동','장지동'].filter(d=>DONG_NAMES.indexOf(d)<0));   // [11_12] 사고는 장지동·문정동도
+   if(isH){
+     b=`<div class="form-2col">
+       <div><span class="form-label">점검일자</span><input class="form-input" id="e-inspdate" type="date" value="${E(r.inspDate)}"></div>
+       <div><span class="form-label">행정동</span>
+         <select class="form-select" id="e-dong" onchange="onEditDong()"><option value="">선택</option>
+-        ${DONG_NAMES.map(d=>'<option'+(r.dong===d?' selected':'')+'>'+d+'</option>').join('')}
+-        <option value="기타"${(r.dong&&DONG_NAMES.indexOf(r.dong)<0)?' selected':''}>기타 (직접 입력)</option>
++        ${HD.map(d=>'<option'+(r.dong===d?' selected':'')+'>'+d+'</option>').join('')}
++        <option value="기타"${(r.dong&&HD.indexOf(r.dong)<0)?' selected':''}>기타 (직접 입력)</option>
+         </select>
+         <input class="form-input" id="e-dong-etc" type="text" placeholder="행정동 직접 입력"
+-          value="${(r.dong&&DONG_NAMES.indexOf(r.dong)<0)?E(r.dong):''}"
+-          style="margin-top:6px;${(r.dong&&DONG_NAMES.indexOf(r.dong)<0)?'':'display:none'}"></div>
++          value="${(r.dong&&HD.indexOf(r.dong)<0)?E(r.dong):''}"
++          style="margin-top:6px;${(r.dong&&HD.indexOf(r.dong)<0)?'':'display:none'}"></div>
+     </div>
+     <div class="form-row"><span class="form-label">🚛 기사 이름</span><input class="form-input" id="e-driver" list="driver-dl" autocomplete="off" placeholder="명부에서 고르거나 직접 입력" value="${E(r.driver)}"></div>
+     <div class="form-row"><span class="form-label">위험지점 주소 *</span><input class="form-input" id="e-addr" value="${E(r.addr)}"></div>
+     <div class="form-row"><span class="form-label">위험등급</span>
+       <select class="form-select" id="e-level">
+-      ${['High','Medium','Low'].map(v=>'<option value="'+v+'"'+(r.riskLevel===v?' selected':'')+'>🔴 '+v+'</option>').join('')}
++      ${['High','Medium','Low'].map(v=>'<option value="'+v+'"'+(r.riskLevel===v?' selected':'')+'>'+({High:'🔴 높음',Medium:(isOccur(r)?'🟠 보통':'🟠 중간'),Low:'🟡 낮음'})[v]+'</option>').join('')}
+       </select></div>
+     <div class="form-row">
+       <span class="group-label">${isOccur(r)?'① 사고 내용 및 원인 *':'① 위험요인 · 현황 및 점검실태 *'}</span>
+@@ -2342,11 +2344,12 @@ function openEdit(id){
+         </select></div>
+     </div>`;
+   }
++  b+=posEditRow(r);   // [11_12] 상세창 = 수정창 (내용·위치·사진 한 곳에서)
+   b+=`<div class="form-row"><span class="form-label">사진 (교체 · 삭제 · 추가 — 누르는 즉시 저장됩니다)</span>
+     <div id="det-photo-area">🔄 사진 로딩 중…</div></div>`;
+   $('modal-body').innerHTML=b;
+   loadPhotos(id, isH);
+-  $('modal-actions').innerHTML=`<button class="act-btn edit" onclick="openDet('${id}')">취소</button><button class="act-btn mod" onclick="saveEdit('${id}')">💾 저장</button>`;
++  $('modal-actions').innerHTML=`<button class="act-btn del" onclick="delRec('${id}')">🗑 삭제</button><button class="act-btn mod" onclick="saveEdit('${id}')">💾 저장</button><button class="act-btn edit" onclick="closeMod()">닫기</button>`;
+   $('modal-bg').classList.add('on');
+ }
+ 
+@@ -2361,6 +2364,7 @@ function saveEdit(id){
+   if(isH){
+     u.inspDate=$('e-inspdate').value;
+     u.dong = ($('e-dong').value==='기타') ? ($('e-dong-etc')?$('e-dong-etc').value.trim():'') : $('e-dong').value;
++    if(!u.dong){ const m=addr.match(/([가-힣]+?)(?:본)?동(?=\s|\d|$)/); if(m) u.dong=(m[1]==='잠실'?'잠실동':m[1]+'동'); }   // [11_12] 동 비우면 주소에서
+     u.riskType=$('e-risktype').value.trim();
+     u.riskLevel=$('e-level').value;
+     u.riskContent=$('e-riskcont').value.trim();
+@@ -2392,7 +2396,7 @@ function saveEdit(id){
+       lgAddrQ(q,function(g){ if(!g) { toast('⚠️ 새 주소 위치를 못 찾았어요 — 지도에서 찍어 주세요'); return; }
+         RECS.child(id).update({addrPos:{lat:g.lat,lng:g.lng}}).then(function(){ r.addrPos={lat:g.lat,lng:g.lng}; toast('📍 새 주소 위치로 핀을 옮겼어요 — 틀리면 지도에서 찍기'); if(typeof lgRender==='function') lgRender(); }).catch(function(){}); });
+     }
+-    openDet(id);
++    closeMod(); if(typeof lgRender==='function'&&$('pane-ledger')&&$('pane-ledger').classList.contains('on')) lgRender();
+   }).catch(function(){ toast('⚠️ 저장 실패'); });
+ }
+ 
+@@ -2639,6 +2643,7 @@ const LG_SEED_RFID=[["삼전동166-10(지테크)(본에코)","서울특별시 
+ 
+ function lgIsH(){ return lg.sec==='occur'||lg.sec==='hazard'; }
+ function lgIsM(){ return lg.sec==='minwon'; }
++function lgLvName(v){ return ({High:'높음',Medium:(lg.sec==='hazard'?'중간':'보통'),Low:'낮음'})[v]||v||''; }   // [11_12] 사고발생지점=보통, 사고재해예방=중간
+ // [11_11] 주소 표시 통일 — 저장값은 그대로, 보이는 것만: 잠실본동·잠실동·본 → '잠실동 199-3', 삼·삼전동 → '삼전동 64-8'
+ function lgAddrDisp(s){
+   s=String(s||'').replace(/서울(특별시)?\s*/g,'').replace(/송파구\s*/g,'').trim();
+@@ -2660,7 +2665,7 @@ function lgAutoSeed(){
+   lgSeedTried[k]=true;
+   LGSEED.child(k).once('value').then(function(s){ if(!s.val()) lgSeed(k,true); }).catch(function(){});
+ }
+-function lgOnRecs(){ if($('pane-ledger')&&$('pane-ledger').classList.contains('on')&&lgIsH()) lgRender(); else lgRenderLeds(); }
++function lgOnRecs(){ if($('pane-ledger')&&$('pane-ledger').classList.contains('on')&&(lgIsH()||lgIsM())) lgRender(); else lgRenderLeds(); }
+ 
+ // ── 작은 도우미 ──
+ function lgNum(x){ const v=parseFloat(String(x==null?'':x).replace(/[,\s원kgℓ]/gi,'')); return isFinite(v)?v:0; }
+@@ -2767,8 +2772,8 @@ function lgRenderSubs(){
+ // [11_11] 숫자 4칸 — 디지털원장처럼: 검색 결과 기준 건수, 누르면 그 건만 (목록·지도)
+ function lgStatDefs(){
+   const H=lgIsH(), M=lgIsM(), R=lg.sec==='rfid', ym=today().slice(0,7);
+-  if(M) return [['all','전체',x=>true,'acc','건'],['open','미처리',x=>x.status!=='처리완료','warn',''],['month','이번 달',x=>String(x.date||'').slice(0,7)===ym,'hold',''],['nopos','위치 없음',x=>!lgPos(x),'hold','']];
+-  if(H) return [['all','전체',x=>true,'acc','건'],['high','위험 높음',x=>x.riskLevel==='High','warn',''],['nodong','동 미지정',x=>!x.dong,'hold',''],['nopos','위치 없음',x=>!lgPos(x),'hold','']];
++  if(M) return [['all','전체',x=>true,'acc','건'],['open','미처리',x=>x.status!=='처리완료','warn',''],['done','처리',x=>x.status==='처리완료','acc',''],['month','이번달',x=>String(x.date||'').slice(0,7)===ym,'hold','']];   // [11_12] 전체·미처리·처리·이번달
++  if(H) return [['all','전체',x=>true,'acc','건'],['high','높음',x=>x.riskLevel==='High','warn',''],['mid',lgLvName('Medium'),x=>x.riskLevel==='Medium','hold',''],['low','낮음',x=>x.riskLevel==='Low','hold','']];   // [11_12] 등급으로
+   return [['all','전체',x=>true,'acc',R?'대':'곳'],['off',R?'미사용':'해지',x=>!lgIsUse(x),'warn',''],['chk','확인 필요 (동·위치)',x=>LG_DONGS.indexOf(x.dong)<0||!lgPos(x),'hold',''],['noph','사진 없음',x=>!x.phCount,'hold','']];
+ }
+ function lgSetStat(k){ lg.stat=(k==='all'?'':k); lgFitKey=''; lgRender(); }
+@@ -2838,6 +2843,7 @@ function lgItems(){
+   return lg.sec==='rfid' ? rfidList : bizList.filter(b=>b.kind===lg.kind);
+ }
+ function lgPos(x){ const p=x.pos&&x.pos.lat?x.pos:(x.addrPos&&x.addrPos.lat?x.addrPos:null);   // [11_11] 잠실·삼전 밖(김포·부천 등 잘못 찍힌 곳)은 위치 없음으로
++  if(p&&x.recType==='hazard') return (+p.lat>33&&+p.lat<39&&+p.lng>124&&+p.lng<132)?p:null;   // [11_12] 사고는 장지동·매립지 등 구역 밖도 위치로 인정
+   return p&&+p.lat>37.48&&+p.lat<37.535&&+p.lng>127.05&&+p.lng<127.125?p:null; }
+ function lgByDong(a){
+   if(lg.dong==='all') return a;
+@@ -2917,9 +2923,8 @@ function lgRender(){
+   // 사용중/미사용 (RFID) · 계약중/해지 (사업장)
+   const inD=lgByDong(all);
+   if(isH){
+-    const lv=[['High','🔴 높음'],['Medium','🟠 보통'],['Low','🟡 낮음']];
+-    $('lg-use').innerHTML='<button class="lg-ubtn'+(lg.use==='all'?' on':'')+'" onclick="lgSetUse(\'all\')">전체 '+inD.length+'</button>'
+-      +lv.map(v=>'<button class="lg-ubtn'+(lg.use===v[0]?' on':'')+'" onclick="lgSetUse(\''+v[0]+'\')">'+v[1]+' '+inD.filter(x=>x.riskLevel===v[0]).length+'</button>').join('');
++    lg.use='all'; $('lg-use').innerHTML='';   // [11_12] 등급은 위 숫자 칸(전체·높음·보통/중간·낮음)으로
++    if(0) $('lg-use').innerHTML='<button class="lg-ubtn'+(lg.use==='all'?' on':'')+'" onclick="lgSetUse(\'all\')">전체 '+inD.length+'</button>'
+     lgRenderDrv();
+     const list=lgFiltered(); lgRenderSum(list); lgRenderStats(); $('lg-seed').innerHTML=''; lgRenderList(list); lgRenderLegend(); lgRenderMap(list);
+     return;
+@@ -2949,7 +2954,7 @@ function lgRenderSum(list){
+   if(lgIsH()){
+     const np=list.filter(x=>!lgPos(x)).length, last=list.map(x=>x.inspDate||'').sort().pop();
+     $('lg-sum').innerHTML='<b>'+dn+'</b> '+(lg.sec==='occur'?'사고발생지점':'사고재해예방')+' <b>'+list.length+'건</b>'
+-      +' · 높음 '+list.filter(x=>x.riskLevel==='High').length+' · 보통 '+list.filter(x=>x.riskLevel==='Medium').length+' · 낮음 '+list.filter(x=>x.riskLevel==='Low').length
++      +' · 높음 '+list.filter(x=>x.riskLevel==='High').length+' · '+lgLvName('Medium')+' '+list.filter(x=>x.riskLevel==='Medium').length+' · 낮음 '+list.filter(x=>x.riskLevel==='Low').length
+       +(last?' · 최근 '+mkEsc(last):'')+(np?' · <span class="warn">위치 없음 '+np+'건</span>':'')
+       +'<br><span style="font-weight:600">새로 넣기는 <b>＋ 등록</b> · 항목을 누르면 상세·수정·사진</span>';
+     return;
+@@ -3022,7 +3027,7 @@ function lgRenderList(list){
+       const c=pinColorDark(r);
+       return '<div class="lg-row" style="border-left-color:'+c+'" onclick="lgCard(\''+r.id+'\')">'
+         +'<div class="lg-top"><div class="lg-nm"><span class="lg-no">'+E(r.hazardNo||'')+'</span>'+E(r.riskType||'(유형 없음)')+'</div>'
+-        +'<div class="lg-num"><span class="lg-tag" style="background:'+c+';color:#fff">'+E(LV[r.riskLevel]||r.riskLevel||'-')+'</span><small>'+E(r.inspDate||'')+'</small></div></div>'
++        +'<div class="lg-num"><span class="lg-tag" style="background:'+c+';color:#fff">'+E(lgLvName(r.riskLevel)||'-')+'</span><small>'+E(r.inspDate||'')+'</small></div></div>'
+         +'<div class="lg-sub">'+E(r.dong||'동 미지정')+' · '+E(lgAddrDisp(r.addr)||'주소 없음')+(r.driver?' · 🚛 '+E(r.driver):'')+(lgPos(r)?'':' <span class="lg-tag nopos">위치 없음</span>')+'</div>'
+         +(r.riskContent?'<div class="lg-sub" style="color:var(--ink)">'+E(String(r.riskContent).slice(0,70))+(String(r.riskContent).length>70?'…':'')+'</div>':'')
+         +'</div>';
+@@ -3099,7 +3104,7 @@ function lgCard(id){
+   const E=mkEsc, rows=[]; const add=(k,v)=>{ if(v!=null&&String(v).trim()!=='') rows.push('<div class="lgc-r"><b>'+k+'</b><div>'+E(v)+'</div></div>'); };
+   let ttl='';
+   if(r&&r.recType==='hazard'){ ttl=(isOccur(r)?'🚨 ':'⚠️ ')+(r.hazardNo||'')+' '+(r.riskType||'');
+-    add('구분',hKindOf(r)); add('날짜',r.inspDate); add('주소',lgAddrDisp(r.addr)); add('작업자',r.driver); add('내용',r.riskContent); add('등급',({High:'높음',Medium:'보통',Low:'낮음'})[r.riskLevel]||r.riskLevel); add('조치',r.actionNote); add('현장 점검',r.inspResult); }
++    add('구분',hKindOf(r)); add('날짜',r.inspDate); add('주소',lgAddrDisp(r.addr)); add('작업자',r.driver); add('내용',r.riskContent); add('등급',lgLvName(r.riskLevel)); add('조치',r.actionNote); add('현장 점검',r.inspResult); }
+   else if(r){ ttl='📒 '+(r.subtype||'민원')+' · '+lgAddrDisp(r.addr||'');
+     add('접수',(r.date||'')+' '+(r.time||'')); add('주소',lgAddrDisp(r.addr)); add('민원인',r.person); add('연락처',r.tel); add('내용',r.content||r.category); add('상태',r.status); add('방문결과',r.visitResult||r.inspResult); add('조치',r.actionNote); }
+   else { ttl=(it._t==='rfid'?'📡 ':(it.kind==='cafe'?'☕ ':(it.kind==='food'?'🍚 ':'♻️ ')))+(it.name||'');
+diff --git "a/report/\354\210\230\354\240\225\352\270\260\353\241\235.md" "b/report/\354\210\230\354\240\225\352\270\260\353\241\235.md"
+index 50b9138..1837ef8 100644
+--- "a/report/\354\210\230\354\240\225\352\270\260\353\241\235.md"
++++ "b/report/\354\210\230\354\240\225\352\270\260\353\241\235.md"
+@@ -2,6 +2,7 @@
+ 
+ 형식: `날짜 | 무엇을 고쳤나 | 누가 요청`
+ 
++- 2026-11-12 | 사고대장 숫자 칸을 전체·높음·보통(사고재해예방은 중간)·낮음으로(아래 등급 버튼 줄은 뺌), 장지동·매립지 등 잠실·삼전 밖 사고 위치도 '위치 있음'으로, 수정한 내용 바로 반영(민원대장 포함), 상세창에서 바로 모든 칸 수정(내용·동·등급·위치·사진 한 창에서, 🗑 삭제·💾 저장·닫기), 행정동에 문정동·장지동 추가, 동을 비우면 주소에서 자동, 민원대장 숫자 칸은 전체·미처리·처리·이번달(누르면 그 건만) | 본에코 통합방
+ - 2026-11-12 | 브라우저 탭 아이콘: 로고 둘레 흰 바탕 없앤 둥근 아이콘(favicon-tab.png). 폰 설치 아이콘(icon-192)은 그대로 | 본에코 통합방
+ - 2026-11-11 | 시안5: 주소 표시를 '잠실동 199-3'·'삼전동 64-8'로 통일(저장값은 그대로), 검색 시 잠실본동·잠실동·본 / 삼전동·삼 같은 것으로, 검색창 아래 설명 줄 삭제, 상세 카드는 대장 바꾸면 자동 닫힘·윗줄 끌어서 이동, 목록 한 건 누르면 지도에 그 건만, 감량의무사업장 달 고르기 삭제·수정창에서 월별 칸 숨김 → [📊 배출량 확인]·[📊 이 사업장 배출량] | 본에코 통합방
+ - 2026-11-11 | 시안4: 가운데 '연결됨' 띠 없애고 제목 옆 🟢 연결됨/🔴 끊김, PC에서 화면 가득·글자 크게, 숫자 4칸을 누르면 그 건만(검색 결과 기준 건수), 목록은 한 줄 요약, 목록·핀 누르면 지도 위 상세 카드, 잠실·삼전 밖에 잘못 찍힌 위치는 지도에서 빼고 위치 없음으로 | 본에코 통합방
+-- 
+2.43.0
+
