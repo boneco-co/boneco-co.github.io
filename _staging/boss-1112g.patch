@@ -1,0 +1,374 @@
+From 28eae01f8341478c0b8c78237f7f6bfae19bacd3 Mon Sep 17 00:00:00 2001
+From: bongsuk0708 <bongsuk0708@users.noreply.github.com>
+Date: Thu, 12 Nov 2026 02:39:49 +0000
+Subject: [PATCH] =?UTF-8?q?=EC=82=AC=EA=B3=A0=C2=B7=EB=AF=BC=EC=9B=90?=
+ =?UTF-8?q?=EB=8C=80=EC=9E=A5=20=EC=88=AB=EC=9E=90=EC=B9=B8=C2=B7=EC=83=81?=
+ =?UTF-8?q?=EC=84=B8=EC=B0=BD=20=EC=88=98=EC=A0=95,=20=EC=A7=80=EB=8F=84?=
+ =?UTF-8?q?=20=ED=95=80=20=EB=AD=89=EC=B9=98=EA=B8=B0,=20=EC=A0=9C?=
+ =?UTF-8?q?=EB=AA=A9=20=EB=A1=9C=EA=B3=A0=C2=B7=EB=B2=84=EC=A0=84,=20?=
+ =?UTF-8?q?=EB=AF=BC=EC=9B=90=20=EB=B6=84=EB=A5=98=20=EB=B2=84=ED=8A=BC?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ report/index.html                             | 147 +++++++++++++-----
+ ...30\354\240\225\352\270\260\353\241\235.md" |   4 +
+ 2 files changed, 109 insertions(+), 42 deletions(-)
+
+diff --git a/report/index.html b/report/index.html
+index 673d871..506fe2a 100644
+--- a/report/index.html
++++ b/report/index.html
+@@ -39,7 +39,8 @@ input,select,textarea{font-family:inherit;outline:none}
+ #hdr{position:sticky;top:0;z-index:100;background:var(--blue);color:#fff;padding:10px 14px 0;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+ #hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+ #hdr h1{font-size:15px;font-weight:800;display:flex;align-items:center;gap:7px}
+-#hdr h1::before{content:"";width:24px;height:24px;flex-shrink:0;border-radius:50%;background:var(--logo) center/cover no-repeat;background-color:#fff;box-shadow:0 0 0 1.5px rgba(255,255,255,.55)}
++#hdr h1 .build-tag{font-size:11px;font-weight:700;background:rgba(255,255,255,.18);color:#e0f2fe;border-radius:999px;padding:2px 8px;align-self:center}   /* [11_12] 버전 표시 */
++#hdr h1 .h-logo{display:inline-block;width:24px;height:24px;flex-shrink:0;border-radius:50%;background:var(--logo) center/cover no-repeat;background-color:#fff;box-shadow:0 0 0 1.5px rgba(255,255,255,.55)}
+ #login-logo{width:72px;height:72px;border-radius:50%;background:var(--logo) center/cover no-repeat;background-color:#fff;box-shadow:0 2px 10px rgba(0,0,0,.18);margin-bottom:4px}
+ #hdr-right{display:flex;align-items:center;gap:6px}
+ #staff-name{font-size:12px;opacity:.85}
+@@ -383,6 +384,12 @@ input,select,textarea{font-family:inherit;outline:none}
+ .lgp-lbl{display:flex;align-items:center;gap:4px;cursor:pointer}
+ .lgp-lbl span{background:#fff;border:2px solid;border-radius:8px;padding:1px 6px;font-size:11px;font-weight:800;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+ .lg-legend{display:flex;gap:10px;flex-wrap:wrap;font-size:11.5px;font-weight:700;color:var(--sub);margin-top:4px}
++#lg-cat{position:absolute;right:10px;top:10px;z-index:5;display:flex;flex-wrap:wrap;justify-content:flex-end;max-width:calc(100% - 20px);gap:4px;background:var(--card,#fff);border-radius:12px;padding:6px;box-shadow:0 2px 10px rgba(0,0,0,.2)}   /* [11_12] 민원 분류 켜고 끄기 */
++#lg-cat.inline{position:static;flex-direction:row;flex-wrap:wrap;box-shadow:none;padding:0 0 8px;background:none;width:100%}
++.lg-catb{font:inherit;font-size:13px;font-weight:800;border:1.5px solid #e2e8f0;background:#fff;color:#0f172a;border-radius:999px;padding:4px 10px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
++.lg-catb i{width:10px;height:10px;border-radius:50%;display:inline-block}
++.lg-catb.on{background:#0f172a;color:#fff;border-color:#0f172a}
++.lg-mapcol:has(#lg-cat:not([style*="none"])) #lg-card{top:58px}
+ .lg-legend i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:3px;vertical-align:-1px}
+ /* 상세 */
+ .lg-mtab{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}
+@@ -530,6 +537,7 @@ button.lg-stat.on{border-color:var(--blue);background:#eff6ff}
+ .lg-voltab th,.lg-voltab td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+ .lg-voltab th:first-child,.lg-voltab td:first-child{text-align:left}
+ .lg-voltab tr.click{cursor:pointer}.lg-voltab tr.click:hover td{background:#eff6ff}
++  .lg-clu{cursor:pointer;filter:drop-shadow(0 2px 4px rgba(0,0,0,.25))}   /* [11_12] 뭉침 원 */
+ </style>
+ </head>
+ <body>
+@@ -545,7 +553,7 @@ button.lg-stat.on{border-color:var(--blue);background:#eff6ff}
+ <div id="app" style="display:none">
+   <div id="hdr">
+     <div id="hdr-top">
+-      <h1>종합예방관리대장<span id="net-dot" class="net-dot"></span></h1>
++      <h1><span>종합예방관리대장</span><i class="h-logo" aria-hidden="true"></i><span>본에코(주)</span><span id="build-tag" class="build-tag">v1112a</span><span id="net-dot" class="net-dot"></span></h1>
+       <div id="hdr-right">
+         <a id="mw-sw" href="https://boneco-minwon.web.app/?from=risk" target="bn_minwon" rel="noopener">📋 민원접수</a>
+         <button class="hdr-sbtn" id="hb-photo" onclick="swSide('photo')">📦 보관함</button>
+@@ -1595,10 +1603,10 @@ function exportExcel(){
+ 
+ function hKindOf(r){ return r.hKind || '사고재해예방'; }
+ function isOccur(r){ return r.recType==='hazard' && hKindOf(r)==='사고발생지점'; }
+-function pinColor(r){if(r.recType==='hazard')return r.riskLevel==='High'?'#b91c1c':r.riskLevel==='Medium'?'#ef4444':'#f87171';return r.subtype==='생활'?'#22c55e':r.subtype==='음식물'?'#eab308':'#3b82f6';}
++function pinColor(r){if(r.recType==='hazard')return r.riskLevel==='High'?'#b91c1c':r.riskLevel==='Medium'?'#ef4444':'#f87171';return r.subtype==='생활'?'#22c55e':r.subtype==='음식물'?'#eab308':r.subtype==='재활용'?'#3b82f6':'#94a3b8';}
+ function pinLabel(r){if(r.recType==='hazard')return r.riskType||'위험';return r.subtype==='생활'?'생활':r.subtype==='음식물'?'음식물':'재활용';}
+ // 라벨용 진한 색 (흰 배경 위 가독성)
+-function pinColorDark(r){if(r.recType==='hazard')return r.riskLevel==='High'?'#991b1b':r.riskLevel==='Medium'?'#dc2626':'#ef4444';return r.subtype==='생활'?'#16a34a':r.subtype==='음식물'?'#ca8a04':'#2563eb';}
++function pinColorDark(r){if(r.recType==='hazard')return r.riskLevel==='High'?'#991b1b':r.riskLevel==='Medium'?'#dc2626':'#ef4444';return r.subtype==='생활'?'#16a34a':r.subtype==='음식물'?'#ca8a04':r.subtype==='재활용'?'#2563eb':'#64748b';}
+ // 배지 안 2글자
+ function pinBadge(r){if(r.recType==='hazard')return isOccur(r)?'발생':'예방';return r.subtype==='생활'?'생활':r.subtype==='음식물'?'음식':'재활';}
+ function mkEsc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+@@ -1720,7 +1728,8 @@ function posEditRow(r){
+ }
+ 
+ // ── 상세 모달 ──
+-function openDet(id){
++function openDet(id){ return openEdit(id); }   // [11_12] 상세창에서 바로 모든 칸 수정
++function openDetView(id){
+   const r=recs.find(x=>x.id===id); if(!r)return;
+   curDetailId=id;
+   const isH=r.recType==='hazard';
+@@ -2278,25 +2287,26 @@ function openEdit(id){
+   curDetailId=id;
+   const isH=r.recType==='hazard';
+   const E=mkEsc;
+-  $('modal-title').textContent=(isH?'✏️ 사고재해예방 수정 ':'✏️ 민원 수정 ')+(isH?(r.hazardNo||''):(r.no||''));
++  $('modal-title').textContent=(isH?(isOccur(r)?'🚨 사고발생지점 ':'⚠️ 사고재해예방 '):'📋 민원 ')+(isH?(r.hazardNo||''):(r.no||''))+' · 상세·수정';
+   let b='';
++  const HD=DONG_NAMES.concat(['문정동','장지동'].filter(d=>DONG_NAMES.indexOf(d)<0));   // [11_12] 사고는 장지동·문정동도
+   if(isH){
+     b=`<div class="form-2col">
+       <div><span class="form-label">점검일자</span><input class="form-input" id="e-inspdate" type="date" value="${E(r.inspDate)}"></div>
+       <div><span class="form-label">행정동</span>
+         <select class="form-select" id="e-dong" onchange="onEditDong()"><option value="">선택</option>
+-        ${DONG_NAMES.map(d=>'<option'+(r.dong===d?' selected':'')+'>'+d+'</option>').join('')}
+-        <option value="기타"${(r.dong&&DONG_NAMES.indexOf(r.dong)<0)?' selected':''}>기타 (직접 입력)</option>
++        ${HD.map(d=>'<option'+(r.dong===d?' selected':'')+'>'+d+'</option>').join('')}
++        <option value="기타"${(r.dong&&HD.indexOf(r.dong)<0)?' selected':''}>기타 (직접 입력)</option>
+         </select>
+         <input class="form-input" id="e-dong-etc" type="text" placeholder="행정동 직접 입력"
+-          value="${(r.dong&&DONG_NAMES.indexOf(r.dong)<0)?E(r.dong):''}"
+-          style="margin-top:6px;${(r.dong&&DONG_NAMES.indexOf(r.dong)<0)?'':'display:none'}"></div>
++          value="${(r.dong&&HD.indexOf(r.dong)<0)?E(r.dong):''}"
++          style="margin-top:6px;${(r.dong&&HD.indexOf(r.dong)<0)?'':'display:none'}"></div>
+     </div>
+     <div class="form-row"><span class="form-label">🚛 기사 이름</span><input class="form-input" id="e-driver" list="driver-dl" autocomplete="off" placeholder="명부에서 고르거나 직접 입력" value="${E(r.driver)}"></div>
+     <div class="form-row"><span class="form-label">위험지점 주소 *</span><input class="form-input" id="e-addr" value="${E(r.addr)}"></div>
+     <div class="form-row"><span class="form-label">위험등급</span>
+       <select class="form-select" id="e-level">
+-      ${['High','Medium','Low'].map(v=>'<option value="'+v+'"'+(r.riskLevel===v?' selected':'')+'>🔴 '+v+'</option>').join('')}
++      ${['High','Medium','Low'].map(v=>'<option value="'+v+'"'+(r.riskLevel===v?' selected':'')+'>'+({High:'🔴 높음',Medium:(isOccur(r)?'🟠 보통':'🟠 중간'),Low:'🟡 낮음'})[v]+'</option>').join('')}
+       </select></div>
+     <div class="form-row">
+       <span class="group-label">${isOccur(r)?'① 사고 내용 및 원인 *':'① 위험요인 · 현황 및 점검실태 *'}</span>
+@@ -2342,11 +2352,12 @@ function openEdit(id){
+         </select></div>
+     </div>`;
+   }
++  b+=posEditRow(r);   // [11_12] 상세창 = 수정창 (내용·위치·사진 한 곳에서)
+   b+=`<div class="form-row"><span class="form-label">사진 (교체 · 삭제 · 추가 — 누르는 즉시 저장됩니다)</span>
+     <div id="det-photo-area">🔄 사진 로딩 중…</div></div>`;
+   $('modal-body').innerHTML=b;
+   loadPhotos(id, isH);
+-  $('modal-actions').innerHTML=`<button class="act-btn edit" onclick="openDet('${id}')">취소</button><button class="act-btn mod" onclick="saveEdit('${id}')">💾 저장</button>`;
++  $('modal-actions').innerHTML=`<button class="act-btn del" onclick="delRec('${id}')">🗑 삭제</button><button class="act-btn mod" onclick="saveEdit('${id}')">💾 저장</button><button class="act-btn edit" onclick="closeMod()">닫기</button>`;
+   $('modal-bg').classList.add('on');
+ }
+ 
+@@ -2361,6 +2372,7 @@ function saveEdit(id){
+   if(isH){
+     u.inspDate=$('e-inspdate').value;
+     u.dong = ($('e-dong').value==='기타') ? ($('e-dong-etc')?$('e-dong-etc').value.trim():'') : $('e-dong').value;
++    if(!u.dong){ const m=addr.match(/([가-힣]+?)(?:본)?동(?=\s|\d|$)/); if(m) u.dong=(m[1]==='잠실'?'잠실동':m[1]+'동'); }   // [11_12] 동 비우면 주소에서
+     u.riskType=$('e-risktype').value.trim();
+     u.riskLevel=$('e-level').value;
+     u.riskContent=$('e-riskcont').value.trim();
+@@ -2392,7 +2404,7 @@ function saveEdit(id){
+       lgAddrQ(q,function(g){ if(!g) { toast('⚠️ 새 주소 위치를 못 찾았어요 — 지도에서 찍어 주세요'); return; }
+         RECS.child(id).update({addrPos:{lat:g.lat,lng:g.lng}}).then(function(){ r.addrPos={lat:g.lat,lng:g.lng}; toast('📍 새 주소 위치로 핀을 옮겼어요 — 틀리면 지도에서 찍기'); if(typeof lgRender==='function') lgRender(); }).catch(function(){}); });
+     }
+-    openDet(id);
++    closeMod(); if(typeof lgRender==='function'&&$('pane-ledger')&&$('pane-ledger').classList.contains('on')) lgRender();
+   }).catch(function(){ toast('⚠️ 저장 실패'); });
+ }
+ 
+@@ -2639,6 +2651,7 @@ const LG_SEED_RFID=[["삼전동166-10(지테크)(본에코)","서울특별시 
+ 
+ function lgIsH(){ return lg.sec==='occur'||lg.sec==='hazard'; }
+ function lgIsM(){ return lg.sec==='minwon'; }
++function lgLvName(v){ return ({High:'높음',Medium:(lg.sec==='hazard'?'중간':'보통'),Low:'낮음'})[v]||v||''; }   // [11_12] 사고발생지점=보통, 사고재해예방=중간
+ // [11_11] 주소 표시 통일 — 저장값은 그대로, 보이는 것만: 잠실본동·잠실동·본 → '잠실동 199-3', 삼·삼전동 → '삼전동 64-8'
+ function lgAddrDisp(s){
+   s=String(s||'').replace(/서울(특별시)?\s*/g,'').replace(/송파구\s*/g,'').trim();
+@@ -2660,7 +2673,7 @@ function lgAutoSeed(){
+   lgSeedTried[k]=true;
+   LGSEED.child(k).once('value').then(function(s){ if(!s.val()) lgSeed(k,true); }).catch(function(){});
+ }
+-function lgOnRecs(){ if($('pane-ledger')&&$('pane-ledger').classList.contains('on')&&lgIsH()) lgRender(); else lgRenderLeds(); }
++function lgOnRecs(){ if($('pane-ledger')&&$('pane-ledger').classList.contains('on')&&(lgIsH()||lgIsM())) lgRender(); else lgRenderLeds(); }
+ 
+ // ── 작은 도우미 ──
+ function lgNum(x){ const v=parseFloat(String(x==null?'':x).replace(/[,\s원kgℓ]/gi,'')); return isFinite(v)?v:0; }
+@@ -2767,8 +2780,8 @@ function lgRenderSubs(){
+ // [11_11] 숫자 4칸 — 디지털원장처럼: 검색 결과 기준 건수, 누르면 그 건만 (목록·지도)
+ function lgStatDefs(){
+   const H=lgIsH(), M=lgIsM(), R=lg.sec==='rfid', ym=today().slice(0,7);
+-  if(M) return [['all','전체',x=>true,'acc','건'],['open','미처리',x=>x.status!=='처리완료','warn',''],['month','이번 달',x=>String(x.date||'').slice(0,7)===ym,'hold',''],['nopos','위치 없음',x=>!lgPos(x),'hold','']];
+-  if(H) return [['all','전체',x=>true,'acc','건'],['high','위험 높음',x=>x.riskLevel==='High','warn',''],['nodong','동 미지정',x=>!x.dong,'hold',''],['nopos','위치 없음',x=>!lgPos(x),'hold','']];
++  if(M) return [['all','전체',x=>true,'acc','건'],['open','미처리',x=>x.status!=='처리완료','warn',''],['done','처리',x=>x.status==='처리완료','acc',''],['month','이번달',x=>String(x.date||'').slice(0,7)===ym,'hold','']];   // [11_12] 전체·미처리·처리·이번달
++  if(H) return [['all','전체',x=>true,'acc','건'],['high','높음',x=>x.riskLevel==='High','warn',''],['mid',lgLvName('Medium'),x=>x.riskLevel==='Medium','hold',''],['low','낮음',x=>x.riskLevel==='Low','hold','']];   // [11_12] 등급으로
+   return [['all','전체',x=>true,'acc',R?'대':'곳'],['off',R?'미사용':'해지',x=>!lgIsUse(x),'warn',''],['chk','확인 필요 (동·위치)',x=>LG_DONGS.indexOf(x.dong)<0||!lgPos(x),'hold',''],['noph','사진 없음',x=>!x.phCount,'hold','']];
+ }
+ function lgSetStat(k){ lg.stat=(k==='all'?'':k); lgFitKey=''; lgRender(); }
+@@ -2780,7 +2793,7 @@ function lgRenderStats(){
+ // 보기: 지도+목록 / 지도만 / 목록만
+ function lgSetView(v){
+   lg.view=v; try{ localStorage.setItem('rp_lgview',v); }catch(e){}
+-  lgApplyView();
++  lgApplyView(); lgRenderLegend();
+   setTimeout(function(){ lgInitMap(); if(lgMap){ lgMap.relayout(); lgFitKey=''; lgRenderMap(lgFiltered()); } },60);
+ }
+ function lgApplyView(){
+@@ -2838,6 +2851,7 @@ function lgItems(){
+   return lg.sec==='rfid' ? rfidList : bizList.filter(b=>b.kind===lg.kind);
+ }
+ function lgPos(x){ const p=x.pos&&x.pos.lat?x.pos:(x.addrPos&&x.addrPos.lat?x.addrPos:null);   // [11_11] 잠실·삼전 밖(김포·부천 등 잘못 찍힌 곳)은 위치 없음으로
++  if(p&&x.recType==='hazard') return (+p.lat>33&&+p.lat<39&&+p.lng>124&&+p.lng<132)?p:null;   // [11_12] 사고는 장지동·매립지 등 구역 밖도 위치로 인정
+   return p&&+p.lat>37.48&&+p.lat<37.535&&+p.lng>127.05&&+p.lng<127.125?p:null; }
+ function lgByDong(a){
+   if(lg.dong==='all') return a;
+@@ -2855,8 +2869,13 @@ function lgPerRange(){
+   return [d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'), t];
+ }
+ function lgFiltered(){ const a=lgFilteredBase(), d=lgStatDefs().find(x=>x[0]===(lg.stat||'all')); return d?a.filter(d[2]):a; }   // [11_11] 숫자 칸 거르기
+-function lgFilteredBase(){
++const LG_CATS=[['생활','#16a34a'],['음식물','#ca8a04'],['재활용','#2563eb'],['기타','#64748b']];   // [11_12] 민원 분류
++let lgCatSel='';   // '' = 전체
++function lgCat(x){ return ['생활','음식물','재활용'].indexOf(x.subtype)>=0?x.subtype:'기타'; }
++function lgCatPick(c){ lgCatSel=c||''; lgFitKey=''; lgRender(); }   // [11_12] 누른 분류만 보기
++function lgFilteredBase(noCat){
+   let a=lgByDong(lgItems());
++  if(lgIsM()&&!noCat) { if(lgCatSel) a=a.filter(x=>lgCat(x)===lgCatSel); }   // [11_12] 고른 분류만 목록·지도·숫자에
+   { const pr=(lgIsH()||lgIsM())&&lgPerRange(); if(pr) a=a.filter(x=>{ const d=String(x.inspDate||x.date||'').slice(0,10).replace(/\./g,'-'); return d&&d>=pr[0]&&d<=pr[1]; }); }
+   if(lgIsM()){ if(lg.q){ const q=lgNormQ(lg.q); a=a.filter(x=>lgNormQ((x.addr||'')+' '+(x.content||'')+' '+(x.person||'')+' '+(x.tel||'')+' '+(x.category||'')+' '+(x.subtype||'')+' '+(x.no||'')).indexOf(q)>=0); }
+     return a.slice().sort((p,q)=>String((q.date||'')+(q.time||'')).localeCompare(String((p.date||'')+(p.time||'')))); }   // [11_11]
+@@ -2917,9 +2936,8 @@ function lgRender(){
+   // 사용중/미사용 (RFID) · 계약중/해지 (사업장)
+   const inD=lgByDong(all);
+   if(isH){
+-    const lv=[['High','🔴 높음'],['Medium','🟠 보통'],['Low','🟡 낮음']];
+-    $('lg-use').innerHTML='<button class="lg-ubtn'+(lg.use==='all'?' on':'')+'" onclick="lgSetUse(\'all\')">전체 '+inD.length+'</button>'
+-      +lv.map(v=>'<button class="lg-ubtn'+(lg.use===v[0]?' on':'')+'" onclick="lgSetUse(\''+v[0]+'\')">'+v[1]+' '+inD.filter(x=>x.riskLevel===v[0]).length+'</button>').join('');
++    lg.use='all'; $('lg-use').innerHTML='';   // [11_12] 등급은 위 숫자 칸(전체·높음·보통/중간·낮음)으로
++    if(0) $('lg-use').innerHTML='<button class="lg-ubtn'+(lg.use==='all'?' on':'')+'" onclick="lgSetUse(\'all\')">전체 '+inD.length+'</button>'
+     lgRenderDrv();
+     const list=lgFiltered(); lgRenderSum(list); lgRenderStats(); $('lg-seed').innerHTML=''; lgRenderList(list); lgRenderLegend(); lgRenderMap(list);
+     return;
+@@ -2949,7 +2967,7 @@ function lgRenderSum(list){
+   if(lgIsH()){
+     const np=list.filter(x=>!lgPos(x)).length, last=list.map(x=>x.inspDate||'').sort().pop();
+     $('lg-sum').innerHTML='<b>'+dn+'</b> '+(lg.sec==='occur'?'사고발생지점':'사고재해예방')+' <b>'+list.length+'건</b>'
+-      +' · 높음 '+list.filter(x=>x.riskLevel==='High').length+' · 보통 '+list.filter(x=>x.riskLevel==='Medium').length+' · 낮음 '+list.filter(x=>x.riskLevel==='Low').length
++      +' · 높음 '+list.filter(x=>x.riskLevel==='High').length+' · '+lgLvName('Medium')+' '+list.filter(x=>x.riskLevel==='Medium').length+' · 낮음 '+list.filter(x=>x.riskLevel==='Low').length
+       +(last?' · 최근 '+mkEsc(last):'')+(np?' · <span class="warn">위치 없음 '+np+'건</span>':'')
+       +'<br><span style="font-weight:600">새로 넣기는 <b>＋ 등록</b> · 항목을 누르면 상세·수정·사진</span>';
+     return;
+@@ -3022,7 +3040,7 @@ function lgRenderList(list){
+       const c=pinColorDark(r);
+       return '<div class="lg-row" style="border-left-color:'+c+'" onclick="lgCard(\''+r.id+'\')">'
+         +'<div class="lg-top"><div class="lg-nm"><span class="lg-no">'+E(r.hazardNo||'')+'</span>'+E(r.riskType||'(유형 없음)')+'</div>'
+-        +'<div class="lg-num"><span class="lg-tag" style="background:'+c+';color:#fff">'+E(LV[r.riskLevel]||r.riskLevel||'-')+'</span><small>'+E(r.inspDate||'')+'</small></div></div>'
++        +'<div class="lg-num"><span class="lg-tag" style="background:'+c+';color:#fff">'+E(lgLvName(r.riskLevel)||'-')+'</span><small>'+E(r.inspDate||'')+'</small></div></div>'
+         +'<div class="lg-sub">'+E(r.dong||'동 미지정')+' · '+E(lgAddrDisp(r.addr)||'주소 없음')+(r.driver?' · 🚛 '+E(r.driver):'')+(lgPos(r)?'':' <span class="lg-tag nopos">위치 없음</span>')+'</div>'
+         +(r.riskContent?'<div class="lg-sub" style="color:var(--ink)">'+E(String(r.riskContent).slice(0,70))+(String(r.riskContent).length>70?'…':'')+'</div>':'')
+         +'</div>';
+@@ -3099,7 +3117,7 @@ function lgCard(id){
+   const E=mkEsc, rows=[]; const add=(k,v)=>{ if(v!=null&&String(v).trim()!=='') rows.push('<div class="lgc-r"><b>'+k+'</b><div>'+E(v)+'</div></div>'); };
+   let ttl='';
+   if(r&&r.recType==='hazard'){ ttl=(isOccur(r)?'🚨 ':'⚠️ ')+(r.hazardNo||'')+' '+(r.riskType||'');
+-    add('구분',hKindOf(r)); add('날짜',r.inspDate); add('주소',lgAddrDisp(r.addr)); add('작업자',r.driver); add('내용',r.riskContent); add('등급',({High:'높음',Medium:'보통',Low:'낮음'})[r.riskLevel]||r.riskLevel); add('조치',r.actionNote); add('현장 점검',r.inspResult); }
++    add('구분',hKindOf(r)); add('날짜',r.inspDate); add('주소',lgAddrDisp(r.addr)); add('작업자',r.driver); add('내용',r.riskContent); add('등급',lgLvName(r.riskLevel)); add('조치',r.actionNote); add('현장 점검',r.inspResult); }
+   else if(r){ ttl='📒 '+(r.subtype||'민원')+' · '+lgAddrDisp(r.addr||'');
+     add('접수',(r.date||'')+' '+(r.time||'')); add('주소',lgAddrDisp(r.addr)); add('민원인',r.person); add('연락처',r.tel); add('내용',r.content||r.category); add('상태',r.status); add('방문결과',r.visitResult||r.inspResult); add('조치',r.actionNote); }
+   else { ttl=(it._t==='rfid'?'📡 ':(it.kind==='cafe'?'☕ ':(it.kind==='food'?'🍚 ':'♻️ ')))+(it.name||'');
+@@ -3140,6 +3158,7 @@ function lgInitMap(){
+   if(lgMap){ return; }
+   if(!window.kakao||!kakao.maps||!kakao.maps.Map||!$('lg-map')) return;
+   lgMap=new kakao.maps.Map($('lg-map'),{center:new kakao.maps.LatLng(37.505,127.088),level:5});
++  kakao.maps.event.addListener(lgMap,'idle',lgDrawPts);   // [11_12] 확대·축소하면 뭉침/핀 다시
+ }
+ function lgPinCls(it){
+   if(it._t==='rfid') return lgIsUse(it)?'use':'unuse';
+@@ -3147,7 +3166,16 @@ function lgPinCls(it){
+ }
+ function lgRenderLegend(){
+   const el=$('lg-legend'); if(!el) return;
+-  if(lgIsM()){ el.innerHTML='<span><i style="background:#16a34a"></i>생활</span><span><i style="background:#ca8a04"></i>음식물</span><span><i style="background:#2563eb"></i>재활용</span><span>· 누르면 상세</span>'; return; }
++  let ct=$('lg-cat');
++  if(lgIsM()){ el.innerHTML='';
++    if(!ct){ ct=document.createElement('div'); ct.id='lg-cat'; }
++    const listOnly=lg.view==='list', bd=$('lg-body'), host=listOnly?(bd&&bd.parentNode):document.querySelector('.lg-mapcol');
++    if(host&&ct.parentNode!==host){ if(listOnly) host.insertBefore(ct,bd); else host.appendChild(ct); }
++    ct.className=listOnly?'inline':'';
++    const st=lgStatDefs().find(x=>x[0]===(lg.stat||'all')), base=lgFilteredBase(true).filter(st?st[2]:()=>true);
++    ct.innerHTML=[['','전체',null]].concat(LG_CATS.map(c=>[c[0],c[0],c[1]])).map(c=>'<button type="button" class="lg-catb'+(lgCatSel===c[0]?' on':'')+'" onclick="lgCatPick(\''+c[0]+'\')" aria-pressed="'+(lgCatSel===c[0])+'">'+(c[2]?'<i style="background:'+c[2]+'"></i>':'')+c[1]+' '+(c[0]?base.filter(x=>lgCat(x)===c[0]).length:base.length)+'</button>').join('');
++    ct.style.display=''; return; }
++  if(ct) ct.style.display='none';
+   if(lgIsH()){ el.innerHTML='<span><i style="background:#991b1b"></i>높음</span><span><i style="background:#dc2626"></i>보통</span><span><i style="background:#f87171"></i>낮음</span><span>· 누르면 상세</span>'; return; }
+   el.innerHTML = lg.sec==='rfid'
+     ? '<span><i style="background:#16a34a"></i>사용중</span><span><i style="background:#94a3b8;border:2px solid #475569"></i>미사용</span><span>· 점을 누르면 상세</span>'
+@@ -3161,29 +3189,64 @@ function lgRenderMap(list){
+   const miss=list.length-pts.length;
+   const st=$('lg-stat');
+   if(st) st.innerHTML='지도 <b>'+pts.length+'</b>곳'+(miss?' · <span class="miss">위치 없음 '+miss+'곳 — 📍 위치 찾기를 누르거나 항목을 눌러 🗺️지도로 찍어주세요</span>':'');
++  lgCurPts=pts;
+   if(!pts.length) return;
+   const bounds=new kakao.maps.LatLngBounds();
+-  const label = true;   // [11_11] 모든 대장 색 라벨 (대형수거앱처럼 주소·이름 짧게)
++  pts.forEach(function(it){ const P=lgPos(it); bounds.extend(new kakao.maps.LatLng(P.lat,P.lng)); });
++  // 같은 조건이면 화면 위치 유지 (상세 저장할 때마다 튀지 않게)
++  const key=lg.sec+lg.kind+lg.dong+lg.use+lg.q+lg.drv+lg.view+pts.length;
++  if(key!==lgFitKey){ lgFitKey=key;
++    if(pts.length===1){ const P=lgPos(pts[0]); lgMap.setCenter(new kakao.maps.LatLng(P.lat,P.lng)); lgMap.setLevel(3); }
++    else lgMap.setBounds(bounds,50,50,50,50); }
++  lgDrawPts();
++}
++// [11_12] 대형수거앱처럼 — 멀리(레벨 4↑)는 원+숫자로 뭉치고, 가까이(3↓)는 주소 핀
++let lgCurPts=[];
++function lgPinCol(it){ const H=lgIsH()||lgIsM(); return H?pinColorDark(it):{use:'#16a34a',unuse:'#475569',food:'#d97706',recycle:'#2563eb',cafe:'#7c4a1e',ended:'#64748b'}[lgPinCls(it)]; }
++function lgDonut(cols,total){
++  const size=total>=50?64:total>=10?56:48, dpr=window.devicePixelRatio||1, cv=document.createElement('canvas');
++  cv.width=size*dpr; cv.height=size*dpr; cv.style.width=size+'px'; cv.style.height=size+'px';
++  const x=cv.getContext('2d'); x.scale(dpr,dpr); const cx=size/2, R=size/2-2, ring=Math.max(6,size*0.17);
++  x.beginPath(); x.arc(cx,cx,R,0,Math.PI*2); x.fillStyle='rgba(15,23,42,.30)'; x.fill();
++  let a=-Math.PI/2; Object.keys(cols).forEach(function(c){ const sw=cols[c]/total*Math.PI*2; x.beginPath(); x.arc(cx,cx,R-ring/2,a,a+sw); x.strokeStyle=c; x.lineWidth=ring; x.stroke(); a+=sw; });
++  x.beginPath(); x.arc(cx,cx,R-ring,0,Math.PI*2); x.fillStyle='#fff'; x.fill();
++  x.fillStyle='#0f172a'; x.font='800 '+(total>=100?15:total>=10?17:19)+'px -apple-system,sans-serif'; x.textAlign='center'; x.textBaseline='middle'; x.fillText(String(total),cx,cx+0.5);
++  return cv;
++}
++function lgDrawPts(){
++  if(!lgMap) return;
++  lgPins.forEach(p=>p.setMap(null)); lgPins=[];
++  const pts=lgCurPts||[]; if(!pts.length) return;
+   const H=lgIsH()||lgIsM();
+-  pts.forEach(function(it){
+-    const P=lgPos(it), pos=new kakao.maps.LatLng(P.lat,P.lng); bounds.extend(pos);
+-    const c=H?'':lgPinCls(it);
+-    const col=H?pinColorDark(it):{use:'#16a34a',unuse:'#475569',food:'#d97706',recycle:'#2563eb',cafe:'#7c4a1e',ended:'#64748b'}[c];
+-    const nm=mkEsc(lgShort(it));   // [11_11]
+-    const go='lgCard', dot='<div class="lgp '+c+'"'+(H?' style="background:'+col+'"':'')+'></div>';
+-    const html = label
+-      ? '<div class="lgp-lbl" onclick="'+go+'(\''+it.id+'\')" title="'+nm+'">'+dot+'<span style="border-color:'+col+';color:'+col+'">'+nm+'</span></div>'
+-      : dot.replace('<div class="lgp','<div onclick="'+go+'(\''+it.id+'\')" title="'+nm+'" class="lgp');
+-    const ov=new kakao.maps.CustomOverlay({position:pos,content:html,xAnchor:label?0.06:0.5,yAnchor:0.5,zIndex:(H||lgIsUse(it))?3:2});
++  const pin=function(it){
++    const P=lgPos(it), pos=new kakao.maps.LatLng(P.lat,P.lng), c=H?'':lgPinCls(it), col=lgPinCol(it);
++    const nm=mkEsc(lgShort(it)), dot='<div class="lgp '+c+'"'+(H?' style="background:'+col+'"':'')+'></div>';
++    const html='<div class="lgp-lbl" onclick="lgCard(\''+it.id+'\')" title="'+nm+'">'+dot+'<span style="border-color:'+col+';color:'+col+'">'+nm+'</span></div>';
++    const ov=new kakao.maps.CustomOverlay({position:pos,content:html,xAnchor:0.06,yAnchor:0.5,zIndex:(H||lgIsUse(it))?3:2});
++    ov.setMap(lgMap); lgPins.push(ov);
++  };
++  const b=lgMap.getBounds(), sw=b.getSouthWest(), ne=b.getNorthEast(), el=$('lg-map'), lv=lgMap.getLevel();
++  const inView=pts.filter(it=>{ const P=lgPos(it); return P.lat>=sw.getLat()&&P.lat<=ne.getLat()&&P.lng>=sw.getLng()&&P.lng<=ne.getLng(); }).length;
++  if(pts.length===1||lv<=2||(lv===3&&inView<=40)){ pts.forEach(pin); return; }   // 가까이: 주소 핀 (3단계는 화면에 40곳 이하일 때만)
++  // 화면에서 일정 간격(95px 격자 → 78px 안은 합침)으로 묶기
++  const dLat=(ne.getLat()-sw.getLat())/(el.clientHeight||600), dLng=(ne.getLng()-sw.getLng())/(el.clientWidth||600);
++  if(!(dLat>0&&dLng>0)){ pts.forEach(pin); return; }
++  const bins={};
++  pts.forEach(function(it){ const P=lgPos(it), k=Math.floor(P.lat/(dLat*95))+'_'+Math.floor(P.lng/(dLng*95)); (bins[k]=bins[k]||[]).push(it); });
++  const cen=g=>{ const n=g.rows.length; g.lat=g.rows.reduce((s,r)=>s+(+lgPos(r).lat),0)/n; g.lng=g.rows.reduce((s,r)=>s+(+lgPos(r).lng),0)/n; return g; };
++  const groups=Object.values(bins).map(r=>cen({rows:r})).sort((a,b)=>b.rows.length-a.rows.length), merged=[];
++  groups.forEach(function(g){ const near=merged.find(m=>Math.hypot((m.lat-g.lat)/dLat,(m.lng-g.lng)/dLng)<78);
++    if(near){ near.rows=near.rows.concat(g.rows); cen(near); } else merged.push(g); });
++  merged.forEach(function(g){
++    if(g.rows.length===1){ pin(g.rows[0]); return; }
++    const cols={}; g.rows.forEach(r=>{ const c=lgPinCol(r)||'#475569'; cols[c]=(cols[c]||0)+1; });
++    const box=document.createElement('div'); box.className='lg-clu'; box.title=g.rows.length+'건 — 누르면 확대';
++    box.appendChild(lgDonut(cols,g.rows.length));
++    box.onclick=function(){ lgMap.setLevel(Math.max(2,lgMap.getLevel()-2),{anchor:new kakao.maps.LatLng(g.lat,g.lng)}); };
++    const ov=new kakao.maps.CustomOverlay({position:new kakao.maps.LatLng(g.lat,g.lng),content:box,xAnchor:0.5,yAnchor:0.5,zIndex:4});
+     ov.setMap(lgMap); lgPins.push(ov);
+   });
+-  // 같은 조건이면 화면 위치 유지 (상세 저장할 때마다 튀지 않게)
+-  const key=lg.sec+lg.kind+lg.dong+lg.use+lg.q+lg.drv+lg.view+pts.length;
+-  if(key===lgFitKey) return; lgFitKey=key;
+-  if(pts.length===1){ const P=lgPos(pts[0]); lgMap.setCenter(new kakao.maps.LatLng(P.lat,P.lng)); lgMap.setLevel(3); }
+-  else lgMap.setBounds(bounds,50,50,50,50);
+ }
+-
+ // ── 상세·수정 ──
+ function lgOpen(id){
+   if(!id&&lgIsH()){ lgHFormOpen(); return; }
+diff --git "a/report/\354\210\230\354\240\225\352\270\260\353\241\235.md" "b/report/\354\210\230\354\240\225\352\270\260\353\241\235.md"
+index 50b9138..253e47e 100644
+--- "a/report/\354\210\230\354\240\225\352\270\260\353\241\235.md"
++++ "b/report/\354\210\230\354\240\225\352\270\260\353\241\235.md"
+@@ -2,6 +2,10 @@
+ 
+ 형식: `날짜 | 무엇을 고쳤나 | 누가 요청`
+ 
++- 2026-11-12 | 민원대장 분류 버튼: 지도 오른쪽 위 [전체·생활·음식물·재활용·기타] — 누른 분류만 목록·지도·숫자 칸에(하나씩), '목록만' 보기에서는 목록 위 한 줄, 상세 카드는 버튼 아래로. 기타는 회색 핀 | 본에코 통합방
++- 2026-11-12 | 제목을 디지털원장처럼 '종합예방관리대장 (로고) 본에코(주) v1112a'로, 버전 표시 추가 | 본에코 통합방
++- 2026-11-12 | 지도 핀 뭉치기(대형수거앱처럼): 멀리 보면 원+숫자로 뭉침(색 비율 링), 원 누르면 확대, 가까이(화면에 40곳 이하)는 주소 핀 — 민원·사고·RFID·감량·커피 모든 대장 | 본에코 통합방
++- 2026-11-12 | 사고대장 숫자 칸을 전체·높음·보통(사고재해예방은 중간)·낮음으로(아래 등급 버튼 줄은 뺌), 장지동·매립지 등 잠실·삼전 밖 사고 위치도 '위치 있음'으로, 수정한 내용 바로 반영(민원대장 포함), 상세창에서 바로 모든 칸 수정(내용·동·등급·위치·사진 한 창에서, 🗑 삭제·💾 저장·닫기), 행정동에 문정동·장지동 추가, 동을 비우면 주소에서 자동, 민원대장 숫자 칸은 전체·미처리·처리·이번달(누르면 그 건만) | 본에코 통합방
+ - 2026-11-12 | 브라우저 탭 아이콘: 로고 둘레 흰 바탕 없앤 둥근 아이콘(favicon-tab.png). 폰 설치 아이콘(icon-192)은 그대로 | 본에코 통합방
+ - 2026-11-11 | 시안5: 주소 표시를 '잠실동 199-3'·'삼전동 64-8'로 통일(저장값은 그대로), 검색 시 잠실본동·잠실동·본 / 삼전동·삼 같은 것으로, 검색창 아래 설명 줄 삭제, 상세 카드는 대장 바꾸면 자동 닫힘·윗줄 끌어서 이동, 목록 한 건 누르면 지도에 그 건만, 감량의무사업장 달 고르기 삭제·수정창에서 월별 칸 숨김 → [📊 배출량 확인]·[📊 이 사업장 배출량] | 본에코 통합방
+ - 2026-11-11 | 시안4: 가운데 '연결됨' 띠 없애고 제목 옆 🟢 연결됨/🔴 끊김, PC에서 화면 가득·글자 크게, 숫자 4칸을 누르면 그 건만(검색 결과 기준 건수), 목록은 한 줄 요약, 목록·핀 누르면 지도 위 상세 카드, 잠실·삼전 밖에 잘못 찍힌 위치는 지도에서 빼고 위치 없음으로 | 본에코 통합방
+-- 
+2.43.0
+
