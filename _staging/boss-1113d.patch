@@ -1,0 +1,107 @@
+From 9488d5d54842cc1a8bf17ccbba1d03b766130ed3 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 13 Nov 2026 01:07:36 +0000
+Subject: [PATCH] =?UTF-8?q?=EC=A2=85=ED=95=A9=EC=98=88=EB=B0=A9=EA=B4=80?=
+ =?UTF-8?q?=EB=A6=AC=EB=8C=80=EC=9E=A5=20v1113d:=20=EB=93=B1=EB=A1=9D?=
+ =?UTF-8?q?=C2=B7=EC=83=81=EC=84=B8=C2=B7=EB=AF=BC=EC=9B=90=20=EC=A0=91?=
+ =?UTF-8?q?=EC=88=98=EC=B0=BD=20=EC=9D=B4=EB=8F=99=C2=B7=ED=81=AC=EA=B8=B0?=
+ =?UTF-8?q?=20=EC=A1=B0=EC=A0=95=C2=B7=EA=B8=80=EC=94=A8=20=EC=9E=90?=
+ =?UTF-8?q?=EB=8F=99=20=ED=81=AC=EA=B8=B0?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_013YMEudMHewuLqXVoZoD7eG
+---
+ report/index.html                             | 33 +++++++++++++++++--
+ ...30\354\240\225\352\270\260\353\241\235.md" |  1 +
+ 2 files changed, 31 insertions(+), 3 deletions(-)
+
+diff --git a/report/index.html b/report/index.html
+index 3bab7b3..14b8f4b 100644
+--- a/report/index.html
++++ b/report/index.html
+@@ -584,6 +584,21 @@ body{background:var(--bg)}
+ .mj-chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+ .mj-chip i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+ .mj-save{border:0;border-radius:10px;background:var(--blue);color:#fff;font:inherit;font-weight:900;font-size:16px;padding:12px;cursor:pointer}
++/* [11_13] 등록·상세·민원 접수창: 윗줄 잡고 이동 · 오른쪽 아래 모서리로 크기 조정 · 창 너비에 맞춰 글씨 자동 크기 (PC) */
++#modal,#mj{container-type:inline-size;display:flex;flex-direction:column}
++#modal-body,#mj-b{flex:1 1 auto;overflow:auto}
++#modal-hdr,#modal-body,#modal-actions,#mj-h,#mj-b{font-size:clamp(14px,calc(9px + 1.15cqi),21px)}
++#modal-title,#mj-h b{font-size:1.12em}
++#modal-body .form-label,#modal-body .det-label,.mj-f>span{font-size:.85em}
++#modal-body .det-val,#modal-body .form-input,#modal-body .form-select,#modal-body textarea,.mj-in{font-size:1em}
++#modal-body .pill,#modal-body .lg-pick button,.mj-chip,#modal-actions .act-btn{font-size:.92em}
++.mj-save{font-size:1.08em}
++#modal-hdr,#mj-h{cursor:move;user-select:none}
++@media(min-width:701px){
++  #modal,#mj{resize:both;overflow:hidden;width:min(560px,calc(100vw - 28px));max-width:calc(100vw - 28px);min-width:340px;min-height:240px;max-height:calc(100vh - 40px);position:relative}
++  #modal.big{width:min(1500px,calc(100vw - 28px))}
++  #mj{width:min(620px,calc(100vw - 28px))}
++}
+ </style>
+ </head>
+ <body>
+@@ -599,7 +614,7 @@ body{background:var(--bg)}
+ <div id="app" style="display:none">
+   <div id="hdr">
+     <div id="hdr-top">
+-      <h1><span>종합예방관리대장</span><i class="h-logo" aria-hidden="true"></i><span>본에코(주)</span><span id="build-tag" class="build-tag">v1113c</span><span id="net-dot" class="net-dot"></span></h1>
++      <h1><span>종합예방관리대장</span><i class="h-logo" aria-hidden="true"></i><span>본에코(주)</span><span id="build-tag" class="build-tag">v1113d</span><span id="net-dot" class="net-dot"></span></h1>
+       <div id="hdr-right">
+         <a id="mw-sw" href="https://boneco-minwon.web.app/?from=risk" target="bn_minwon" rel="noopener">📋 민원접수</a>
+         <button class="hdr-sbtn" id="hb-photo" onclick="swSide('photo')">📦 보관함</button>
+@@ -1509,6 +1524,18 @@ function geoH(){
+   });
+ }
+ 
++// [11_13] 등록·상세·민원 접수창 끌어서 옮기기 (PC) — 윗줄을 잡고 끈다. 크기는 오른쪽 아래 모서리(CSS resize)
++(function lgWinDrag(){
++  let d=null;
++  document.addEventListener('mousedown',function(e){
++    if(window.innerWidth<=700||!e.target.closest) return;
++    const h=e.target.closest('#modal-hdr,#mj-h'); if(!h||e.target.closest('button,input,select,a,label')) return;
++    const box=h.id==='mj-h'?$('mj'):$('modal'); if(!box) return;
++    d={box,sx:e.clientX,sy:e.clientY,ox:parseFloat(box.style.left)||0,oy:parseFloat(box.style.top)||0}; box.style.position='relative'; e.preventDefault();
++  });
++  document.addEventListener('mousemove',function(e){ if(!d) return; d.box.style.left=(d.ox+e.clientX-d.sx)+'px'; d.box.style.top=(d.oy+e.clientY-d.sy)+'px'; });
++  document.addEventListener('mouseup',function(){ d=null; });
++})();
+ // [11_13] 민원 접수창 — 시안·디지털원장 민원처리와 같은 항목. 저장은 report/recs (현장앱·디지털원장이 같은 자료를 봄)
+ const MJ_TYPES=[['생활','#16a34a'],['음식물','#facc15'],['재활용','#2563eb'],['공용용기','#a16207'],['특수마대','#db2777'],['기타','#64748b']];
+ let mjPos=null;
+@@ -1519,7 +1546,7 @@ function mjOpen(){
+   ty.querySelectorAll('.mj-chip').forEach((b,i)=>b.classList.toggle('on',!i)); $('mj-ch').querySelectorAll('.mj-chip').forEach((b,i)=>b.classList.toggle('on',!i));
+   mjTeam(); $('mj-bg').classList.add('on'); setTimeout(()=>$('mj-addr').focus(),50);
+ }
+-function mjClose(){ $('mj-bg').classList.remove('on'); }
++function mjClose(){ $('mj-bg').classList.remove('on'); const m=$('mj'); if(m){ m.style.left=''; m.style.top=''; } }   // 닫으면 자리는 처음으로 (크기는 그대로)
+ function mjTypes(){ return [...document.querySelectorAll('#mj-ty .mj-chip.on')].map(b=>b.dataset.v); }
+ function mjAutoTeam(){ const h=new Date($('mj-dt').value||Date.now()).getHours(); if(h>=6&&h<15) return '기동반';
+   return ({생활:'야간 생활팀',음식물:'야간 음식물팀',재활용:'야간 재활용팀',공용용기:'야간 음식물팀',특수마대:'야간 생활팀'})[mjTypes()[0]]||'기동반'; }
+@@ -3287,7 +3314,7 @@ function lgVolPick(id){ const y=lg.volY||lgYear(), t=today().slice(0,7); lg.ym=(
+ // [11_12] 상세 창 윗줄을 잡고 끌어서 옮기기 (배출량 확인 창)
+ function lgModDrag(){
+   const m=$('modal'), hd=$('modal-hdr'); if(!m||!hd) return; hd.classList.add('drag'); m.style.position='relative'; m.style.left=''; m.style.top='';
+-  if(hd._dr) return; hd._dr=1;
++  return;   // [11_13] 끌기는 공통 끌기(lgWinDrag)가 맡는다
+   let sx,sy,ox,oy,on=false;
+   const mv=e=>{ if(!on||!hd.classList.contains('drag')) return; const t=e.touches?e.touches[0]:e; m.style.left=(ox+t.clientX-sx)+'px'; m.style.top=(oy+t.clientY-sy)+'px'; e.preventDefault(); };
+   const up=()=>{ on=false; document.removeEventListener('mousemove',mv); document.removeEventListener('mouseup',up); document.removeEventListener('touchmove',mv); document.removeEventListener('touchend',up); };
+diff --git "a/report/\354\210\230\354\240\225\352\270\260\353\241\235.md" "b/report/\354\210\230\354\240\225\352\270\260\353\241\235.md"
+index 962f5e0..6cd4103 100644
+--- "a/report/\354\210\230\354\240\225\352\270\260\353\241\235.md"
++++ "b/report/\354\210\230\354\240\225\352\270\260\353\241\235.md"
+@@ -2,6 +2,7 @@
+ 
+ 형식: `날짜 | 무엇을 고쳤나 | 누가 요청`
+ 
++- 2026-11-13 | 종합예방관리대장 v1113d: 모든 대장 등록·상세창과 민원 접수창 — 윗줄 잡고 이동, 오른쪽 아래 모서리로 크기 조정, 창 너비에 맞춰 글씨 자동 크기(PC) | 사용자
+ - 2026-11-13 | 종합예방관리대장 v1113c: 민원대장 [＋ 등록] 접수창을 시안·디지털원장 민원처리와 같은 항목으로(접수일시·개인/기관·민원인번호·민원종류 여러 개·주소검색·위치 설명·민원내용·담당 팀 자동/변경) | 사용자
+ - 2026-11-13 | 종합예방관리대장 v1113b: 민원처리앱으로 넘어가는 [📋 민원접수] 버튼 없앰, 민원대장 [＋ 등록] → 대장 안 민원 접수창(저장 후 민원대장으로), 민원 저장 때 담당 팀 자동(15시 이전 기동반·이후 종류별 야간팀) | 전무님·사용자
+ - 2026-11-13 | 종합예방관리대장 v1113a: 지도 자료 50곳 미만 대장(사고·감량 등)은 원 뭉치지 않고 주소 핀, 모든 대장 주소 핀·글씨 키움(수거앱 참조), 목록 첫 줄만 굵게·둘째 줄 보통, 디지털원장·접수페이지와 같은 청록 스킨(흰 헤더·청록 버튼) | 사용자
+-- 
+2.43.0
+
