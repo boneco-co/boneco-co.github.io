@@ -1,0 +1,245 @@
+From cc4b4ad9bd4ba3d30dfaabbb34adbbe239891d95 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 13 Nov 2026 00:51:36 +0000
+Subject: [PATCH 1/2] =?UTF-8?q?=EC=A2=85=ED=95=A9=EC=98=88=EB=B0=A9?=
+ =?UTF-8?q?=EA=B4=80=EB=A6=AC=EB=8C=80=EC=9E=A5=20v1113b:=20=EB=AF=BC?=
+ =?UTF-8?q?=EC=9B=90=EC=B2=98=EB=A6=AC=EC=95=B1=20=EB=84=98=EC=96=B4?=
+ =?UTF-8?q?=EA=B0=80=EA=B8=B0=20=EB=B2=84=ED=8A=BC=20=EC=97=86=EC=95=B0,?=
+ =?UTF-8?q?=20=EB=AF=BC=EC=9B=90=EB=8C=80=EC=9E=A5=20=EB=93=B1=EB=A1=9D=20?=
+ =?UTF-8?q?=E2=86=92=20=EB=8C=80=EC=9E=A5=20=EC=95=88=20=EB=AF=BC=EC=9B=90?=
+ =?UTF-8?q?=20=EC=A0=91=EC=88=98=EC=B0=BD,=20=EB=8B=B4=EB=8B=B9=20?=
+ =?UTF-8?q?=ED=8C=80=20=EC=9E=90=EB=8F=99?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_013YMEudMHewuLqXVoZoD7eG
+---
+ report/index.html                                  | 14 +++++++++++---
+ ...210\230\354\240\225\352\270\260\353\241\235.md" |  1 +
+ 2 files changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/report/index.html b/report/index.html
+index de8d2d4..3d44efa 100644
+--- a/report/index.html
++++ b/report/index.html
+@@ -568,6 +568,7 @@ body{background:var(--bg)}
+ #lg-ledwrap .lg-led{background:#fff;color:#4b5563;border:1.5px solid var(--line)}
+ #lg-ledwrap .lg-led.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+ .lg-led.on,button.lg-stat.on{border-color:var(--blue);background:#dff2f5}
++#mw-sw{display:none!important}   /* [11_13] 민원처리앱으로 넘어가는 버튼 없앰 — 민원 접수는 민원대장 [＋ 등록] */
+ </style>
+ </head>
+ <body>
+@@ -583,7 +584,7 @@ body{background:var(--bg)}
+ <div id="app" style="display:none">
+   <div id="hdr">
+     <div id="hdr-top">
+-      <h1><span>종합예방관리대장</span><i class="h-logo" aria-hidden="true"></i><span>본에코(주)</span><span id="build-tag" class="build-tag">v1113a</span><span id="net-dot" class="net-dot"></span></h1>
++      <h1><span>종합예방관리대장</span><i class="h-logo" aria-hidden="true"></i><span>본에코(주)</span><span id="build-tag" class="build-tag">v1113b</span><span id="net-dot" class="net-dot"></span></h1>
+       <div id="hdr-right">
+         <a id="mw-sw" href="https://boneco-minwon.web.app/?from=risk" target="bn_minwon" rel="noopener">📋 민원접수</a>
+         <button class="hdr-sbtn" id="hb-photo" onclick="swSide('photo')">📦 보관함</button>
+@@ -1476,6 +1477,12 @@ function geoH(){
+   });
+ }
+ 
++// [11_13] 담당 팀 자동 — 민원처리앱 규칙: 15시 이전(06시~) 접수 = 기동반, 15시 이후·새벽 = 민원종류별 야간 수거팀 (현장앱이 이 팀으로 받음)
++function mTeamAuto(){
++  const h=parseInt(String(($('m-time')||{}).value||'').slice(0,2),10); const hh=isNaN(h)?new Date().getHours():h;
++  if(hh>=6&&hh<15) return '기동반';
++  return ({생활:'야간 생활팀',음식물:'야간 음식물팀',재활용:'야간 재활용팀'})[mSub]||'기동반';
++}
+ async function submitM(){
+   if(!mSub){toast('폐기물 구분 선택');return;}
+   if(!$('m-addr').value.trim()){toast('주소 입력');return;}
+@@ -1487,7 +1494,7 @@ async function submitM(){
+     person:$('m-person').value.trim(),tel:$('m-tel').value.trim(),channel:$('m-channel').value.trim(),
+     category:$('m-category').value.trim(),content:$('m-content').value.trim(),
+     inspResult:'',status:$('m-status').value,mgmtLevel:$('m-mgmt').value,
+-    actionNote:$('m-action').value.trim(),staff,createdAt:nowStr(),updatedAt:nowStr(),del:0};
++    actionNote:$('m-action').value.trim(),team:mTeamAuto(),src:'종합예방관리대장',staff,createdAt:nowStr(),updatedAt:nowStr(),del:0};
+   $('photo-progress').classList.add('on');
+   try{
+     await saveRec(rec);
+@@ -1498,6 +1505,7 @@ async function submitM(){
+     }
+     toast(mPos?('✅ 민원 접수 완료! ('+rec.no+')'):('✅ 접수 완료 ('+rec.no+') — 위치 미지정, 지도 표시 안 됨'));
+     resetMForm();
++    if(window.lgFromLedger){ window.lgFromLedger=false; sw('ledger'); }   // [11_13] 민원대장 [＋ 등록]에서 왔으면 저장 후 민원대장으로
+   }catch{toast('⚠️ 저장 실패');}
+   finally{$('photo-progress').classList.remove('on');}
+ }
+@@ -2878,7 +2886,7 @@ function lgPickHtml(k,mode){
+     +LG_KEYS.map(x=>'<button type="button" data-k="'+x[0]+'" class="'+(x[0]===k?'on':'')+'" onclick="'+(mode==='up'?'lgUpDraw':'lgAddTo')+'(\''+x[0]+'\')">'+x[1]+'</button>').join('')
+     +'</div></div>';
+ }
+-function lgAddOpen(){ if(lgIsM()){ const a=$('mw-sw'); if(a) a.click(); return; } lgAddTo(lgKey()); }   // [11_11] 민원은 민원접수 화면에서
++function lgAddOpen(){ if(lgIsM()){ window.lgFromLedger=true; sw('form'); window.scrollTo(0,0); return; } lgAddTo(lgKey()); }   // [11_13] 민원은 민원처리앱으로 넘어가지 않고 대장 안 민원 접수창   // [11_11] 민원은 민원접수 화면에서
+ function lgAddTo(k){
+   if(lgKey()!==k) lgSetKey(k);   // 같은 대장이면 고른 달·동 그대로
+   if(!$('pane-ledger').classList.contains('on')) sw('ledger');
+diff --git "a/report/\354\210\230\354\240\225\352\270\260\353\241\235.md" "b/report/\354\210\230\354\240\225\352\270\260\353\241\235.md"
+index d10095a..ecc5cf2 100644
+--- "a/report/\354\210\230\354\240\225\352\270\260\353\241\235.md"
++++ "b/report/\354\210\230\354\240\225\352\270\260\353\241\235.md"
+@@ -2,6 +2,7 @@
+ 
+ 형식: `날짜 | 무엇을 고쳤나 | 누가 요청`
+ 
++- 2026-11-13 | 종합예방관리대장 v1113b: 민원처리앱으로 넘어가는 [📋 민원접수] 버튼 없앰, 민원대장 [＋ 등록] → 대장 안 민원 접수창(저장 후 민원대장으로), 민원 저장 때 담당 팀 자동(15시 이전 기동반·이후 종류별 야간팀) | 전무님·사용자
+ - 2026-11-13 | 종합예방관리대장 v1113a: 지도 자료 50곳 미만 대장(사고·감량 등)은 원 뭉치지 않고 주소 핀, 모든 대장 주소 핀·글씨 키움(수거앱 참조), 목록 첫 줄만 굵게·둘째 줄 보통, 디지털원장·접수페이지와 같은 청록 스킨(흰 헤더·청록 버튼) | 사용자
+ - 2026-11-12 | 현장앱 개편(A 시안): 처리 전·후 사진 올리기·처리 상태(완료)·한 줄 메모만 남김(민원인 정보·내용 수정·지도·사무실 버튼 없앰), 완료 값을 PC와 같은 '처리완료'로 저장, 폰에서 관리대장 주소를 열면 현장앱으로 이동, PC 상세에 사고 '처리 후' 사진 칸과 '📱 현장 메모' 줄 추가, 현장앱 아이콘 회사 로고(report-field-v3) | bongsuk0708
+ - 2026-11-12 | 종합예방관리대장 전체(v1112b): 주소 표시 통일(불필요한 0 제거 182-02→182-2·33-00→33, 번지만 있으면 그 건의 동을 붙여 '잠실동 182-2'), 도구줄 한 줄(왼쪽 절반 검색, 오른쪽 기간 설정·인쇄·엑셀·배출량 확인·등록·엑셀 올리기), 인쇄·엑셀 동별→번지 오름차순, 민원 핀·목록·범례 색을 민원처리앱 규칙으로(생활 초록·재활용 파랑·음식물 노랑(글자 어둡게)·공용용기 갈색·특수마대 분홍·대형 보라·기타 회색), 사고대장 목록 윗줄=주소·관리번호는 상세에서만·아랫줄 '내용 - 작업원', RFID 📅 달 고르기·📍 위치 찾기 삭제·목록 한 줄, 감량 목록 '주소 · 상호', 모든 대장 [🗓 전체 기간 ▾] 기간 설정(민원·사고·커피=일 단위, RFID·감량=달 단위: 이번 달·지난 달·최근 3개월·올해·직접) — RFID·감량 오른쪽 kg·ℓ·금액·계약금은 고른 기간 자료 있을 때만, 배출량 확인 창 크게·윗줄 끌어 이동·연도 선택·줄 누르면 그 연도 입력, 같은 주소 핀 하나로+건수 배지→그 주소 목록→상세 | 사용자
+-- 
+2.43.0
+
+
+From ae029feed83a98e691357012d27414c749aa7617 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 13 Nov 2026 00:54:37 +0000
+Subject: [PATCH 2/2] =?UTF-8?q?=EC=A2=85=ED=95=A9=EC=98=88=EB=B0=A9?=
+ =?UTF-8?q?=EA=B4=80=EB=A6=AC=EB=8C=80=EC=9E=A5=20v1113c:=20=EB=AF=BC?=
+ =?UTF-8?q?=EC=9B=90=20=EC=A0=91=EC=88=98=EC=B0=BD=EC=9D=84=20=EC=8B=9C?=
+ =?UTF-8?q?=EC=95=88=C2=B7=EB=94=94=EC=A7=80=ED=84=B8=EC=9B=90=EC=9E=A5?=
+ =?UTF-8?q?=EA=B3=BC=20=EA=B0=99=EC=9D=80=20=ED=95=AD=EB=AA=A9=EC=9C=BC?=
+ =?UTF-8?q?=EB=A1=9C?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_013YMEudMHewuLqXVoZoD7eG
+---
+ report/index.html                             | 73 ++++++++++++++++++-
+ ...30\354\240\225\352\270\260\353\241\235.md" |  1 +
+ 2 files changed, 72 insertions(+), 2 deletions(-)
+
+diff --git a/report/index.html b/report/index.html
+index 3d44efa..3bab7b3 100644
+--- a/report/index.html
++++ b/report/index.html
+@@ -569,6 +569,21 @@ body{background:var(--bg)}
+ #lg-ledwrap .lg-led.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+ .lg-led.on,button.lg-stat.on{border-color:var(--blue);background:#dff2f5}
+ #mw-sw{display:none!important}   /* [11_13] 민원처리앱으로 넘어가는 버튼 없앰 — 민원 접수는 민원대장 [＋ 등록] */
++/* [11_13] 민원 접수창 (시안 · 디지털원장 민원처리와 같은 항목) */
++#mj-bg{display:none;position:fixed;inset:0;z-index:210;background:rgba(15,23,42,.45);align-items:flex-start;justify-content:center;padding:40px 12px;overflow:auto}
++#mj-bg.on{display:flex}
++#mj{background:var(--card);border-radius:16px;width:100%;max-width:620px;box-shadow:0 18px 50px rgba(15,23,42,.3);overflow:hidden}
++#mj-h{background:#dff2f5;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}#mj-h b{font-size:17px}
++#mj-h button{border:0;background:#fff;border-radius:50%;width:30px;height:30px;font-size:16px;cursor:pointer}
++#mj-b{padding:14px 16px;display:grid;gap:12px}
++.mj-f{display:grid;gap:5px}.mj-f>span{font-size:13px;font-weight:800;color:var(--sub)}.mj-f small{font-weight:600;color:#6b7280}
++.mj-in{border:1.5px solid var(--line);border-radius:10px;padding:9px 11px;font:inherit;font-size:14.5px;background:#fff;color:var(--ink);width:100%}
++.mj-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:560px){.mj-2{grid-template-columns:1fr}}
++.mj-chips{display:flex;gap:6px;flex-wrap:wrap}
++.mj-chip{font:inherit;font-size:13.5px;font-weight:800;border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:5px 11px;color:var(--ink);cursor:pointer}
++.mj-chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
++.mj-chip i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
++.mj-save{border:0;border-radius:10px;background:var(--blue);color:#fff;font:inherit;font-weight:900;font-size:16px;padding:12px;cursor:pointer}
+ </style>
+ </head>
+ <body>
+@@ -584,7 +599,7 @@ body{background:var(--bg)}
+ <div id="app" style="display:none">
+   <div id="hdr">
+     <div id="hdr-top">
+-      <h1><span>종합예방관리대장</span><i class="h-logo" aria-hidden="true"></i><span>본에코(주)</span><span id="build-tag" class="build-tag">v1113b</span><span id="net-dot" class="net-dot"></span></h1>
++      <h1><span>종합예방관리대장</span><i class="h-logo" aria-hidden="true"></i><span>본에코(주)</span><span id="build-tag" class="build-tag">v1113c</span><span id="net-dot" class="net-dot"></span></h1>
+       <div id="hdr-right">
+         <a id="mw-sw" href="https://boneco-minwon.web.app/?from=risk" target="bn_minwon" rel="noopener">📋 민원접수</a>
+         <button class="hdr-sbtn" id="hb-photo" onclick="swSide('photo')">📦 보관함</button>
+@@ -906,6 +921,23 @@ body{background:var(--bg)}
+     <div id="st-list"></div>
+   </div>
+ 
++<!-- [11_13] 민원 접수창 -->
++<div id="mj-bg" onclick="if(event.target===this)mjClose()">
++  <div id="mj" role="dialog" aria-label="민원 접수">
++    <div id="mj-h"><b>📒 민원 접수</b><button type="button" onclick="mjClose()" aria-label="닫기">✕</button></div>
++    <div id="mj-b">
++      <div class="mj-2"><label class="mj-f"><span>접수일시</span><input class="mj-in" id="mj-dt" type="datetime-local" onchange="mjTeam()"></label>
++        <div class="mj-f"><span>민원유형</span><div class="mj-chips" id="mj-ch"><button type="button" class="mj-chip on" data-v="개인">👤 개인</button><button type="button" class="mj-chip" data-v="기관">🏛 기관</button></div></div></div>
++      <label class="mj-f"><span>민원인번호 <small>뒤 8자리 · 민원인 미공개 가능</small></span><input class="mj-in" id="mj-tel" inputmode="tel" placeholder="뒤 8자리" autocomplete="off"></label>
++      <div class="mj-f"><span>민원종류 <small>(여러 개 고를 수 있음)</small></span><div class="mj-chips" id="mj-ty"></div></div>
++      <div class="mj-f"><span>주소</span><div style="display:flex;gap:6px"><input class="mj-in" id="mj-addr" placeholder="예: 잠실동 199-3" autocomplete="off" oninput="mjPos=null;$('mj-addrok').textContent=''"><button type="button" class="lg-tool" onclick="mjAddr()">🔍 주소검색</button></div><div id="mj-addrok" style="font-size:12.5px"></div></div>
++      <label class="mj-f"><span>위치 설명 <small>(선택)</small></span><input class="mj-in" id="mj-loc" placeholder="예: OO빌라 앞 전봇대, 분리수거장 옆" autocomplete="off"></label>
++      <label class="mj-f"><span>민원내용</span><textarea class="mj-in" id="mj-txt" rows="3"></textarea></label>
++      <div class="mj-f"><span>담당 팀 <small>자동 배정 · 바꿀 수 있음</small></span><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><select class="mj-in" id="mj-team" style="width:auto" onchange="this.dataset.manual='1';mjTeam()"><option>기동반</option><option>야간 생활팀</option><option>야간 음식물팀</option><option>야간 재활용팀</option></select><b id="mj-auto" style="font-size:13.5px;color:#15803d"></b></div></div>
++      <button type="button" class="mj-save" id="mj-go" onclick="mjSave()">💾 접수 저장</button>
++    </div>
++  </div>
++</div>
+ <!-- 상세 모달 -->
+ <div id="modal-bg" onclick="closeMod(event)">
+   <div id="modal">
+@@ -1477,6 +1509,43 @@ function geoH(){
+   });
+ }
+ 
++// [11_13] 민원 접수창 — 시안·디지털원장 민원처리와 같은 항목. 저장은 report/recs (현장앱·디지털원장이 같은 자료를 봄)
++const MJ_TYPES=[['생활','#16a34a'],['음식물','#facc15'],['재활용','#2563eb'],['공용용기','#a16207'],['특수마대','#db2777'],['기타','#64748b']];
++let mjPos=null;
++function mjOpen(){
++  const ty=$('mj-ty'); if(!ty.children.length) ty.innerHTML=MJ_TYPES.map((t,i)=>'<button type="button" class="mj-chip'+(i?'':' on')+'" data-v="'+t[0]+'"><i style="background:'+t[1]+'"></i>'+t[0]+'</button>').join('');
++  const d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); $('mj-dt').value=d.toISOString().slice(0,16);
++  ['mj-tel','mj-addr','mj-loc','mj-txt'].forEach(i=>$(i).value=''); $('mj-addrok').textContent=''; mjPos=null; $('mj-team').dataset.manual='';
++  ty.querySelectorAll('.mj-chip').forEach((b,i)=>b.classList.toggle('on',!i)); $('mj-ch').querySelectorAll('.mj-chip').forEach((b,i)=>b.classList.toggle('on',!i));
++  mjTeam(); $('mj-bg').classList.add('on'); setTimeout(()=>$('mj-addr').focus(),50);
++}
++function mjClose(){ $('mj-bg').classList.remove('on'); }
++function mjTypes(){ return [...document.querySelectorAll('#mj-ty .mj-chip.on')].map(b=>b.dataset.v); }
++function mjAutoTeam(){ const h=new Date($('mj-dt').value||Date.now()).getHours(); if(h>=6&&h<15) return '기동반';
++  return ({생활:'야간 생활팀',음식물:'야간 음식물팀',재활용:'야간 재활용팀',공용용기:'야간 음식물팀',특수마대:'야간 생활팀'})[mjTypes()[0]]||'기동반'; }
++function mjTeam(){ const a=mjAutoTeam(), sel=$('mj-team'); if(!sel.dataset.manual) sel.value=a;
++  $('mj-auto').textContent=sel.value===a?'자동('+a.replace('야간 ','').replace('팀','')+')':'자동은 '+a+' · 직접 바꿈'; }
++document.addEventListener('click',function(e){ const c=e.target.closest&&e.target.closest('#mj-ty .mj-chip, #mj-ch .mj-chip'); if(!c) return;
++  if(c.parentElement.id==='mj-ty'){ c.classList.toggle('on'); if(!mjTypes().length) c.classList.add('on'); mjTeam(); }
++  else c.parentElement.querySelectorAll('.mj-chip').forEach(b=>b.classList.toggle('on',b===c)); });
++function mjAddr(cb){ const a=$('mj-addr').value.trim(), o=$('mj-addrok'); if(!a){ o.textContent='주소를 넣으세요'; o.style.color='var(--red)'; if(cb) cb(); return; }
++  o.textContent='찾는 중…'; o.style.color='var(--sub)';
++  lgAddrQ('서울 송파구 '+a.replace(/잠실본동|(^|\s)본(?=\s*\d)/,'$1잠실동').replace(/(^|\s)삼(?=\s*\d)/,'$1삼전동'),function(r){ mjPos=r?{lat:+r.lat,lng:+r.lng}:null;
++    o.textContent=r?'📍 위치 찾음 — 지도에 표시됩니다':'⚠️ 위치를 못 찾았어요 (그래도 저장 가능, 나중에 지도로 찍기)'; o.style.color=r?'var(--green)':'#b45309'; if(cb) cb(); }); }
++async function mjSave(){
++  const addr=$('mj-addr').value.trim(), txt=$('mj-txt').value.trim(), loc=$('mj-loc').value.trim();
++  if(!addr){toast('주소를 넣으세요');return;} if(!txt){toast('민원내용을 넣으세요');return;}
++  if(!mjPos) await new Promise(ok=>mjAddr(ok));
++  const dt=$('mj-dt').value||'', t=mjTypes(), id=uuid();
++  const rec={id,recType:'minwon',no:nextMNo(),date:dt.slice(0,10)||today(),time:dt.slice(11,16)||now_t(),subtype:t[0]||'기타',addr,addrPos:mjPos||null,
++    person:'',tel:$('mj-tel').value.trim(),channel:(document.querySelector('#mj-ch .mj-chip.on')||{}).dataset?.v||'개인',category:t.join(', '),
++    content:txt+(loc?' (위치: '+loc+')':''),inspResult:'',status:'접수',mgmtLevel:'일반',actionNote:'',team:$('mj-team').value,
++    src:'종합예방관리대장',staff,createdAt:nowStr(),updatedAt:nowStr(),del:0};
++  $('mj-go').disabled=true;
++  try{ await saveRec(rec); toast('✅ 민원 접수 ('+rec.no+') — '+rec.team+(mjPos?'':' · 위치 없음')); mjClose(); }
++  catch(e){ toast('⚠️ 저장 실패'); }
++  $('mj-go').disabled=false;
++}
+ // [11_13] 담당 팀 자동 — 민원처리앱 규칙: 15시 이전(06시~) 접수 = 기동반, 15시 이후·새벽 = 민원종류별 야간 수거팀 (현장앱이 이 팀으로 받음)
+ function mTeamAuto(){
+   const h=parseInt(String(($('m-time')||{}).value||'').slice(0,2),10); const hh=isNaN(h)?new Date().getHours():h;
+@@ -2886,7 +2955,7 @@ function lgPickHtml(k,mode){
+     +LG_KEYS.map(x=>'<button type="button" data-k="'+x[0]+'" class="'+(x[0]===k?'on':'')+'" onclick="'+(mode==='up'?'lgUpDraw':'lgAddTo')+'(\''+x[0]+'\')">'+x[1]+'</button>').join('')
+     +'</div></div>';
+ }
+-function lgAddOpen(){ if(lgIsM()){ window.lgFromLedger=true; sw('form'); window.scrollTo(0,0); return; } lgAddTo(lgKey()); }   // [11_13] 민원은 민원처리앱으로 넘어가지 않고 대장 안 민원 접수창   // [11_11] 민원은 민원접수 화면에서
++function lgAddOpen(){ if(lgIsM()){ mjOpen(); return; } lgAddTo(lgKey()); }   // [11_13] 민원은 민원처리앱으로 넘어가지 않고 대장 안 민원 접수창(시안과 같은 창, 디지털원장 민원처리와 같은 항목)   // [11_11] 민원은 민원접수 화면에서
+ function lgAddTo(k){
+   if(lgKey()!==k) lgSetKey(k);   // 같은 대장이면 고른 달·동 그대로
+   if(!$('pane-ledger').classList.contains('on')) sw('ledger');
+diff --git "a/report/\354\210\230\354\240\225\352\270\260\353\241\235.md" "b/report/\354\210\230\354\240\225\352\270\260\353\241\235.md"
+index ecc5cf2..962f5e0 100644
+--- "a/report/\354\210\230\354\240\225\352\270\260\353\241\235.md"
++++ "b/report/\354\210\230\354\240\225\352\270\260\353\241\235.md"
+@@ -2,6 +2,7 @@
+ 
+ 형식: `날짜 | 무엇을 고쳤나 | 누가 요청`
+ 
++- 2026-11-13 | 종합예방관리대장 v1113c: 민원대장 [＋ 등록] 접수창을 시안·디지털원장 민원처리와 같은 항목으로(접수일시·개인/기관·민원인번호·민원종류 여러 개·주소검색·위치 설명·민원내용·담당 팀 자동/변경) | 사용자
+ - 2026-11-13 | 종합예방관리대장 v1113b: 민원처리앱으로 넘어가는 [📋 민원접수] 버튼 없앰, 민원대장 [＋ 등록] → 대장 안 민원 접수창(저장 후 민원대장으로), 민원 저장 때 담당 팀 자동(15시 이전 기동반·이후 종류별 야간팀) | 전무님·사용자
+ - 2026-11-13 | 종합예방관리대장 v1113a: 지도 자료 50곳 미만 대장(사고·감량 등)은 원 뭉치지 않고 주소 핀, 모든 대장 주소 핀·글씨 키움(수거앱 참조), 목록 첫 줄만 굵게·둘째 줄 보통, 디지털원장·접수페이지와 같은 청록 스킨(흰 헤더·청록 버튼) | 사용자
+ - 2026-11-12 | 현장앱 개편(A 시안): 처리 전·후 사진 올리기·처리 상태(완료)·한 줄 메모만 남김(민원인 정보·내용 수정·지도·사무실 버튼 없앰), 완료 값을 PC와 같은 '처리완료'로 저장, 폰에서 관리대장 주소를 열면 현장앱으로 이동, PC 상세에 사고 '처리 후' 사진 칸과 '📱 현장 메모' 줄 추가, 현장앱 아이콘 회사 로고(report-field-v3) | bongsuk0708
+-- 
+2.43.0
+
