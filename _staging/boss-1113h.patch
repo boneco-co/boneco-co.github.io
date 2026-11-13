@@ -1,0 +1,99 @@
+From 89bba0feb4ec47031c5aeeba21028d97ac2ec979 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 13 Nov 2026 02:18:04 +0000
+Subject: [PATCH] =?UTF-8?q?=EC=A2=85=ED=95=A9=EC=98=88=EB=B0=A9=EA=B4=80?=
+ =?UTF-8?q?=EB=A6=AC=EB=8C=80=EC=9E=A5=20v1113h:=20=EB=AF=BC=EC=9B=90?=
+ =?UTF-8?q?=EB=8C=80=EC=9E=A5=20=EC=82=AC=EC=A7=84=EB=8C=80=EC=A7=80(A4=20?=
+ =?UTF-8?q?3=EA=B1=B4,=20=EC=B2=98=EB=A6=AC=20=EC=A0=84=C2=B7=ED=9B=84)?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_013YMEudMHewuLqXVoZoD7eG
+---
+ report/index.html                             | 34 ++++++++++++++++++-
+ ...30\354\240\225\352\270\260\353\241\235.md" |  1 +
+ 2 files changed, 34 insertions(+), 1 deletion(-)
+
+diff --git a/report/index.html b/report/index.html
+index 94b93b5..3fa2a1a 100644
+--- a/report/index.html
++++ b/report/index.html
+@@ -621,7 +621,7 @@ body{background:var(--bg)}
+ <div id="app" style="display:none">
+   <div id="hdr">
+     <div id="hdr-top">
+-      <h1><span>종합예방관리대장</span><i class="h-logo" aria-hidden="true"></i><span>본에코(주)</span><span id="build-tag" class="build-tag">v1113g</span><span id="net-dot" class="net-dot"></span></h1>
++      <h1><span>종합예방관리대장</span><i class="h-logo" aria-hidden="true"></i><span>본에코(주)</span><span id="build-tag" class="build-tag">v1113h</span><span id="net-dot" class="net-dot"></span></h1>
+       <div id="hdr-right">
+         <button class="hdr-sbtn" id="hb-photo" onclick="swSide('photo')">📦 보관함</button>
+         <button class="hdr-sbtn" id="hb-staff" onclick="swSide('staff')">👷 직원</button>
+@@ -840,6 +840,7 @@ body{background:var(--bg)}
+         <span id="lg-mpercus" style="display:none"><input type="month" id="lg-mpf" onchange="lgSetPer('custom')"> ~ <input type="month" id="lg-mpt" onchange="lgSetPer('custom')"></span></span>
+       <button class="lg-tool" onclick="lgPrint()">🖨 인쇄</button>
+       <button class="lg-tool" onclick="lgPrint('xls')">📊 엑셀</button>
++      <button class="lg-tool" id="lg-psbtn" onclick="lgSheet()" style="display:none">🖨 사진대지</button>
+       <button class="lg-tool" id="lg-volbtn" onclick="lgVolOpen()" style="display:none">📊 배출량 확인</button>
+       <button class="lg-tool" id="lg-locbtn" onclick="lgLocateAll()">📍 위치 찾기</button>
+       <button class="lg-addbtn" onclick="lgAddOpen()">＋ 등록</button>
+@@ -3087,6 +3088,7 @@ function lgRender(){
+   if($('lg-ymwrap')) $('lg-ymwrap').style.display='none';   // [11_12] 📅 달 고르기 없음 — 기간 설정으로
+   if($('lg-locbtn')) $('lg-locbtn').style.display=(isH||lgIsM()||isR)?'none':'';   // [11_12] RFID 📍 위치 찾기 삭제
+   if($('lg-perwrap')) $('lg-perwrap').style.display=''; lgRenderPer();
++  if($('lg-psbtn')) $('lg-psbtn').style.display=lgIsM()?'':'none';   // [11_13] 사진대지는 민원대장에서
+   if(lgIsM()){ ['lg-ymwrap','lg-locbtn'].forEach(i=>{ if($(i)) $(i).style.display='none'; }); document.querySelectorAll('.lg-upbtn2').forEach(b=>b.style.display='none');
+     $('lg-dongs').innerHTML=''; $('lg-use').innerHTML=''; $('lg-seed').innerHTML='';
+     const list=lgFiltered(); lgRenderSum(list); lgRenderStats(); lgRenderList(list); lgRenderLegend(); lgRenderMap(list); return; }   // [11_11]
+@@ -3274,6 +3276,36 @@ function lgRenderList(list){
+   }).join('');
+ }
+ 
++// [11_13] 사진대지 — 민원처리앱에서 가져온 방식: A4 세로 한 장에 민원 3건(왼쪽 처리 전 · 오른쪽 처리 후).
++//   지금 목록(검색·기간·분류·숫자 칸) 중 처리 전·후 사진이 있는 건만. 사진 아래: 접수번호 · 민원종류 · 주소 · 접수일 → 처리일 (민원인 이름·전화 없음)
++async function lgSheet(){
++  const list=lgFiltered().slice().sort((a,b)=>String((a.date||'')+(a.time||'')).localeCompare(String((b.date||'')+(b.time||''))));
++  if(!list.length){ toast('목록에 민원이 없습니다'); return; }
++  toast('📷 사진을 모으는 중… ('+list.length+'건)');
++  const rows=[];
++  for(const r of list){ try{ const v=(await PHOTOS.child(r.id).once('value')).val()||{}; const ex=v.extra?Object.values(v.extra):[];
++      const bf=v.before||v.hazard||ex[0]||'', af=v.after||ex[1]||''; if(bf||af) rows.push({r,bf,af}); }catch(e){} }
++  if(!rows.length){ toast('처리 전·후 사진이 있는 민원이 없습니다'); return; }
++  const w=window.open('','_blank'); if(!w){ toast('팝업이 막혀 있습니다 — 허용해 주세요'); return; }
++  const E=mkEsc, pr=lgPerRange(), rng=pr?(pr[0]+' ~ '+pr[1]):'전체 기간', pages=[];
++  for(let i=0;i<rows.length;i+=3) pages.push(rows.slice(i,i+3));
++  const cell=(src,lb)=>'<div class="ph">'+(src?'<img src="'+src+'">':'<div class="no">사진 없음</div>')+'<span>'+lb+'</span></div>';
++  const done=r=>String(r.doneAt||(r.status==='처리완료'?r.updatedAt:'')||'').slice(5,16);
++  w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>민원 처리 사진대지</title><style>'
++    +'@page{size:A4 portrait;margin:12mm}body{font-family:"Malgun Gothic",sans-serif;margin:0;color:#000}'
++    +'.pg{page-break-after:always;display:grid;grid-template-rows:auto 1fr 1fr 1fr;gap:5mm;height:270mm}.pg:last-child{page-break-after:auto}'
++    +'h1{font-size:15px;text-align:center;margin:0}.meta{font-size:10px;text-align:right;margin-top:2px}'
++    +'.row{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr auto;gap:2mm 3mm;min-height:0}'
++    +'.ph{position:relative;border:1px solid #555;overflow:hidden;min-height:0}.ph img{width:100%;height:100%;object-fit:cover;display:block}'
++    +'.ph span{position:absolute;left:4px;top:4px;background:rgba(0,0,0,.65);color:#fff;font-size:10px;padding:1px 6px;border-radius:8px}'
++    +'.no{display:grid;place-items:center;height:100%;color:#888;font-size:11px}.cap{grid-column:1/3;font-size:10.5px;border-bottom:1px solid #999;padding-bottom:2px}'
++    +'</style></head><body>'
++    +pages.map((pg,pi)=>'<div class="pg"><div><h1>민원 처리 사진대지</h1><div class="meta">'+E(rng)+' · '+(pi+1)+'/'+pages.length+'쪽 · 출력 '+today()+'</div></div>'
++      +pg.map(x=>'<div class="row">'+cell(x.bf,'처리 전')+cell(x.af,'처리 후')+'<div class="cap">'+E(x.r.no||'')+' · '+E(x.r.subtype||'민원')+' · '+E(lgAddrOf(x.r))+' · 접수 '+E(String(x.r.date||'').slice(5))+' '+E(x.r.time||'')+(done(x.r)?' → 처리 '+E(done(x.r)):'')+'</div></div>').join('')
++      +'</div>').join('')
++    +'<script>setTimeout(function(){window.print();},600)<\/script></body></html>');
++  w.document.close();
++}
+ // ── [11_11] 감량의무사업장 [📊 배출량 확인] — 전체 표, 달 고르기·엑셀·입력은 여기서 (줄을 누르면 그 사업장 월 자료 입력)
+ function lgVolOpen(y){
+   const food=lg.kind==='food', list=lgFiltered(), E=mkEsc;
+diff --git "a/report/\354\210\230\354\240\225\352\270\260\353\241\235.md" "b/report/\354\210\230\354\240\225\352\270\260\353\241\235.md"
+index 16d7e08..47f5bb2 100644
+--- "a/report/\354\210\230\354\240\225\352\270\260\353\241\235.md"
++++ "b/report/\354\210\230\354\240\225\352\270\260\353\241\235.md"
+@@ -2,6 +2,7 @@
+ 
+ 형식: `날짜 | 무엇을 고쳤나 | 누가 요청`
+ 
++- 2026-11-13 | 종합예방관리대장 v1113h: 민원대장 [🖨 사진대지] — A4 한 장에 민원 3건(처리 전·후), 지금 목록(기간·분류·검색) 중 사진 있는 건, 사진 아래 접수번호·종류·주소·접수→처리 (민원처리앱 사진대지를 대장으로) | 사용자
+ - 2026-11-13 | 종합예방관리대장 v1113g: 민원처리앱으로 넘어가는 링크를 화면에서 완전히 삭제 (모든 민원·사진은 이 저장소 report/recs·report/photos) | 사용자
+ - 2026-11-13 | 종합예방관리대장 v1113f: 민원 접수창 배치(시안) — 주소 줄 가로 전체, 관리대상을 오른쪽 칸으로(위 두 칸 높이 맞춤), 사진 칸 옆은 내용 구분·세부 내용, 방문 확인결과·처리 상태는 아래 가로 전체 | 사용자
+ - 2026-11-13 | 종합예방관리대장 v1113e: 등록·상세·민원 접수창이 바깥을 눌러도 닫히지 않게(끌기·크기 조정 중 창 밖에서 손을 떼면 닫히던 문제), 민원 접수창 안 입력은 처음 만든 민원 등록 양식(폐기물 구분·민원인·연락처·접수경로·내용 구분·처리상태·관리등급·사진 등) 그대로 | 사용자
+-- 
+2.43.0
+
