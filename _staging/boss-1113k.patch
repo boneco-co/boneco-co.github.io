@@ -1,0 +1,126 @@
+From 0d918390d2d02eae8ec56f17aa9a7990cbfda604 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 13 Nov 2026 08:56:08 +0000
+Subject: [PATCH] =?UTF-8?q?=EC=A2=85=ED=95=A9=EC=98=88=EB=B0=A9=EA=B4=80?=
+ =?UTF-8?q?=EB=A6=AC=EB=8C=80=EC=9E=A5=20v1113k:=20RFID=20=EB=AA=A8?=
+ =?UTF-8?q?=EB=8D=B8=EB=AA=85=20=EB=B6=84=EB=A6=AC(=EC=95=9E=20=EA=B4=84?=
+ =?UTF-8?q?=ED=98=B8),=20=ED=95=80=20=EC=A3=BC=EC=86=8C=EB=A7=8C,=20?=
+ =?UTF-8?q?=EB=AA=A9=EB=A1=9D=20=EC=A3=BC=EC=86=8C=C2=B7=EA=B8=B0=EA=B3=84?=
+ =?UTF-8?q?=EB=AA=85?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_013YMEudMHewuLqXVoZoD7eG
+---
+ report/index.html                             | 27 ++++++++++++-------
+ ...30\354\240\225\352\270\260\353\241\235.md" |  1 +
+ 2 files changed, 18 insertions(+), 10 deletions(-)
+
+diff --git a/report/index.html b/report/index.html
+index aa39841..297e5f0 100644
+--- a/report/index.html
++++ b/report/index.html
+@@ -631,6 +631,7 @@ body{background:var(--bg)}
+ #form-hazard.hz .photo-section{margin:0}
+ #form-hazard.hz .submit-btn{font-size:18px;padding:13px;margin-top:0}
+ @media(max-width:640px){#form-hazard.hz .hz-r1,#form-hazard.hz .hz-r2,#form-hazard.hz .hz-r3{grid-template-columns:1fr}}
++.lg-num .lg-model{display:block;font-size:13.5px;font-weight:900;color:#1a56db;white-space:nowrap}   /* [11_13k] RFID 기계명 */
+ </style>
+ </head>
+ <body>
+@@ -646,7 +647,7 @@ body{background:var(--bg)}
+ <div id="app" style="display:none">
+   <div id="hdr">
+     <div id="hdr-top">
+-      <h1><span>종합예방관리대장</span><i class="h-logo" aria-hidden="true"></i><span>본에코(주)</span><span id="build-tag" class="build-tag">v1113j</span><span id="net-dot" class="net-dot"></span></h1>
++      <h1><span>종합예방관리대장</span><i class="h-logo" aria-hidden="true"></i><span>본에코(주)</span><span id="build-tag" class="build-tag">v1113k</span><span id="net-dot" class="net-dot"></span></h1>
+       <div id="hdr-right">
+         <button class="hdr-sbtn" id="hb-photo" onclick="swSide('photo')">📦 보관함</button>
+         <button class="hdr-sbtn" id="hb-staff" onclick="swSide('staff')">👷 직원</button>
+@@ -2891,6 +2892,10 @@ function lgDongOf(s){   // [11_10] 디지털원장과 같은 규칙: '삼전'·'
+   const n=+m[1]; return n>=1&&n<=174?'삼전동':(n>=183&&n<=341?'잠실동':'');
+ }
+ function lgIsUse(it){ return it._t==='rfid' ? (it.status||'사용')==='사용' : (it.status||'계약')!=='해지'; }
++// [11_13k] RFID 이름 앞 괄호(일반-BM·일반-CP·60L…)와 이름 속 기계 괄호(BM·지테크…)는 모델명 — 이름(주소)과 나눈다
++function lgRfidSplit(n){ n=String(n||'').trim(); let m=n.match(/^[(（]([^)）]*)[)）]\s*(.*)$/); if(m) return {model:m[1].trim(),name:m[2].trim()};
++  m=n.match(/[(（]([^)）]*?(?:BM|CP|ATEC|지테크|\d+\s*L)[^)）]*?)[)）]/i); if(m) return {model:m[1].trim(),name:(n.slice(0,m.index)+n.slice(m.index+m[0].length)).trim()}; return {model:'',name:n}; }
++function lgRfidAddr(it){ return lgAddrDisp(String(lgRfidSplit(it.name||it.addr||'').name).replace(/[(（][^)）]*[)）]/g,''), it.dong||it.addrDong||'').replace(/\s+/g,' ').trim(); }   // 괄호 다 뺀 주소만
+ function lgNormName(s){ return String(s||'').replace(/\s+/g,'').replace(/[()（）]/g,'').replace(/에코$/,'').toLowerCase(); }
+ 
+ // ── 불러오기 (관리대장 탭을 처음 열 때만 연결 → 평소 데이터 아낌) ──
+@@ -3292,9 +3297,9 @@ function lgRenderList(list){
+     if(it._t==='rfid'){
+       const use=lgIsUse(it), sm=lgRfidSum(it);   // [11_12] 한 줄 · 오른쪽 kg·금액은 고른 기간에 자료가 있을 때만
+       return '<div class="lg-row '+(use?'use':'unuse')+'" onclick="lgCard(\''+it.id+'\')">'
+-        +'<div class="lg-top"><div class="lg-nm"><span class="lg-tag '+(use?'use':'unuse')+'">'+(use?'사용중':'미사용')+'</span>'
+-          +E(it.name||'(이름 없음)')+(nopos?' <span class="lg-tag nopos">위치 없음</span>':'')+'</div>'
+-        +'<div class="lg-num">'+(sm?lgFmt(sm.kg,2)+'kg<small>'+lgFmt(sm.amt)+'원'+(sm.n>1?' · '+sm.n+'개월':'')+'</small>':'')+'</div></div></div>';
++        +'<div class="lg-top"><div class="lg-nm">'+E(lgRfidAddr(it)||it.name||'(이름 없음)')   // [11_13k] 주소 맨 앞, 오른쪽 끝에 기계(모델)명
++          +' <span class="lg-tag '+(use?'use':'unuse')+'">'+(use?'사용중':'미사용')+'</span>'+(nopos?' <span class="lg-tag nopos">위치 없음</span>':'')+'</div>'
++        +'<div class="lg-num">'+((it.model||lgRfidSplit(it.name).model)?'<b class="lg-model">'+E(it.model||lgRfidSplit(it.name).model)+'</b>':'')+(sm?'<small>'+lgFmt(sm.kg,2)+'kg · '+lgFmt(sm.amt)+'원'+(sm.n>1?' · '+sm.n+'개월':'')+'</small>':'')+'</div></div></div>';
+     }
+     if(it.kind==='food'){
+       const cum=lgFoodCum(it), u=lgNum(it.unit), sm=lgFoodSum(it);   // [11_12] '주소 · 상호', 오른쪽 ℓ·금액은 고른 기간 자료 있을 때만
+@@ -3431,7 +3436,8 @@ function lgCardClose(){ const c=$('lg-card'); if(c) c.style.display='none';
+ // ── 지도 ──
+ // [11_11] 지도 라벨 글자: 주소(본/삼 번지) 또는 이름을 짧게
+ function lgShort(it){
+-  let s=String((lgIsM()||lgIsH())?(it.addr||it.riskType||''):(it._t==='rfid'?(it.name||it.addr||''):(it.name||it.addr||'')));
++  if(it._t==='rfid'){ const a=lgRfidAddr(it); return a.length>12?a.slice(0,12)+'…':(a||'-'); }   // [11_13k] 괄호 다 빼고 주소만
++  let s=String((lgIsM()||lgIsH())?(it.addr||it.riskType||''):(it.name||it.addr||''));
+   s=lgAddrDisp(s.replace(/\([^)]*\)/g,''),it.dong||it.addrDong||'').replace(/\s+/g,' ').trim();
+   return s.length>12?s.slice(0,12)+'…':(s||'-');
+ }
+@@ -3908,7 +3914,8 @@ function lgParseRows(rows){
+     const r=rows[i], nm=String(r[cN]||'').trim(), line=r.map(String).join(' ');
+     if(/합\s*계/.test(line)||/\(\s*[\d,]+\s*건\s*\)/.test(nm)){ const d=lgDongOf(line); if(d) pend.forEach(p=>{ if(!p.dong) p.dong=d; }); pend=[]; continue; }
+     if(!nm) continue;
+-    const p={name:nm, addr:cA>=0?String(r[cA]||'').trim():'', n:cP>=0?lgNum(r[cP]):0, kg:lgNum(r[cK]), amt:cM>=0?lgNum(r[cM]):0, dong:cD>=0?lgDongOf(r[cD]):''};
++    const sp=lgRfidSplit(nm);   // [11_13k] 앞 괄호 = 모델명
++    const p={name:sp.name, model:sp.model, addr:cA>=0?String(r[cA]||'').trim():'', n:cP>=0?lgNum(r[cP]):0, kg:lgNum(r[cK]), amt:cM>=0?lgNum(r[cM]):0, dong:cD>=0?lgDongOf(r[cD]):''};
+     out.push(p); pend.push(p);
+   }
+   out.forEach(p=>{ if(!p.dong) p.dong=lgDongOf(p.name)||lgDongOf(p.addr); });
+@@ -3929,13 +3936,13 @@ async function lgImport(input){
+ async function lgRfidApply(p){
+   const ym=lgYm();
+   try{
+-    const byKey={}; rfidList.forEach(x=>{ byKey[lgNormName(x.name)]=x; });
++    const byKey={}; rfidList.forEach(x=>{ byKey[lgNormName(x.name)]=x; byKey[lgNormName(lgRfidSplit(x.name).name)]=x; });   // [11_13k] 모델명 뗀 이름으로도 찾음
+     let nNew=0,nUpd=0; const up={}, now=nowStr();
+     p.rows.forEach(function(r,i){
+       const ex=byKey[lgNormName(r.name)], mo={n:r.n,kg:r.kg,amt:r.amt};
+-      if(ex){ up[ex.id+'/months/'+ym]=mo; if(!ex.addr&&r.addr) up[ex.id+'/addr']=r.addr; nUpd++; }
++      if(ex){ up[ex.id+'/months/'+ym]=mo; if(!ex.addr&&r.addr) up[ex.id+'/addr']=r.addr; if(!ex.model&&r.model) up[ex.id+'/model']=r.model; nUpd++; }
+       else{ const id='r'+Date.now().toString(36)+'_'+i;
+-        up[id]={name:r.name,addr:r.addr,dong:r.dong,status:r.kg>0?'사용':'미사용',months:{[ym]:mo},createdAt:now,updatedAt:now,by:staff||''};
++        up[id]={name:r.name,model:r.model||'',addr:r.addr,dong:r.dong,status:r.kg>0?'사용':'미사용',months:{[ym]:mo},createdAt:now,updatedAt:now,by:staff||''};
+         byKey[lgNormName(r.name)]={id:id}; nNew++; }
+     });
+     const tKg=p.rows.reduce((s,r)=>s+r.kg,0), tAmt=p.rows.reduce((s,r)=>s+r.amt,0);
+@@ -4087,7 +4094,7 @@ async function lgUpGo(){
+   let hn=Math.max(0,...recs.filter(r=>r.recType==='hazard'&&r.hazardNo).map(r=>parseInt((r.hazardNo||'').replace('26-',''))||0));
+   go.forEach(function(x,i){
+     if(H){ const id=uuid()+i; hn++; up[id]=Object.assign({},x.rec,{id:id,hazardNo:'26-'+(hn<10?'0'+hn:hn)}); }
+-    else up[(k==='rfid'?'r':'b')+Date.now().toString(36)+'_'+i]=x.rec;
++    else { const rec=Object.assign({},x.rec); if(k==='rfid'&&rec.name){ const sp=lgRfidSplit(rec.name); if(sp.model){ rec.name=sp.name; if(!rec.model) rec.model=sp.model; } } up[(k==='rfid'?'r':'b')+Date.now().toString(36)+'_'+i]=rec; }   // [11_13k]
+   });
+   const REF=H?RECS:(k==='rfid'?RFID:BIZ);
+   try{
+diff --git "a/report/\354\210\230\354\240\225\352\270\260\353\241\235.md" "b/report/\354\210\230\354\240\225\352\270\260\353\241\235.md"
+index 56c2e3a..92fa9ff 100644
+--- "a/report/\354\210\230\354\240\225\352\270\260\353\241\235.md"
++++ "b/report/\354\210\230\354\240\225\352\270\260\353\241\235.md"
+@@ -2,6 +2,7 @@
+ 
+ 형식: `날짜 | 무엇을 고쳤나 | 누가 요청`
+ 
++- 2026-11-13 | 종합예방관리대장 v1113k: RFID — 이름 앞 괄호(일반-BM·일반-CP·60L 등)와 이름 속 기계 괄호(BM·지테크)를 모델명으로(엑셀 올릴 때도 자동으로 모델명 칸, 기존 기계는 모델명 뗀 이름으로도 찾아 중복 없음), 지도 핀은 괄호 뺀 주소만, 목록은 주소 맨 앞·오른쪽 끝에 기계명 | 사용자
+ - 2026-11-13 | 종합예방관리대장 v1113j: 민원 분류 — 공용용기는 음식물, 특수마대·기타 등은 생활로 (색·글자·분류 버튼·지도·인쇄 묶음·담당 팀 자동), '기타' 분류 버튼 없앰 | 사용자
+ - 2026-11-13 | 종합예방관리대장 v1113i: 각 대장 [＋ 등록] 버튼을 크게·같은 줄 맨 오른쪽 끝으로(대장 이름 붙음: ＋ 민원 등록 등), 사고대장 등록창 여백 줄이고 글씨 크게 한 화면 배치(점검일자·기사·동 한 줄, ①·② 좌우, 위험등급 버튼), 디지털원장 [📋 민원접수·대장관리]로 열면 폰에서도 대장 화면 | 사용자
+ - 2026-11-13 | 종합예방관리대장 v1113h: 민원대장 [🖨 사진대지] — A4 한 장에 민원 3건(처리 전·후), 지금 목록(기간·분류·검색) 중 사진 있는 건, 사진 아래 접수번호·종류·주소·접수→처리 (민원처리앱 사진대지를 대장으로) | 사용자
+-- 
+2.43.0
+
