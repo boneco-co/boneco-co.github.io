@@ -1,0 +1,154 @@
+From 0b192e155ccca69d6228cc4410870ba14ee0da01 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 13 Nov 2026 04:19:12 +0000
+Subject: [PATCH] =?UTF-8?q?=EC=A2=85=ED=95=A9=EC=98=88=EB=B0=A9=EA=B4=80?=
+ =?UTF-8?q?=EB=A6=AC=EB=8C=80=EC=9E=A5=20v1113i:=20=EB=93=B1=EB=A1=9D=20?=
+ =?UTF-8?q?=EB=B2=84=ED=8A=BC=20=ED=81=AC=EA=B2=8C=C2=B7=EC=98=A4=EB=A5=B8?=
+ =?UTF-8?q?=EC=AA=BD=20=EB=81=9D,=20=EC=82=AC=EA=B3=A0=EB=8C=80=EC=9E=A5?=
+ =?UTF-8?q?=20=EB=93=B1=EB=A1=9D=EC=B0=BD=20=ED=95=9C=20=ED=99=94=EB=A9=B4?=
+ =?UTF-8?q?=20=EB=B0=B0=EC=B9=98,=20=EC=9B=90=EC=9E=A5=EC=97=90=EC=84=9C?=
+ =?UTF-8?q?=20=EC=97=B4=EB=A9=B4=20=ED=8F=B0=EC=97=90=EC=84=9C=EB=8F=84=20?=
+ =?UTF-8?q?=EB=8C=80=EC=9E=A5?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_013YMEudMHewuLqXVoZoD7eG
+---
+ report/index.html                             | 56 +++++++++++++++++--
+ ...30\354\240\225\352\270\260\353\241\235.md" |  1 +
+ 2 files changed, 53 insertions(+), 4 deletions(-)
+
+diff --git a/report/index.html b/report/index.html
+index 3fa2a1a..0b13637 100644
+--- a/report/index.html
++++ b/report/index.html
+@@ -9,7 +9,7 @@
+ <meta name="apple-mobile-web-app-title" content="예방관리대장">
+ <meta name="theme-color" content="#1e40af">
+ <title>종합예방관리대장</title>
+-<script>/* 폰에서는 현장앱(사진 올리기)만 — 사무실 화면은 PC·태블릿에서만 */(function(){try{if(/iPhone|iPod|Android.+Mobile|Mobile.+Android|Windows Phone/i.test(navigator.userAgent)){var p=location.pathname;if(p.slice(-1)!=='/'&&!/\.html$/.test(p))p+='/';location.replace(p.slice(0,p.lastIndexOf('/')+1)+'field/'+location.search);}}catch(e){}})();</script>
++<script>/* 폰에서는 현장앱(사진 올리기)만 — 사무실 화면은 PC·태블릿에서만 */(function(){try{/* [11_13i] 디지털원장 [📋 민원접수·대장관리]로 열면(?from=wonjang) 폰에서도 대장 화면 그대로 — 같은 창 안 새로고침에도 유지 */if(/[?&]from=wonjang\b/.test(location.search))sessionStorage.setItem('bn_full','1');if(sessionStorage.getItem('bn_full')==='1')return;if(/iPhone|iPod|Android.+Mobile|Mobile.+Android|Windows Phone/i.test(navigator.userAgent)){var p=location.pathname;if(p.slice(-1)!=='/'&&!/\.html$/.test(p))p+='/';location.replace(p.slice(0,p.lastIndexOf('/')+1)+'field/'+location.search);}}catch(e){}})();</script>
+ <link rel="manifest" href="manifest.json">
+ <link rel="apple-touch-icon" href="icon-192.png">
+ <link rel="icon" type="image/png" href="favicon-tab.png">
+@@ -606,6 +606,31 @@ body{background:var(--bg)}
+ @container (min-width:600px){ #mj #form-minwon{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:stretch} #mj #form-minwon>.submit-btn,#mj #form-minwon>.mj-full{grid-column:1/-1} #mj .mj-half{max-width:50%} }
+ #mj #form-minwon>.form-card{margin-bottom:0}#mj #form-minwon{display:grid;gap:12px}
+ @media(min-width:701px){ #mj{width:min(760px,calc(100vw - 28px))} }
++
++/* [11_13i] 대장 도구줄 — 등록 버튼 크게, 같은 줄 맨 오른쪽 끝 (줄을 옆으로 밀어도 오른쪽에 붙어 있음) */
++.lg-tools .lg-addbtn{margin-left:auto;position:sticky;right:0;padding:10px 20px;font-size:16px;font-weight:900;border-radius:12px;box-shadow:-10px 0 10px #fff,0 3px 10px rgba(15,122,134,.3);white-space:nowrap}
++/* [11_13i] 사고대장 등록창 — 여백 줄이고 글씨 크게, 한 화면에 저장 버튼까지 */
++#form-hazard.hz{display:grid!important;grid-template-columns:1fr!important;gap:10px}
++#form-hazard.hz>.form-card{margin:0;padding:12px 14px;grid-column:1/-1;box-shadow:none;border:1px solid var(--line)}
++#form-hazard.hz .form-label{font-size:14px;font-weight:800;margin-bottom:4px}
++#form-hazard.hz .group-label{font-size:14px;margin-bottom:5px}
++#form-hazard.hz .form-input,#form-hazard.hz .form-select,#form-hazard.hz .form-textarea{font-size:16px;padding:9px 12px;border-radius:10px}
++#form-hazard.hz .form-row{margin-bottom:0}
++#form-hazard.hz .hz-r1{display:grid;grid-template-columns:170px 1fr 1fr;gap:10px;margin-bottom:10px}
++#form-hazard.hz .hz-r2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
++#form-hazard.hz .hz-r2>.form-row{display:flex;flex-direction:column}
++#form-hazard.hz #h-riskcont{min-height:112px}
++#form-hazard.hz #h-action{flex:1;min-height:112px}
++#form-hazard.hz .hz-r3{display:grid;grid-template-columns:1.1fr 1fr;gap:12px;align-items:start}
++#form-hazard.hz .hz-left{display:grid;gap:10px}
++#form-hazard.hz .hz-lv{display:flex;gap:6px}
++#form-hazard.hz .hz-lv button{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:10px;padding:9px 0;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit}
++#form-hazard.hz .hz-lv button.on[data-v=High]{border-color:#dc2626;color:#dc2626;background:#fde2e2}
++#form-hazard.hz .hz-lv button.on[data-v=Medium]{border-color:#ea580c;color:#c2410c;background:#ffedd5}
++#form-hazard.hz .hz-lv button.on[data-v=Low]{border-color:#16a34a;color:#15803d;background:#dcfce7}
++#form-hazard.hz .photo-section{margin:0}
++#form-hazard.hz .submit-btn{font-size:18px;padding:13px;margin-top:0}
++@media(max-width:640px){#form-hazard.hz .hz-r1,#form-hazard.hz .hz-r2,#form-hazard.hz .hz-r3{grid-template-columns:1fr}}
+ </style>
+ </head>
+ <body>
+@@ -621,7 +646,7 @@ body{background:var(--bg)}
+ <div id="app" style="display:none">
+   <div id="hdr">
+     <div id="hdr-top">
+-      <h1><span>종합예방관리대장</span><i class="h-logo" aria-hidden="true"></i><span>본에코(주)</span><span id="build-tag" class="build-tag">v1113h</span><span id="net-dot" class="net-dot"></span></h1>
++      <h1><span>종합예방관리대장</span><i class="h-logo" aria-hidden="true"></i><span>본에코(주)</span><span id="build-tag" class="build-tag">v1113i</span><span id="net-dot" class="net-dot"></span></h1>
+       <div id="hdr-right">
+         <button class="hdr-sbtn" id="hb-photo" onclick="swSide('photo')">📦 보관함</button>
+         <button class="hdr-sbtn" id="hb-staff" onclick="swSide('staff')">👷 직원</button>
+@@ -843,8 +868,8 @@ body{background:var(--bg)}
+       <button class="lg-tool" id="lg-psbtn" onclick="lgSheet()" style="display:none">🖨 사진대지</button>
+       <button class="lg-tool" id="lg-volbtn" onclick="lgVolOpen()" style="display:none">📊 배출량 확인</button>
+       <button class="lg-tool" id="lg-locbtn" onclick="lgLocateAll()">📍 위치 찾기</button>
+-      <button class="lg-addbtn" onclick="lgAddOpen()">＋ 등록</button>
+       <button class="lg-upbtn2" onclick="lgUpOpen()">📤 엑셀 올리기</button>
++      <button class="lg-addbtn" onclick="lgAddOpen()">＋ 등록</button>
+     </div>
+     <div class="lg-use" id="lg-use"></div>
+     <div class="lg-drvbox" id="lg-drv"></div>
+@@ -1544,6 +1569,27 @@ function mjOpen(){
+   $('mj-bg').classList.add('on'); b.scrollTop=0; setTimeout(()=>{ const a=$('m-addr'); if(a) a.focus(); },50);
+ }
+ // [11_13] 접수창 배치 (시안): 위 두 칸 높이 맞춤(관리대상 → 오른쪽 칸), 주소 줄 가로 전체, 사진 칸 옆은 내용 구분·세부 내용, 방문 확인결과·처리 상태는 아래 가로 전체
++// [11_13i] 사고대장 등록창 배치 — 첫 줄(점검일자·기사·동) / 주소 가로 전체 / ①·② 좌우 / 위험등급 버튼·비고 + 사진 오른쪽
++function hzSyncLv(){ const v=($('h-level')||{}).value; document.querySelectorAll('#form-hazard .hz-lv button').forEach(b=>b.classList.toggle('on',b.dataset.v===v)); }
++function hzLayout(){
++  try{
++    const f=$('form-hazard'); if(!f||f.classList.contains('hz')) return;
++    const cards=[...f.querySelectorAll(':scope>.form-card')]; if(cards.length<3) return;
++    const [c1,c2,c3]=cards, row=id=>$(id)&&$(id).closest('.form-row');
++    const r1=document.createElement('div'); r1.className='hz-r1'; [row('h-inspdate'),row('h-driver'),row('h-dong-sel')].forEach(x=>x&&r1.appendChild(x)); c1.prepend(r1);
++    const r2=document.createElement('div'); r2.className='hz-r2'; [row('h-risktype'),row('h-action')].forEach(x=>x&&r2.appendChild(x));
++    const two=$('h-level').closest('.form-2col'), lvBox=$('h-level').parentElement, noteBox=$('h-note').parentElement;
++    const left=document.createElement('div'); left.className='hz-left'; left.appendChild(lvBox); left.appendChild(noteBox); if(two) two.remove();
++    c2.appendChild(r2);
++    const right=document.createElement('div'); while(c3.firstChild) right.appendChild(c3.firstChild);
++    const r3=document.createElement('div'); r3.className='hz-r3'; r3.appendChild(left); r3.appendChild(right); c3.appendChild(r3);
++    const sel=$('h-level'); sel.style.display='none';
++    const lv=document.createElement('div'); lv.className='hz-lv'; lv.innerHTML='<button type="button" data-v="High">🔴 높음</button><button type="button" data-v="Medium">🟠 보통</button><button type="button" data-v="Low">🟢 낮음</button>';
++    lv.querySelectorAll('button').forEach(b=>b.onclick=()=>{ sel.value=b.dataset.v; sel.dispatchEvent(new Event('change',{bubbles:true})); hzSyncLv(); });
++    sel.after(lv); sel.addEventListener('change',hzSyncLv);
++    f.classList.add('hz'); hzSyncLv();
++  }catch(e){ console.warn('hzLayout',e); }
++}
+ function mjLayout(f){
+   try{
+     const cards=[...f.querySelectorAll(':scope>.form-card')]; if(cards.length<4) return;
+@@ -1630,7 +1676,7 @@ async function submitH(){
+ function resetHForm(){
+   ['h-addr','h-risktype','h-riskcont','h-action','h-note','h-preaddr','h-driver'].forEach(i=>{if($(i))$(i).value='';});
+   $('h-dong').value='';if($('h-dongshow'))$('h-dongshow').textContent='';
+-  $('h-risktype').value='';$('h-level').value='High';
++  $('h-risktype').value='';$('h-level').value='High';try{hzSyncLv();}catch(e){}
+   $('h-inspdate').value=today();$('h-photo-th').style.display='none';$('h-photo').value='';$('h-extra').value='';
+   hPos=null;hPosManual=false;$('h-addr-ok').innerHTML=ADDR_WARN;
+   $('h-dong-sel').value='';
+@@ -2977,6 +3023,7 @@ function lgAddTo(k){
+ }
+ // 사고발생지점·사고재해예방 입력 양식 열기/닫기
+ function lgHFormOpen(){
++  hzLayout(); setTimeout(hzSyncLv,0);
+   hKind=lg.sec==='occur'?'사고발생지점':'사고재해예방'; applyHKind();
+   if($('lg-hform-pick')) $('lg-hform-pick').innerHTML=lgPickHtml(lg.sec,'add');
+   $('lg-hform-ttl').textContent=(lg.sec==='occur'?'🚨 사고발생지점':'⚠️ 사고재해예방')+' 입력';
+@@ -3089,6 +3136,7 @@ function lgRender(){
+   if($('lg-locbtn')) $('lg-locbtn').style.display=(isH||lgIsM()||isR)?'none':'';   // [11_12] RFID 📍 위치 찾기 삭제
+   if($('lg-perwrap')) $('lg-perwrap').style.display=''; lgRenderPer();
+   if($('lg-psbtn')) $('lg-psbtn').style.display=lgIsM()?'':'none';   // [11_13] 사진대지는 민원대장에서
++  { const ab=document.querySelector('.lg-tools .lg-addbtn'); if(ab) ab.textContent='＋ '+(lgIsM()?'민원':({occur:'사고발생지점',hazard:'재해예방',rfid:'RFID',cafe:'커피매장',food:'사업장',recycle:'사업장'})[lgKey()]||'')+' 등록'; }   // [11_13i] 대장 이름 붙은 큰 등록 버튼
+   if(lgIsM()){ ['lg-ymwrap','lg-locbtn'].forEach(i=>{ if($(i)) $(i).style.display='none'; }); document.querySelectorAll('.lg-upbtn2').forEach(b=>b.style.display='none');
+     $('lg-dongs').innerHTML=''; $('lg-use').innerHTML=''; $('lg-seed').innerHTML='';
+     const list=lgFiltered(); lgRenderSum(list); lgRenderStats(); lgRenderList(list); lgRenderLegend(); lgRenderMap(list); return; }   // [11_11]
+diff --git "a/report/\354\210\230\354\240\225\352\270\260\353\241\235.md" "b/report/\354\210\230\354\240\225\352\270\260\353\241\235.md"
+index 47f5bb2..9dedbf4 100644
+--- "a/report/\354\210\230\354\240\225\352\270\260\353\241\235.md"
++++ "b/report/\354\210\230\354\240\225\352\270\260\353\241\235.md"
+@@ -2,6 +2,7 @@
+ 
+ 형식: `날짜 | 무엇을 고쳤나 | 누가 요청`
+ 
++- 2026-11-13 | 종합예방관리대장 v1113i: 각 대장 [＋ 등록] 버튼을 크게·같은 줄 맨 오른쪽 끝으로(대장 이름 붙음: ＋ 민원 등록 등), 사고대장 등록창 여백 줄이고 글씨 크게 한 화면 배치(점검일자·기사·동 한 줄, ①·② 좌우, 위험등급 버튼), 디지털원장 [📋 민원접수·대장관리]로 열면 폰에서도 대장 화면 | 사용자
+ - 2026-11-13 | 종합예방관리대장 v1113h: 민원대장 [🖨 사진대지] — A4 한 장에 민원 3건(처리 전·후), 지금 목록(기간·분류·검색) 중 사진 있는 건, 사진 아래 접수번호·종류·주소·접수→처리 (민원처리앱 사진대지를 대장으로) | 사용자
+ - 2026-11-13 | 종합예방관리대장 v1113g: 민원처리앱으로 넘어가는 링크를 화면에서 완전히 삭제 (모든 민원·사진은 이 저장소 report/recs·report/photos) | 사용자
+ - 2026-11-13 | 종합예방관리대장 v1113f: 민원 접수창 배치(시안) — 주소 줄 가로 전체, 관리대상을 오른쪽 칸으로(위 두 칸 높이 맞춤), 사진 칸 옆은 내용 구분·세부 내용, 방문 확인결과·처리 상태는 아래 가로 전체 | 사용자
+-- 
+2.43.0
+
