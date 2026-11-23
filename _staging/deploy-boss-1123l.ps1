@@ -1,4 +1,4 @@
-﻿# 종합예방관리대장 올리기 (부장님 저장소, v1113a fc270ba 위) — 이미 올라가 있으면 건너뜀
+# 종합예방관리대장 올리기 (부장님 저장소, v1113a fc270ba 위) — 이미 올라가 있으면 건너뜀
 $ProgressPreference = 'SilentlyContinue'
 $g = Get-ChildItem -Path 'D:\','C:\Users' -Directory -Filter '.git' -Recurse -Force -ErrorAction SilentlyContinue -Depth 6 | Where-Object { (Get-Content (Join-Path $_.FullName 'config') -Raw -ErrorAction SilentlyContinue) -match 'bongsuk0708/minwon' } | Select-Object -First 1
 if (-not $g) { Write-Host '부장님 저장소 폴더를 못 찾았습니다.' -ForegroundColor Red; return }
