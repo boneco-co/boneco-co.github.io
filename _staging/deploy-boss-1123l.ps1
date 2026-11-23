@@ -1,8 +1,9 @@
-# 종합예방관리대장 올리기 (부장님 저장소, v1113a fc270ba 위) — 이미 올라가 있으면 건너뜀
+﻿# 종합예방관리대장 올리기 (부장님 저장소, v1113a fc270ba 위) — 이미 올라가 있으면 건너뜀
 $ProgressPreference = 'SilentlyContinue'
 $g = Get-ChildItem -Path 'D:\','C:\Users' -Directory -Filter '.git' -Recurse -Force -ErrorAction SilentlyContinue -Depth 6 | Where-Object { (Get-Content (Join-Path $_.FullName 'config') -Raw -ErrorAction SilentlyContinue) -match 'bongsuk0708/minwon' } | Select-Object -First 1
 if (-not $g) { Write-Host '부장님 저장소 폴더를 못 찾았습니다.' -ForegroundColor Red; return }
 Set-Location (Split-Path $g.FullName -Parent)
+if (Test-Path '.git\rebase-apply') { cmd /c "git am --abort" 2>$null; if (Test-Path '.git\rebase-apply') { Remove-Item -Recurse -Force '.git\rebase-apply' } }   # 예전에 멈춘 올리기 흔적 정리
 git pull --ff-only
 $log = git log --oneline -40 | Out-String
 if ($log -match 'v1123l') { Write-Host '✅ 이미 올라가 있습니다 — 건너뜀' -ForegroundColor Green; return }
