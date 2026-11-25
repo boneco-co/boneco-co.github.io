@@ -1059,6 +1059,7 @@ async function mineRecord(writes, bonNo, name, tel){
   const who = whoKey(name, tel), ah = (await sha(addrStr())).slice(0, 12), src = isPC() ? 'PC' : '폰';
   const recs = writes.map(w => ({ no: bonNo || '', at: Date.now(), emit: w.배출일 || '', madae: !!w.특수마대,
     items: w._items.map(i => `${i.품목} ${i.개수}`).join(' · '), names: w._items.map(i => i.품목), total: w.총금액, src, ah,
+    req: w._req || '', its: w._items.map(i => ({ 품목: i.품목, 개수: +i.개수 || 1, 단가: +i.단가 || 0 })),
     ...(w.추가대상 ? { addTo: w.추가대상 } : {}) }));
   mineSaveLocal(recs.map(r => ({ ...r, who })));
   try {
@@ -1079,10 +1080,12 @@ function addMore(){
 
 // ══ 접수 ══
 // [11_3] 버튼을 누르는 즉시 잠그고 '접수 중…' — 확인 창이 떠도 두 번 눌리지 않게. 접수가 끝나면 잠긴 채 '✅ 접수 완료'
-let busy = false, SUBMITTED = false;
+let busy = false, SUBMITTED = false, EDIT_SKIP = false;
 const GO_TXT = '접수하고 입금계좌 보기';
 async function submitReq(){
   if (busy || SUBMITTED) return;
+  // [11_25] 이미 접수한 사람이 [접수하기]를 또 누르면 — 먼저 이전 접수(사무실 전송 전)를 고치거나 취소할 수 있게
+  if (!EDIT_SKIP) { try { if (await myReqOpen()) return; } catch(e){} }
   busy = true; const btn = document.getElementById('goBtn'); btn.disabled = true; btn.textContent = '접수 중…';
   let ok = false;
   try { ok = await submitInner(); } catch(e){ ok = false; }
@@ -1202,13 +1205,14 @@ async function submitInner(){
     const base = { 성명, 전화번호: phone.value.trim(), 주소, _dong: ADDR.dong,
       주소원문: `${ADDR.road}${ADDR.bldg ? ' ' + ADDR.bldg : ''}`, 지번원문: ADDR.jibun, 행정동: ADDR.hname || '', 구역확인: ADDR.checked ? '행정동' : '법정동만',
       비고, 접수시각: firebase.database.ServerValue.TIMESTAMP, 상태: 'new', ...(bonNo ? { 접수번호: bonNo } : {}),
+      ...(firebase.auth().currentUser ? { uid: firebase.auth().currentUser.uid } : {}),   // [11_25] 손님이 사무실 전송 전까지 자기 접수를 고치거나 취소할 수 있게 (보안 규칙: uid 같은 건만)
       ...((ADD_TO && ADD_TO.no) || sameNo ? { 추가대상: sameNo || ADD_TO.no } : {}) };
     const general = picked.filter(r => !isMadae(r.dataset.name)), madae = picked.filter(r => isMadae(r.dataset.name));
     const sumOf = rs => rs.reduce((s,r) => s + (+r.dataset.price) * (parseInt(r.querySelector('[data-cnt]').value)||1), 0);
     const writes = [];
     if (general.length) writes.push({ ...base, _items: general.map(toItem), 총금액: sumOf(general).toLocaleString() + '원', 배출일: emit });
     if (madae.length)   writes.push({ ...base, _items: madae.map(toItem), 총금액: '0원', 배출일: document.getElementById('madaeDay').value, 특수마대: true });
-    for (const w of writes) await db.ref(`${DB_REQ}/${today}`).push(w);
+    for (const w of writes) { const ref = db.ref(`${DB_REQ}/${today}`).push(); await ref.set(w); w._req = `${today}/${ref.key}`; }
     rememberSent(window._pendingSigs || [], bonNo);
     const _recs = await mineRecord(writes, bonNo, 성명, tel);
     window._lastRec = _recs.find(r => !r.madae) || null;
@@ -1225,7 +1229,7 @@ async function submitInner(){
         <div style="display:flex;align-items:center;gap:10px;"><b>080-25-0007-681</b>
           <button type="button" class="copy" onclick="copyAcct(this)" aria-label="계좌번호 복사">📋 복사</button></div>
         <div class="big">${sum.toLocaleString()}원</div></div>
-      <p><b>입금자명은 신청자 성명(${esc(name.value.trim())})으로</b> 보내 주세요.<br>입금 확인 후 배출일 다음날부터 3영업일 안에 수거합니다.</p>`
+      <p><b>입금자명은 신청자 성명(${esc(name.value.trim())})으로</b> 보내 주세요.${bonNo ? ` 접수번호는 <b>${esc(bonNo)}</b>입니다.` : ''}<br>입금 확인 후 배출일 다음날부터 3영업일 안에 수거합니다.</p>`
       : `<p>무상 품목이라 입금 없이 수거합니다. 배출일에 내놓아 주세요.</p>`}
       ${madae.length ? `<p style="margin-top:8px">특수마대는 고르신 배출일(${esc(document.getElementById('madaeDay').selectedOptions[0]?.textContent || '')})에 내놓아 주세요.</p>` : ''}
       <p style="margin-top:10px;padding:10px 12px;background:var(--warn-l);border-radius:10px;color:var(--warn);font-weight:700">${bonNo
@@ -1241,6 +1245,101 @@ async function submitInner(){
     showMsg('접수하지 못했습니다', ['잠시 후 다시 시도해 주시거나 전화로 문의해 주세요 (02-414-6221~2).']);
     return false;
   }
+}
+
+// ══ [11_25] 내 접수 고치기·취소 — 사무실로 접수 전송되기 전(원장 접수함에 있을 때)만, 이 기기에서 접수한 건 ══
+const OFFICE_TEL = '02-414-6221~2';
+let MYREQ = [], MYEDIT = null;
+const wonK = n => n > 0 ? n.toLocaleString() + "원" : "무상";
+async function myReqState(r){   // 'open' = 아직 접수함(고칠 수 있음) · 'sent' = 사무실로 전송됨(접수함에서 빠짐)
+  if (!r.req) return 'old';
+  try { const sn = await Promise.race([db.ref(`${DB_REQ}/${r.req}`).once('value'), new Promise((_, rej) => setTimeout(() => rej(new Error('t')), 4000))]);
+    return sn.exists() ? 'open' : 'sent'; } catch(e){ return 'sent'; }
+}
+async function myReqOpen(){
+  const n = document.getElementById('name').value, p = document.getElementById('phone').value;
+  if (badName(n) || badPhone(p)) return false;
+  await AUTH_READY;
+  const who = whoKey(n, p);
+  const list = mineLocal().filter(x => x.who === who && !x.cancelled).sort((a, b) => b.at - a.at).slice(0, 6);
+  if (!list.length) return false;
+  for (const r of list) r._st = await myReqState(r);
+  MYREQ = list;
+  renderMyReq();
+  return true;
+}
+function renderMyReq(){
+  const nm = document.getElementById('name').value.trim();
+  showDlg(`<h3>📋 ${esc(nm)} 님, 이미 접수한 건이 있어요</h3>
+    <p>이전 접수를 고치거나 취소할 수 있어요.</p>
+    <div style="display:grid;gap:8px;margin:8px 0">${MYREQ.map((r, i) => `<div class="mreq">
+      <div class="r1"><span><b>${esc(r.no || '접수')}</b></span><span class="pl">${r._st === 'open' ? '수정 가능' : '사무실 접수 전송됨'}</span></div>
+      <div class="r2">${esc(r.items)} · 배출일 ${esc(md(r.emit))} · ${esc(r.total)}</div>
+      ${r._st === 'open'
+        ? `<button class="madd" type="button" onclick="myReqAskPaid(${i})">✏️ 고치기·취소</button>`
+        : `<div style="margin-top:6px;padding:9px 10px;background:#fff7ed;border:1.5px solid #fdba74;border-radius:10px;font-size:14px;line-height:1.6">사무실로 접수가 전송된 건이라 여기서는 고칠 수 없어요.<br>취소·변경은 사무실로 전화 주세요 <b style="color:#c2410c">📞 ${OFFICE_TEL}</b></div>`}
+    </div>`).join('')}</div>
+    <div class="row"><button type="button" onclick="closeDlg()">닫기</button><button class="pri" type="button" onclick="myReqContinue()">그대로 두고 새 접수 계속</button></div>`);
+}
+function myReqContinue(){ closeDlg(); EDIT_SKIP = true; submitReq(); }
+function myReqAskPaid(i){
+  showDlg(`<h3>이미 입금하셨나요?</h3>
+    <p>${esc(MYREQ[i].no || '')} · ${esc(MYREQ[i].items)} · ${esc(MYREQ[i].total)}</p>
+    <div class="row"><button type="button" onclick="myReqPaid()">네, 입금했어요</button><button class="pri" type="button" onclick="myReqEdit(${i})">아니요</button></div>`);
+}
+function myReqPaid(){
+  showDlg(`<h3>사무실로 전화 주세요</h3>
+    <p>입금하신 접수는 여기서 고치거나 취소할 수 없어요.<br>사무실로 전화 주시면 <b>취소와 환불</b>을 바로 처리해 드려요.</p>
+    <div class="acct" style="text-align:center"><b>📞 <a href="tel:024146221" style="color:inherit">${OFFICE_TEL}</a></b></div>
+    <div class="row"><button class="pri" type="button" onclick="renderMyReq()">돌아가기</button></div>`);
+}
+function myReqEdit(i){
+  const r = MYREQ[i]; MYEDIT = { i, its: (r.its && r.its.length ? r.its : []).map(x => ({ ...x, 원래: x.개수 })) };
+  if (!MYEDIT.its.length) return showMsg('고칠 수 없는 접수예요', [`예전에 접수한 건이라 여기서는 고칠 수 없어요. 사무실로 전화 주세요 (${OFFICE_TEL}).`]);
+  drawMyEdit();
+}
+function drawMyEdit(){
+  const r = MYREQ[MYEDIT.i], before = MYEDIT.its.reduce((s, x) => s + x.단가 * x.원래, 0), after = MYEDIT.its.reduce((s, x) => s + x.단가 * x.개수, 0);
+  showDlg(`<h3>✏️ ${esc(r.no || '접수')} 고치기</h3>
+    <div style="display:grid;gap:6px;margin:6px 0">${MYEDIT.its.map((x, k) => `<div style="display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;border-bottom:1px dashed var(--line);padding:6px 0">
+      <span style="${x.개수 ? '' : 'text-decoration:line-through;color:#9ca3af'}">${esc(x.품목)}</span>
+      ${x.개수 ? `<span style="display:flex;align-items:center;border:1.5px solid var(--line);border-radius:9px;overflow:hidden"><button type="button" style="border:0;background:#fff;padding:4px 10px;font-weight:900" onclick="myQty(${k},-1)">−</button><b style="min-width:28px;text-align:center">${x.개수}</b><button type="button" style="border:0;background:#fff;padding:4px 10px;font-weight:900" onclick="myQty(${k},1)" ${x.개수 >= x.원래 ? 'disabled' : ''}>＋</button></span>
+        <button type="button" style="border:1.5px solid #fecaca;color:#dc2626;background:#fff;border-radius:8px;padding:4px 8px;font-weight:800" onclick="myQty(${k},-99)">빼기</button>`
+      : `<span style="font-size:13px;color:#6b7280">빠짐</span><button type="button" style="border:0;background:none;color:var(--teal);font-weight:800" onclick="myQty(${k},1)">되돌리기</button>`}
+    </div>`).join('')}</div>
+    <p style="font-weight:900;color:var(--ink)">금액 ${wonK(before)} → <span style="color:var(--teal)">${wonK(after)}</span></p>
+    <div class="row"><button type="button" style="border:1.5px solid #dc2626;color:#dc2626;background:#fff" onclick="myReqSave(true)">전체 취소</button><button class="pri" type="button" onclick="myReqSave(false)">변경 저장</button></div>
+    <div class="row" style="margin-top:6px"><button type="button" onclick="renderMyReq()">돌아가기</button></div>`);
+}
+function myQty(k, d){ const x = MYEDIT.its[k]; x.개수 = Math.max(0, Math.min(x.원래, x.개수 + d)); drawMyEdit(); }
+async function myReqSave(cancelAll){
+  const r = MYREQ[MYEDIT.i], left = MYEDIT.its.filter(x => x.개수 > 0), all = cancelAll || !left.length;
+  if (!all && MYEDIT.its.every(x => x.개수 === x.원래)) return renderMyReq();   // 바뀐 게 없음
+  try {
+    if ((await myReqState(r)) !== 'open') { r._st = 'sent'; renderMyReq(); return showMsg('사무실로 전송된 접수예요', [`방금 사무실로 접수가 전송돼 여기서는 고칠 수 없어요. 사무실로 전화 주세요 (${OFFICE_TEL}).`]); }
+    const ref = db.ref(`${DB_REQ}/${r.req}`);
+    const sum = left.reduce((s, x) => s + x.단가 * x.개수, 0);
+    if (all) await ref.remove();
+    else await ref.update({ _items: left.map(x => ({ 품목: x.품목, 개수: String(x.개수), 단가: x.단가, 금액: x.단가 * x.개수 ? (x.단가 * x.개수).toLocaleString() + '원' : '무상' })),
+                            총금액: r.madae ? '0원' : sum.toLocaleString() + '원', 손님수정: firebase.database.ServerValue.TIMESTAMP });
+    // 이 기기 기록도 마지막 내용으로
+    try { const a = JSON.parse(localStorage.getItem(MINE_KEY) || '[]'); const o = a.find(x => x.req === r.req && x.at === r.at);
+      if (o) { if (all) o.cancelled = true; else { o.its = left.map(x => ({ 품목: x.품목, 개수: x.개수, 단가: x.단가 })); o.items = left.map(x => `${x.품목} ${x.개수}`).join(' · '); o.names = left.map(x => x.품목); o.total = r.madae ? '0원' : sum.toLocaleString() + '원'; }
+        localStorage.setItem(MINE_KEY, JSON.stringify(a)); } } catch(e){}
+    const no = r.no || '';
+    if (all) return showDlg(`<div class="done-big">✅ 취소했어요</div><p>${esc(no)} 접수를 취소했어요. 내놓지 않으셔도 됩니다.</p>
+      <div class="row"><button class="pri" type="button" onclick="closeDlg();location.reload()">확인</button></div>`);
+    showDlg(`<div class="done-big">✅ 변경했어요</div>
+      ${no ? `<div class="bonno"><div class="bl">접수번호</div><div class="br"><b>${esc(no)}</b></div></div>` : ''}
+      <p>${esc(left.map(x => `${x.품목} ${x.개수}`).join(' · '))} · 배출일 ${esc(md(r.emit))}</p>
+      ${!r.madae && sum > 0 ? `<p>최종 금액을 아래 계좌로 입금해 주시면 확인 후 수거합니다.</p>
+      <div class="acct"><div>본에코(주) 국민은행</div><div style="display:flex;align-items:center;gap:10px;"><b>080-25-0007-681</b><button type="button" class="copy" onclick="copyAcct(this)" aria-label="계좌번호 복사">📋 복사</button></div>
+        <div class="big">${sum.toLocaleString()}원</div></div>
+      <p><b>입금자명은 신청자 성명(${esc(document.getElementById('name').value.trim())})으로</b> 보내 주세요.${no ? ` 접수번호는 <b>${esc(no)}</b>입니다.` : ''}</p>`
+      : `<p>무상 품목이라 입금 없이 수거합니다.</p>`}
+      ${no ? `<p style="margin-top:10px;padding:10px 12px;background:var(--warn-l);border-radius:10px;color:var(--warn);font-weight:700">폐기물에 <b>'${esc(no)}'</b> 접수번호를 적은 종이를 붙여 배출장소(지정한 곳)에 내놓아 주세요.</p>` : ''}
+      <div class="row"><button class="pri" type="button" onclick="closeDlg();location.reload()">확인</button></div>`);
+  } catch(e){ showMsg('저장하지 못했습니다', [`잠시 후 다시 해 주시거나 사무실로 전화 주세요 (${OFFICE_TEL}).`]); }
 }
 let DONE_SHOWN = false;
 function resetForm(){ location.reload(); }
